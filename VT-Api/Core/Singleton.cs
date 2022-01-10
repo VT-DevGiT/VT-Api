@@ -1,0 +1,25 @@
+﻿using System;
+using System.Reflection;
+
+namespace VT_Api.Core
+{
+    internal class Singleton<T>
+        where T : class
+    {
+        private static T _instance;
+        private static readonly object _lock = new object();
+
+        public static T Instance
+        {
+            get
+            {
+                lock (_lock)
+                {
+                    if (_instance == null)
+                        _instance = (T)Activator.CreateInstance(typeof(T), BindingFlags.NonPublic | BindingFlags.Public);
+                    return _instance;
+                }
+            }
+        }
+    }
+}
