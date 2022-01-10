@@ -17,7 +17,7 @@ namespace VT_Api.Core.Plugin.AutoRegisterProcess
                 try
                 {
                     if (!(typeof(IRole).IsAssignableFrom(roleType) || 
-                        roleType.GetCustomAttribute<AutoRegisterManager.Ignore>() != null)
+                        roleType.GetCustomAttribute<AutoRegisterManager.Ignore>() != null))
                         continue;
 
                     var classObject = (IRole)Activator.CreateInstance(roleType);
