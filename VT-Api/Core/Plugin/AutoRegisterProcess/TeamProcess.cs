@@ -22,8 +22,6 @@ namespace VT_Api.Core.Plugin.AutoRegisterProcess
                         teamType.GetCustomAttribute<AutoRegisterManager.Ignore>() != null)
                         continue;
 
-                    TeamManager.Get.RegisterTeam<ISynapseTeam>();
-
                     ISynapseTeam synapseTeam = Activator.CreateInstance(teamType) as ISynapseTeam;
                     if (synapseTeam.Info == null)
                         synapseTeam.Info = teamType.GetCustomAttribute<SynapseTeamInformation>();
@@ -33,7 +31,7 @@ namespace VT_Api.Core.Plugin.AutoRegisterProcess
                         throw new Exception("A Plugin tried to register a CustomTeam with an already used Id");
                     
 
-                    TeamManager.Get.GetFieldValueorOrPerties<List<ISynapseTeam>>("teams").Add(synapseTeam);
+                    TeamManager.Get.GetFieldValueOrPerties<List<ISynapseTeam>>("teams").Add(synapseTeam);
                     synapseTeam.Initialise();
                 }
                 catch (Exception e)

@@ -8,12 +8,15 @@ namespace VT_Api.Core.Plugin
 {
     public class AutoRegisterManager
     {
+        internal AutoRegisterManager() { }
+
 
         readonly IContextProcessor[] AddedRegisterProcesses = { new CommandProcess(), new ItemProcess(), new MiniGameProcess(), new RoleProcess(), new TeamProcess() }; 
 
         internal void Init()
         {
-            var processors = SynapseController.PluginLoader.GetFieldValueorOrPerties<List<IContextProcessor>>("_processors");
+            var processors = SynapseController.PluginLoader.GetFieldValueOrPerties<List<IContextProcessor>>("_processors");
+            processors.RemoveAll(p => p is Synapse.Api.Plugin.Processors.CommandProcessor);
             foreach (var addProcesses in AddedRegisterProcesses)
                 processors.Add(addProcesses);
         }

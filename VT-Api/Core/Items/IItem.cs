@@ -9,6 +9,6 @@ namespace VT_Api.Core.Items
     internal interface IItem
     {
 
-
+        VtItemInformation Info { get; set; }
     }
 }

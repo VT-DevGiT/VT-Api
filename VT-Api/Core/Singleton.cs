@@ -16,7 +16,7 @@ namespace VT_Api.Core
                 lock (_lock)
                 {
                     if (_instance == null)
-                        _instance = (T)Activator.CreateInstance(typeof(T), BindingFlags.NonPublic | BindingFlags.Public);
+                        _instance = (T)typeof(T).GetConstructor(BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.Public, null, Type.EmptyTypes, null).Invoke(null);
                     return _instance;
                 }
             }

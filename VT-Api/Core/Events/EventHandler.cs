@@ -21,18 +21,16 @@ namespace VT_Api.Core.Events
 
         public ScpEvents Scp { get; } = new ScpEvents();
 
-        public GrenadEvents Grenade { get; } = new GrenadEvents();
+        public ItemEvents Item { get; } = new ItemEvents();
 
         private VT_Api.Config.VtApiConfiguration Conf => VtController.Get.Configs.VtConfiguration;
-
-        private bool firstLoaded = false;
         #endregion
 
         #region Constructor & Destructor
         internal EventHandler()
         {
             SyanpseEventHandler.Get.Player.PlayerJoinEvent += PlayerJoin;
-            SyanpseEventHandler.Get.Round.WaitingForPlayersEvent += Waiting;
+            SyanpseEventHandler.Get.Server.RemoteAdminCommandEvent += OnRaOverwatchFix;
 #if DEBUG
             SyanpseEventHandler.Get.Player.PlayerKeyPressEvent += KeyPress;
 #endif
@@ -47,15 +45,7 @@ namespace VT_Api.Core.Events
         #endregion
 
         #region Events
-        // Vt Api Init
-        private void Waiting()
-        {
-            if (!firstLoaded)
-            {
-                firstLoaded = true;
-                VtController.Get.Commands.GenerateCommandCompletion();
-            }
-        }
+
         private void PlayerJoin(Synapse.Api.Events.SynapseEventArguments.PlayerJoinEventArgs ev)
         {
             //DataBase

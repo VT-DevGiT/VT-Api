@@ -11,6 +11,8 @@ using VT_Api.Exceptions;
 
 using EventHandler = VT_Api.Core.Events.EventHandler;
 using VT_Api.Core.Command;
+using VT_Api.Core.Roles;
+using VT_Api.Core.Teams;
 
 public class VtController
 {
@@ -19,8 +21,10 @@ public class VtController
 
     public AutoRegisterManager AutoRegister { get => Singleton<AutoRegisterManager>.Instance; }
     public MiniGameManager MinGames { get => Singleton<MiniGameManager>.Instance; }
+    public RoleManager Role { get => Singleton<RoleManager>.Instance; }
+    public TeamManager Team { get => Singleton<TeamManager>.Instance; }
     public EventHandler Events { get => Singleton<EventHandler>.Instance; }
-    public CommandHandlers Commands { get => Singleton<CommandHandlers>.Instance; }
+    public CommandHandler Commands { get => Singleton<CommandHandler>.Instance; }
     public Config Configs { get => Singleton<Config>.Instance; }
 
     private static bool _enabled = false;
@@ -64,11 +68,14 @@ public class VtController
     {
         try
         {
+            //todo
             AutoRegister.Init();
             MinGames.Init();
             Events.Init();
             Commands.Init();
-            Configs.Init();
+            //Configs.Init();
+            //Team.Init();
+            //Role.Init();
         }
         catch (Exception e)
         {

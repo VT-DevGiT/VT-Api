@@ -21,7 +21,7 @@ namespace VT_Api.Exceptions
 
         public int ID { get; }
 
-        public string Name { get; set; }
+        public string Name { get; }
     }
 
     internal class VtMiniGameAlreadyRegisteredException : Exception

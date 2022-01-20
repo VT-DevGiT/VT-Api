@@ -25,7 +25,7 @@ namespace VT_Api.Reflexion
             return null;
         }
 
-        public static T GetFieldValueorOrPerties<T>(this object element, string fieldName)
+        public static T GetFieldValueOrPerties<T>(this object element, string fieldName)
         {
             var prop = element.GetType().GetProperty(fieldName, BindingFlags.NonPublic | BindingFlags.Instance);
             if (prop != null)
@@ -55,7 +55,7 @@ namespace VT_Api.Reflexion
             return default(T);
         }
 
-        public static void SetProperty<T>(this Type element, string fieldName, object value)
+        public static void SetProperty<T>(this Type element, string fieldName, T value)
         {
             var prop = element.GetType().GetProperty(fieldName, BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Static);
             if (prop != null)
@@ -64,7 +64,7 @@ namespace VT_Api.Reflexion
             }
         }
 
-        public static void SetProperty<T>(this object element, string fieldName, object value)
+        public static void SetProperty<T>(this object element, string fieldName, T value)
         {
             var prop = element.GetType().GetProperty(fieldName, BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance);
             if (prop != null)
@@ -73,7 +73,7 @@ namespace VT_Api.Reflexion
             }
         }
 
-        public static void SetField<T>(this object element, string fieldName, object value)
+        public static void SetField<T>(this object element, string fieldName, T value)
         {
             var prop = element.GetType().GetField(fieldName, BindingFlags.NonPublic | BindingFlags.Instance);
             if (prop != null)
@@ -91,5 +91,49 @@ namespace VT_Api.Reflexion
             }
         }
 
+
+        public static void CallEvent(this Type o, string eventName,params object[] parameters)
+        {
+            var eventsField = o.GetField(eventName, BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Static);
+            if (eventsField != null)
+            {
+                object eventHandlerList = eventsField.GetValue(null);
+                if (eventHandlerList != null)
+                {
+                    var my_event_invoke = eventHandlerList.GetType().GetMethod("Invoke");
+                    if (my_event_invoke != null)
+                    {
+                        my_event_invoke.Invoke(eventHandlerList, parameters);
+                    }
+                }
+                else Synapse.Api.Logger.Get.Error("Vt-Reflexion: CallEvent failed!! \n eventHandlerList null");
+            }
+            else
+            {
+                Synapse.Api.Logger.Get.Error("Vt-Reflexion: CallEvent failed!! \n eventsField null");
+            }
+        }
+
+        public static void CallEvent(this object element, string eventName, params object[] parameters)
+        {
+            var eventsField = element.GetType().GetField(eventName, BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance);
+            if (eventsField != null)
+            {
+                object eventHandlerList = eventsField.GetValue(element);
+                if (eventHandlerList != null)
+                {
+                    var my_event_invoke = eventHandlerList.GetType().GetMethod("Invoke");
+                    if (my_event_invoke != null)
+                    {
+                        my_event_invoke.Invoke(eventHandlerList, parameters);
+                    }
+                }
+                else Synapse.Api.Logger.Get.Error("Vt-Reflexion: CallEvent failed!! \n eventHandlerList null");
+            }
+            else
+            {
+                Synapse.Api.Logger.Get.Error("Vt-Reflexion: CallEvent failed!! \n eventsField null");
+            }
+        }
     }
 }

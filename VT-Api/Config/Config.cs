@@ -7,7 +7,8 @@ namespace VT_Api.Config
     {
         [Synapse.Api.Plugin.Config(section = "VT-API Configuration")]
         public VtApiConfiguration VtConfiguration { get; }
-        internal SynapseTranslation<VtApiTranslation> synapseTranslation;
+
+        internal SynapseTranslation<VtApiTranslation> Translation;
 
 
 

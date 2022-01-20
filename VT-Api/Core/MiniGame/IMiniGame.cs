@@ -11,5 +11,9 @@ namespace VT_Api.Core.MiniGame
         void Start();
         int GetMiniGameID();
         string GetMiniGameName();
+
+
+        bool RoundEnd { get; set; }
+        RoundSummary.LeadingTeam GetLeadingTeam();
     }
 }

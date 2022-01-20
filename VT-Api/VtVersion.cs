@@ -27,7 +27,7 @@ public static class VtVersion
 #if DEBUG
     true;
 #else
-    false;
+    SynapseVersion.Debug;
 #endif
 
     public static string GetVersionName()
