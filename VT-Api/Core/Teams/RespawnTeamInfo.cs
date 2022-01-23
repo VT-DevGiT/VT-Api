@@ -10,19 +10,21 @@ namespace VT_Api.Core.Teams
     public class RespawnTeamInfo
     {
         public RespawnTeamInfo(int teamId = -1) => TeamID = teamId;
+        
+        public Action<List<Player>> Action { get; set; }
+
+        public string Cassie { get; set; }
 
         public int TeamID { get; set; }
 
-        public bool Custom { get; set; }
+        public List<RespawnRoleInfo> Roles { get; } = new List<RespawnRoleInfo>();
 
-        public List<RespawnRoleInfo> Roles { get; set; } = new List<RespawnRoleInfo>();
-
-        public int AmountOfPlayer { get; set; }
+        public int AmountOfPlayers { get; set; }
     }
 
     public struct RespawnRoleInfo
     {
-        public bool Optional;
+        public int Priority;
 
         public int RoleID;
 

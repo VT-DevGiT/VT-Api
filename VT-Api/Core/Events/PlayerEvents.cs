@@ -11,7 +11,7 @@ namespace VT_Api.Core.Events
 
         #region Events
         public event Synapse.Api.Events.EventHandler.OnSynapseEvent<PlayerDamagePostEventArgs> PlayerDamagePostEvent;
-        public event Synapse.Api.Events.EventHandler.OnSynapseEvent<PlayerDestroyEventArgs> PlayerDestroyEvent;
+        public event Synapse.Api.Events.EventHandler.OnSynapseEvent<PlayerDestroyEventArgs> PlayerUnloadEvent;
         public event Synapse.Api.Events.EventHandler.OnSynapseEvent<PlayerSpeakIntercomEventEventArgs> PlayerSpeakIntercomEvent;
         #endregion
 
@@ -52,7 +52,7 @@ namespace VT_Api.Core.Events
                 Player = player,
             };
 
-            PlayerDestroyEvent?.Invoke(ev);
+            PlayerUnloadEvent?.Invoke(ev);
         }
         #endregion
     }

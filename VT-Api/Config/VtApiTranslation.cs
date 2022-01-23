@@ -5,8 +5,8 @@ namespace VT_Api.Config
 {
     public class VtApiTranslation : IPluginTranslation
     {
-        [Description("Test.... ")]
-        public string Vrrooom = "AVION !!!!";
-
+        [Description("Message returned when a player has no power for their role")]
+        public string NoPower = "You don't have any power";
+        public string NotANumber = "The argument must be a number. exemple : 1";
     }
 }

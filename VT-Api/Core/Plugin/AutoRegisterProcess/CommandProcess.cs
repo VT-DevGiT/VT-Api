@@ -4,10 +4,9 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
-using System.Text;
-using System.Threading.Tasks;
 using VT_Api.Core.Command;
 using VT_Api.Reflexion;
+using CommandCtrl = VT_Api.Core.Command.CommandHandler;
 
 namespace VT_Api.Core.Plugin.AutoRegisterProcess
 {
@@ -33,12 +32,12 @@ namespace VT_Api.Core.Plugin.AutoRegisterProcess
                     listSynapseCommandType.Add(commandType);
                 }
             }
-            // traitement des main command
+            // main command processing
             var listRegisteredMainCommand = ProcessMainCommand(context, listMainCommandType);
             VtController.Get.Commands.MainCommands.AddRange(listRegisteredMainCommand);
-            // ajout des sub command 
+            // add sub commands
             ProcessSubCommand(context, listSubCommandType);
-            // ajout des synapse commande qui reste
+            // added synapse command which remains
             ProcessSynapseCommand(context,listSynapseCommandType);
         }
 
@@ -126,7 +125,7 @@ namespace VT_Api.Core.Plugin.AutoRegisterProcess
 
         }
 
-        private void ProcessSynapseCommand(PluginLoadContext context, List<Type> listSynapseCommandType)
+        private void ProcessSynapseCommand(PluginLoadContext context, List<Type> listSynapseCommandType) // processor of synapse
         {
             foreach (var commandType in listSynapseCommandType)
             {
@@ -142,11 +141,11 @@ namespace VT_Api.Core.Plugin.AutoRegisterProcess
                         .Any(paramInfo => paramInfo.ParameterType == context.PluginType));
 
                     if (diCtor != null) //If DI-Ctor is found
-                        classObject = Activator.CreateInstance(commandType, args: new object[] { context.Plugin });
+                        classObject = Activator.CreateInstance(commandType, context.Plugin);
                     else                //There is no DI-Ctor
                         classObject = Activator.CreateInstance(commandType);
 
-                    SynapseController.CommandHandlers.CallMethod("RegisterCommand", new object[] { classObject as ISynapseCommand, true });
+                    CommandCtrl.Get.RegisterCommand(classObject as ISynapseCommand, true);
                 }
                 catch (Exception e)
                 {

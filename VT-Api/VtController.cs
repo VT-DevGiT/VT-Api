@@ -70,12 +70,12 @@ public class VtController
         {
             //todo
             AutoRegister.Init();
-            MinGames.Init();
+            //MinGames.Init();
             Events.Init();
             Commands.Init();
-            //Configs.Init();
-            //Team.Init();
-            //Role.Init();
+            Configs.Init();
+            Team.Init();
+            Role.Init();
         }
         catch (Exception e)
         {

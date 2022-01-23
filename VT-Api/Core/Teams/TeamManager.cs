@@ -4,6 +4,8 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using VT_Api.Core.Enum;
+using rnd = UnityEngine.Random;
+using Manager = Synapse.Api.Teams.TeamManager;
 
 namespace VT_Api.Core.Teams
 {
@@ -34,36 +36,81 @@ namespace VT_Api.Core.Teams
             if (NextRespawnInfo.TeamID == (int)TeamID.None)
                 return;
 
-            ev.Allow = false;
-
-            if (!NextRespawnInfo.Custom)
+            if (!NextRespawnInfo.Roles.Any())
             {
-                Synapse.Api.Teams.TeamManager.Get.SpawnTeam(NextRespawnInfo.TeamID, ev.Players);
+                if (!Manager.Get.IsDefaultSpawnableID(NextRespawnInfo.TeamID))
+                { 
+                    ev.Team = Respawning.SpawnableTeamType.None;
+                    ev.TeamID = NextRespawnInfo.TeamID;
+                }
+                else
+                {
+                    ev.Team = NextRespawnInfo.TeamID == (int)TeamID.NTF ? Respawning.SpawnableTeamType.NineTailedFox :
+                                                                          Respawning.SpawnableTeamType.ChaosInsurgency;
+                }
                 return;
             }
 
+            ev.Allow = false;
+
             if (NextRespawnInfo.Roles.Any())
             {
-                List<Player> players = ev.Players;
-                List<RespawnRoleInfo> rolesinfos = NextRespawnInfo.Roles.ToList();
+                var players = ev.Players;
+                var rolesinfos = NextRespawnInfo.Roles.ToList();
 
-                if (players.Count > NextRespawnInfo.AmountOfPlayer)
+                if (players.Count > NextRespawnInfo.AmountOfPlayers)
                 {
                     var newplayers = RoleType.Spectator.GetPlayers().Where(p => !players.Contains(p)).ToList();
                     newplayers.ShuffleList();
-                    newplayers.RemoveRange(0, players.Count - NextRespawnInfo.AmountOfPlayer);
+                    newplayers.RemoveRange(0, players.Count - NextRespawnInfo.AmountOfPlayers);
+                    players.AddRange(newplayers);
                 }
-                else if (players.Count < NextRespawnInfo.AmountOfPlayer)
+                else if (players.Count < NextRespawnInfo.AmountOfPlayers)
                 {
-
+                    players.ShuffleList();
+                    players.RemoveRange(0, NextRespawnInfo.AmountOfPlayers - players.Count);
                 }
 
-                foreach (var roleinfo in rolesinfos)
-                {
-                    
-                }
-                throw new NotImplementedException();
+                CustomSpawn(rolesinfos, players, NextRespawnInfo.Action, NextRespawnInfo.Cassie);
+
             }
+        }
+
+        public void CustomSpawn(List<RespawnRoleInfo> rolesinfos, List<Player> players, Action<List<Player>> action = null, string cassie = "")
+        {
+            var playersSpwned = new List<Player>();
+
+            foreach (var info in rolesinfos.OrderBy(p => p.Priority))
+            {
+                var amout = rnd.Range(info.Min, info.Max);
+                var PriorityPlys = info.PriorityPlayer.Where(p => players.Contains(p)).ToList();
+
+                for (int i = 0; i < amout; i++)
+                {
+                    if (PriorityPlys.Any())
+                    {
+                        var ply = PriorityPlys[rnd.Range(0, PriorityPlys.Count() - 1)];
+                        ply.RoleID = info.RoleID;
+
+                        players.Remove(ply);
+                        PriorityPlys.Remove(ply);
+                        playersSpwned.Add(ply);
+                    }
+                    else
+                    {
+                        var ply = players[rnd.Range(0, players.Count() - 1)];
+                        ply.RoleID = info.RoleID;
+
+                        players.Remove(ply);
+                        playersSpwned.Add(ply);
+                    }
+                }
+            }
+
+            if (action != null)
+                action.Invoke(playersSpwned);
+            if (string.IsNullOrEmpty(NextRespawnInfo.Cassie))
+                Map.Get.Cassie(NextRespawnInfo.Cassie);
         }
         #endregion
 

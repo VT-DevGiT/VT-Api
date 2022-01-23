@@ -95,7 +95,10 @@
     <Compile Include="Config\Config.cs" />
     <Compile Include="Config\VtApiConfiguration.cs" />
     <Compile Include="Config\VtApiTranslation.cs" />
+    <Compile Include="Core\Behaviour\RepeatingBehaviour.cs" />
+    <Compile Include="Core\Behaviour\RoundBehaviour.cs" />
     <Compile Include="Core\Command\CommandHandler.cs" />
+    <Compile Include="Core\Command\Commands\CallPower.cs" />
     <Compile Include="Core\Command\GeneratedMainCommand.cs" />
     <Compile Include="Core\Command\GeneratedSubCommand.cs" />
     <Compile Include="Core\Command\IMainCommand.cs" />
@@ -134,8 +137,12 @@
     <Compile Include="Core\Plugin\IVtPlugin.cs" />
     <Compile Include="Core\Plugin\VtAbstractPlugins.cs" />
     <Compile Include="Core\Roles\AbstractRole.cs" />
+    <Compile Include="Core\Roles\IScpDeathAnnonce.cs" />
+    <Compile Include="Core\Roles\IVtRole.cs" />
     <Compile Include="Core\Roles\RoleManager.cs" />
     <Compile Include="Core\Roles\RoleSpawnPoint.cs" />
+    <Compile Include="Core\Roles\SerializedPlayerRole.cs" />
+    <Compile Include="Core\SerializedVector2.cs" />
     <Compile Include="Core\Singleton.cs" />
     <Compile Include="Core\Teams\AbstractTeam.cs" />
     <Compile Include="Core\Teams\RespawnTeamInfo.cs" />
@@ -169,7 +176,6 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
-    <Folder Include="Core\Command\Commands\" />
     <Folder Include="Core\DataBase\" />
     <Folder Include="Core\NPC\" />
     <Folder Include="Core\ObjectManager\" />

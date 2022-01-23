@@ -23,7 +23,7 @@ namespace VT_Api.Core.Events
 
         public ItemEvents Item { get; } = new ItemEvents();
 
-        private VT_Api.Config.VtApiConfiguration Conf => VtController.Get.Configs.VtConfiguration;
+        //public VT_Api.Config.VtApiConfiguration Conf => VtController.Get.Configs.VtConfiguration;
         #endregion
 
         #region Constructor & Destructor

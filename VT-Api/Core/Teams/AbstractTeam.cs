@@ -1,25 +1,20 @@
 ﻿using Synapse.Api;
 using Synapse.Api.Teams;
-using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace VT_Api.Core.Teams
 {
-    public abstract class AbstractTeam : Synapse.Api.Teams.ISynapseTeam
+    public abstract class AbstractTeam : ISynapseTeam
     {
-        public SynapseTeamInformation Info { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
+        public SynapseTeamInformation Info { get; set; }
 
-        public void Initialise()
-        {
-            throw new NotImplementedException();
-        }
+        public abstract List<RespawnRoleInfo> Roles { get; set; }
 
-        public void Spawn(List<Player> players)
-        {
-            throw new NotImplementedException();
-        }
+        public abstract string GetSpawnAnnonce();
+
+        public abstract void Initialise();
+
+        public virtual void Spawn(List<Player> players) => TeamManager.Get.CustomSpawn(Roles, players, null, GetSpawnAnnonce());
+        
     }
 }
