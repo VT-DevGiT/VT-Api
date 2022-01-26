@@ -100,20 +100,7 @@ namespace VT_Api.Core.Plugin.AutoRegisterProcess
                     else                //There is no DI-Ctor
                         classObject = (IMainCommand)Activator.CreateInstance(commandType);
                     GeneratedMainCommand command = GeneratedMainCommand.FromSynapseCommand(classObject);
-                    foreach (var platform in command.Platforms)
-                        switch (platform)
-                        {
-                            case Platform.ClientConsole:
-
-                                SynapseController.CommandHandlers.ClientCommandHandler.RegisterCommand(command);
-                                break;
-                            case Platform.RemoteAdmin:
-                                SynapseController.CommandHandlers.RemoteAdminHandler.RegisterCommand(command);
-                                break;
-                            case Platform.ServerConsole:
-                                SynapseController.CommandHandlers.ServerConsoleHandler.RegisterCommand(command);
-                                break;
-                        }
+                    CommandCtrl.Get.RegisterCommand(classObject as ISynapseCommand, true);
                     result.Add(command);
                 }
                 catch (Exception e)

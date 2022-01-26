@@ -8,8 +8,6 @@ namespace VT_Api.Core.MiniGame
 {
     public class MiniGameManager
     {
-
-
         #region Properties & Variable
         public static MiniGameManager Get => VtController.Get.MinGames;
 

@@ -36,6 +36,9 @@ namespace VT_Api.Core.Teams
             if (NextRespawnInfo.TeamID == (int)TeamID.None)
                 return;
 
+            if (NextRespawnInfo.AmountOfPlayers != -1)
+                FillOrRemoveWithSpectator(ev.Players, NextRespawnInfo.AmountOfPlayers);
+
             if (!NextRespawnInfo.Roles.Any())
             {
                 if (!Manager.Get.IsDefaultSpawnableID(NextRespawnInfo.TeamID))
@@ -48,6 +51,15 @@ namespace VT_Api.Core.Teams
                     ev.Team = NextRespawnInfo.TeamID == (int)TeamID.NTF ? Respawning.SpawnableTeamType.NineTailedFox :
                                                                           Respawning.SpawnableTeamType.ChaosInsurgency;
                 }
+
+                NextRespawnInfo = new RespawnTeamInfo();
+
+                if (NextRespawnInfo.Action != null)
+                    NextRespawnInfo.Action.Invoke(ev.Players);
+                
+                if (string.IsNullOrEmpty(NextRespawnInfo.Cassie))
+                    Map.Get.Cassie(NextRespawnInfo.Cassie);
+
                 return;
             }
 
@@ -55,26 +67,29 @@ namespace VT_Api.Core.Teams
 
             if (NextRespawnInfo.Roles.Any())
             {
-                var players = ev.Players;
                 var rolesinfos = NextRespawnInfo.Roles.ToList();
 
-                if (players.Count > NextRespawnInfo.AmountOfPlayers)
-                {
-                    var newplayers = RoleType.Spectator.GetPlayers().Where(p => !players.Contains(p)).ToList();
-                    newplayers.ShuffleList();
-                    newplayers.RemoveRange(0, players.Count - NextRespawnInfo.AmountOfPlayers);
-                    players.AddRange(newplayers);
-                }
-                else if (players.Count < NextRespawnInfo.AmountOfPlayers)
-                {
-                    players.ShuffleList();
-                    players.RemoveRange(0, NextRespawnInfo.AmountOfPlayers - players.Count);
-                }
-
-                CustomSpawn(rolesinfos, players, NextRespawnInfo.Action, NextRespawnInfo.Cassie);
-
+                CustomSpawn(rolesinfos, ev.Players, NextRespawnInfo.Action, NextRespawnInfo.Cassie);
+                NextRespawnInfo = new RespawnTeamInfo();
             }
         }
+
+        public void FillOrRemoveWithSpectator(List<Player> players, int amount)
+        {
+            if (players.Count > amount)
+            {
+                var newplayers = RoleType.Spectator.GetPlayers().Where(p => !players.Contains(p)).ToList();
+                newplayers.ShuffleList();
+                newplayers.RemoveRange(0, players.Count - amount);
+                players.AddRange(newplayers);
+            }
+            else if (players.Count < amount)
+            {
+                players.ShuffleList();
+                players.RemoveRange(0, amount - players.Count);
+            }
+        }
+
 
         public void CustomSpawn(List<RespawnRoleInfo> rolesinfos, List<Player> players, Action<List<Player>> action = null, string cassie = "")
         {
@@ -109,8 +124,8 @@ namespace VT_Api.Core.Teams
 
             if (action != null)
                 action.Invoke(playersSpwned);
-            if (string.IsNullOrEmpty(NextRespawnInfo.Cassie))
-                Map.Get.Cassie(NextRespawnInfo.Cassie);
+            if (string.IsNullOrEmpty(cassie))
+                Map.Get.Cassie(cassie);
         }
         #endregion
 

@@ -5,8 +5,6 @@ VisualStudioVersion = 17.0.31808.319
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "VT-Api", "VT-Api\VT-Api.csproj", "{7D0E0F78-D633-4E4D-AC56-145529B207E2}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "VT-Api.Test", "VT-Api.Test\VT-Api.Test.csproj", "{8686C3EC-FEFC-4AAA-B061-7F6B6BB03F38}"
-EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Exemple-Plugin", "Exemple-Plugin\Exemple-Plugin.csproj", "{823BEBB6-2F8E-421B-B07B-0AEAB3F889FF}"
 EndProject
 Global
@@ -22,12 +20,6 @@ Global
 		{7D0E0F78-D633-4E4D-AC56-145529B207E2}.PreRelease|Any CPU.Build.0 = PreRelease|Any CPU
 		{7D0E0F78-D633-4E4D-AC56-145529B207E2}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{7D0E0F78-D633-4E4D-AC56-145529B207E2}.Release|Any CPU.Build.0 = Release|Any CPU
-		{8686C3EC-FEFC-4AAA-B061-7F6B6BB03F38}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{8686C3EC-FEFC-4AAA-B061-7F6B6BB03F38}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{8686C3EC-FEFC-4AAA-B061-7F6B6BB03F38}.PreRelease|Any CPU.ActiveCfg = Release|Any CPU
-		{8686C3EC-FEFC-4AAA-B061-7F6B6BB03F38}.PreRelease|Any CPU.Build.0 = Release|Any CPU
-		{8686C3EC-FEFC-4AAA-B061-7F6B6BB03F38}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{8686C3EC-FEFC-4AAA-B061-7F6B6BB03F38}.Release|Any CPU.Build.0 = Release|Any CPU
 		{823BEBB6-2F8E-421B-B07B-0AEAB3F889FF}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{823BEBB6-2F8E-421B-B07B-0AEAB3F889FF}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{823BEBB6-2F8E-421B-B07B-0AEAB3F889FF}.PreRelease|Any CPU.ActiveCfg = Release|Any CPU

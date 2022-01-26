@@ -5,10 +5,9 @@ using Synapse.Config;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Reflection;
 using UnityEngine;
+using VT_Api.Config;
 using VT_Api.Core.Enum;
-using VT_Api.Core.Roles;
 
 namespace VT_Api.Extension
 {
@@ -46,9 +45,9 @@ namespace VT_Api.Extension
             return Component;
         }
 
-        public static void Extract(this SerializedPlayerRole playerRole, Player player, out Vector3 postion, out Vector2 rotation, out List<SynapseItem> items, out Dictionary<AmmoType, ushort> ammos)
+        public static void Extract(this SerializedPlayerRole playerRole, Player player, out MapPoint postion, out Vector2 rotation, out List<SynapseItem> items, out Dictionary<AmmoType, ushort> ammos)
         {
-            postion = playerRole.SpawnPoint.Parse().Position;
+            postion = playerRole.SpawnPoint?.Parse();
 
             if (playerRole.Rotation != null)
                 rotation = playerRole.Rotation;
@@ -62,7 +61,6 @@ namespace VT_Api.Extension
                 ammos = new Dictionary<AmmoType, ushort>();
             }
         }
-
 
         public static void Extract(this SerializedPlayerInventory playerInventory, Player player, out List<SynapseItem> items, out Dictionary<AmmoType, ushort> ammos)
         {

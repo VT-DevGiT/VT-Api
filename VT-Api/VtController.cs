@@ -19,12 +19,12 @@ public class VtController
     #region Properties & Variable
     public static VtController Get { get; private set; }
 
-    public AutoRegisterManager AutoRegister { get => Singleton<AutoRegisterManager>.Instance; }
+    internal AutoRegisterManager AutoRegister { get => Singleton<AutoRegisterManager>.Instance; } // nothing  public (yet)
     public MiniGameManager MinGames { get => Singleton<MiniGameManager>.Instance; }
     public RoleManager Role { get => Singleton<RoleManager>.Instance; }
     public TeamManager Team { get => Singleton<TeamManager>.Instance; }
     public EventHandler Events { get => Singleton<EventHandler>.Instance; }
-    public CommandHandler Commands { get => Singleton<CommandHandler>.Instance; }
+    internal CommandHandler Commands { get => Singleton<CommandHandler>.Instance; } // nothing  public (yet)
     public Config Configs { get => Singleton<Config>.Instance; }
 
     private static bool _enabled = false;
@@ -68,19 +68,18 @@ public class VtController
     {
         try
         {
-            //todo
             AutoRegister.Init();
-            //MinGames.Init();
+            MinGames.Init();
             Events.Init();
             Commands.Init();
             Configs.Init();
             Team.Init();
             Role.Init();
+
         }
         catch (Exception e)
         {
-            Logger.Get.Error($"Error while Initialising Vt-API! Please fix the Issue and restart your Server:\n{e}");
-            return;
+            throw new VtInitAllHandlerExceptions($"Vt-init: Error while Initialising the handlers!\n Please fix the Issue and restart your Server!\n{e}\nStackTrace:\n{e.StackTrace}", e);
         }
     }
 
@@ -94,8 +93,8 @@ public class VtController
         }
         catch (Exception e)
         {
-            Logger.Get.Error($"Harmony Patching threw an error:\n\n {e}");
+            throw new VtInitPatchsException($"Vt-init: Harmony Patching threw an error!\n{e}\nStackTrace:\n{e.StackTrace}", e);
         }
     }
-    #endregion
+#endregion
 }

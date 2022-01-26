@@ -1,13 +1,13 @@
-﻿using HarmonyLib;
-using MEC;
-using Synapse;
+﻿using Synapse;
 using Synapse.Api;
+using Synapse.Api.Enum;
 using Synapse.Api.Events.SynapseEventArguments;
+using Synapse.Api.Items;
 using Synapse.Config;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using UnityEngine;
+using VT_Api.Config;
 using VT_Api.Core.Behaviour;
 using VT_Api.Extension;
 
@@ -77,27 +77,18 @@ namespace VT_Api.Core.Roles
         }
 
         [API]
-        protected virtual void AditionalInit(PlayerSetClassEventArgs ev)
-        { }
+        protected virtual void AditionalInit(PlayerSetClassEventArgs ev) { }
 
-        /// <summary>
-        /// call when the class Spawn for add Event on the class
-        /// Warning ! don't forget to untie them when the Despawn class
-        /// </summary>
-        [API]
-        protected virtual void Event()
-        { }
 
         public sealed override void Spawn()
         {
-            Event();
-
-            
             Player.RoleType = RoleType;
 
             if (!string.IsNullOrEmpty(SpawnMessage))
-                Player.OpenReportWindow(SpawnMessage.Replace("%RoleName%", RoleName).Replace("\\n", "\n"));
+                Player.OpenReportWindow(SpawnMessage.Replace("%RoleName%", RoleName));
 
+            if (SetDisplayInfo)
+                Player.SetDisplayInfoRole(RoleName);
         }
 
         public void InitAll(PlayerSetClassEventArgs ev)
@@ -111,24 +102,35 @@ namespace VT_Api.Core.Roles
 
         private void InitPlayer(PlayerSetClassEventArgs ev)
         {
-            Player.Inventory.Clear();
+            if (Config == null) return;
+
             checkItems(Config.Inventory);
 
             try
             {
                 Config.Extract(Player, out var postion, out var rotation, out var items, out var ammos);
-                ev.Items = items;
-                ev.Ammo = ammos;
-                ev.Position = postion;
+                
+                ev.Items = items ?? new List<SynapseItem>();
+                ev.Ammo  = ammos ?? new Dictionary<AmmoType, ushort>();
                 ev.Rotation = rotation.x;
+                
+                if (postion != null) 
+                    ev.Position = postion.Position;
+
+                if (Config.Health != null)
+                    ev.Player.Health = (float)Config.Health;
+                ev.Player.MaxHealth = Config.MaxHealth ?? ev.Player.Health;
+
+                if (Config.ArtificialHealth != null)
+                    ev.Player.ArtificialHealth = (float)Config.ArtificialHealth;
+                if (Config.MaxArtificialHealth != null)
+                    ev.Player.MaxArtificialHealth = (int)Config.MaxArtificialHealth;
+
             }
             catch (Exception e)
             {
-                Server.Get.Logger.Error($"Error for spawn the role {this} : {e}");
+                Server.Get.Logger.Error($"Vt-Role : Error for spawn the role {this}\n{e}\nStackTrace:\n{e.StackTrace}");
             }
-
-            if (SetDisplayInfo)
-                Player.SetDisplayInfoRole(RoleName);
         }
 
         private void checkItems(SerializedPlayerInventory inventory)
@@ -154,7 +156,6 @@ namespace VT_Api.Core.Roles
             Player.DisplayInfo = null;
             Player.AddDisplayInfo(PlayerInfoArea.Role);
             Player.AddDisplayInfo(PlayerInfoArea.UnitName);
-
         }
 
         public override string ToString() => $"{this.RoleName}({this.RoleId})";

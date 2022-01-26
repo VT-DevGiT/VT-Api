@@ -1,11 +1,6 @@
 ﻿using Synapse.Api;
 using Synapse.Api.Enum;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using UnityEngine;
+using VT_Api.Config;
 using VT_Api.Core.Enum;
 using VT_Api.Core.Roles;
 using VT_Api.Core.Teams;
@@ -14,7 +9,7 @@ namespace Exemple_Plugin
 {
     public class SpyPlayerScript : AbstractRole
     {
-        protected override string SpawnMessage => PluginClass.Instance.Config.SpawnMessage;
+        protected override string SpawnMessage => PluginClass.Instance.Translation.ActiveTranslation.SpawnMessage;
 
         protected override int[] EnemysList => TeamManager.Groupe.CHIenemy;
 

@@ -1,4 +1,6 @@
-﻿using Synapse.Translation;
+﻿using Synapse.Config;
+using Synapse.Translation;
+using VT_Api.Reflexion;
 
 namespace VT_Api.Config
 {
@@ -9,7 +11,9 @@ namespace VT_Api.Config
         //[Synapse.Api.Plugin.Config(section = "VT-API Configuration")]
         //public VtApiConfiguration VtConfiguration { get; }
 
-        internal SynapseTranslation<VtApiTranslation> VtTranslation;
+        public SynapseConfiguration SynapseConfiguration => Synapse.Server.Get.Configs.GetFieldValueOrPerties<SynapseConfiguration>("synapseConfiguration");
+
+        public SynapseTranslation<VtApiTranslation> VtTranslation;
 
 
 

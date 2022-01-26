@@ -49,6 +49,10 @@ namespace VT_Api.Core.Roles
 
         private void OnPlayerDeath(PlayerDeathEventArgs ev)
         {
+            if (OldPlayerRole.ContainsKey(ev.Victim))
+                 OldPlayerRole[ev.Victim] = ev.Victim.RoleID;
+            else OldPlayerRole.Add(ev.Victim, ev.Victim.RoleID);
+            
             if (ev.Victim.CustomRole is IScpDeathAnnonce scpDeathAnnonce)
             { 
                 var scpName = scpDeathAnnonce.ScpName;

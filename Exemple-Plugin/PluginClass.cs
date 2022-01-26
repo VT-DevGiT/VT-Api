@@ -37,11 +37,13 @@ namespace Exemple_Plugin
 
             Translation.AddTranslation(new PluginTranslation()
             {
-                ClassName = "Espion"
+                ClassName = "Espion",
+                SpawnMessage = "Vous apparaissez en tant que %RoleName%!\nTuez les autres NTF."
             }, "FRENCH");
             Translation.AddTranslation(new PluginTranslation()
             {
-                ClassName = "Spion"
+                ClassName = "Spion",
+                SpawnMessage = "Du spawnst als %RoleName%!\nTöte die anderen NTF."
             }, "GERMAN");
 
             // the base load init the API, create the EventHandlers and the instance of the plugin 

@@ -9,5 +9,7 @@ namespace VT_Api.Core.Command
 {
     public interface IMainCommand : ISynapseCommand
     {
+
+
     }
 }

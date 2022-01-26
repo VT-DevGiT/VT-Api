@@ -6,8 +6,9 @@ using System.Text;
 using System.Threading.Tasks;
 using UnityEngine;
 
-namespace VT_Api.Core
+namespace VT_Api.Config
 {
+    [Serializable]
     public class SerializedVector2
     {
         public float X
@@ -40,8 +41,6 @@ namespace VT_Api.Core
         
 
         public static implicit operator Vector2(SerializedVector2 vector) => vector.Parse();
-        
-
         public static implicit operator SerializedVector2(Vector2 vector) =>  new SerializedVector2(vector);
         
     }

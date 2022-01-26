@@ -9,7 +9,11 @@ namespace VT_Api.Core.Teams
 {
     public class RespawnTeamInfo
     {
-        public RespawnTeamInfo(int teamId = -1) => TeamID = teamId;
+        public RespawnTeamInfo(int teamId = -1, int amountPlayers = -1)
+        {
+            TeamID = teamId;
+            AmountOfPlayers = amountPlayers;
+        }
         
         public Action<List<Player>> Action { get; set; }
 
