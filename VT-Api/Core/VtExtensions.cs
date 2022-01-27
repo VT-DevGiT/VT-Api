@@ -20,41 +20,40 @@ namespace VT_Api.Extension
 {
     static internal class VtExtensions
     {
+        public static void PlayAmbientSound(this Map _, int id)
+            => VtController.Get.MapAction.PlayAmbientSound(id);
+
+        public static void StartAirBombardement()
+            => VtController.Get.MapAction.StartAirBombardement();
+
+        public static void StopAirBombardement()
+            => MapActionManager.Get.isAirBombCurrently = false;
+
+        public static void ResetRoomsLightColor(this Map _)
+            => VtController.Get.MapAction.ResetRoomsLightColor();
+
+        public static int GetVoltage(this Map map)
+            => VtController.Get.MapAction.GetVoltage();
+
+        public static Player GetPlayercoprs(this Map _, Player player, float rayon)
+            => VtController.Get.MapAction.GetPlayercoprs(player, rayon);
+
+
         internal static void Debug(this SynLogger logger, object message)
             => logger.Send($"VtApi-Debug: {message}", ConsoleColor.DarkYellow);
 
-        public static bool IsDefined(this SerializedPlayerInventory item)
-            => item.Ammo != null || (item.Items != null && item.Items.Any());
-
-        public static bool IsDefined(this SynapseItem item)
-            => item != null && item != SynapseItem.None && item.ItemType != ItemType.None;
-
-        public static void PlayAmbientSound(this Map _, int id)
-            => PlayAmbientSound(id);
-
-        public static void PlayAmbientSound(int id)
-            => Server.Get.Host.GetComponent<AmbientSoundPlayer>().CallMethod("RpcPlaySound", id);
-
+       
         public static bool Is939(this RoleType roleType)
             => roleType == RoleType.Scp93953 || roleType == RoleType.Scp93989;
 
         public static bool Is939(this RoleID roleID)
             => roleID == RoleID.Scp93953 || roleID == RoleID.Scp93989;
 
-        public static T GetOrAddComponent<T>(this Component component) where T : Component
-            => component.gameObject.GetOrAddComponent<T>();
-
-        public static void StartAirBombardement()
-            => MEC.Timing.RunCoroutine(MapActionManager.Get.AirBomb(10, 5));
-
-        public static void StopAirBombardement()
-            => MapActionManager.Get.isAirBombCurrently = false;
-
-        public static bool IsTargetVisible(this Player player, GameObject obj)
-            => IsTargetVisible(player.gameObject.GetComponent<UnityEngine.Camera>(), obj);
-
         public static bool IsUTR(this Player player) 
             => player.CustomRole is IUtrRole;
+
+        public static T GetOrAddComponent<T>(this Component component) where T : Component
+            => component.gameObject.GetOrAddComponent<T>();
 
         public static T GetOrAddComponent<T>(this GameObject gameObject) where T : Component
         {
@@ -63,6 +62,7 @@ namespace VT_Api.Extension
                 Component = gameObject.AddComponent<T>();
             return Component;
         }
+
 
         public static void ChangeRoomLightColor(this Room room, Color color, bool activeColor = true)
         {
@@ -76,19 +76,8 @@ namespace VT_Api.Extension
             room.LightController.WarheadLightOverride = false;
         }
 
-        public static void ResetRoomsLightColor(this Map map)
-        {
-            foreach (Room room in map.Rooms)
-                room.ResetRoomLightColor();
-        }
-
-        public static int GetVoltage(this Map map)
-        {
-            float totalvoltagefloat = 0;
-            foreach (var generator in map.Generators)
-                totalvoltagefloat += generator.generator._currentTime / generator.generator._totalActivationTime * 1000;
-            return (int)totalvoltagefloat;
-        }
+        public static bool IsTargetVisible(this Player player, GameObject obj)
+            => IsTargetVisible(player.gameObject.GetComponent<UnityEngine.Camera>(), obj);
 
         public static bool IsTargetVisible(this UnityEngine.Camera camera, GameObject obj)
         {
@@ -101,6 +90,12 @@ namespace VT_Api.Extension
             }
             return true;
         }
+
+        public static bool IsDefined(this SerializedPlayerInventory item)
+           => item.Ammo != null || (item.Items != null && item.Items.Any());
+
+        public static bool IsDefined(this SynapseItem item)
+            => item != null && item != SynapseItem.None && item.ItemType != ItemType.None;
 
         public static void Extract(this SerializedPlayerRole playerRole, Player player, out MapPoint postion, out Vector2 rotation, out List<SynapseItem> items, out Dictionary<AmmoType, ushort> ammos)
         {
@@ -153,6 +148,7 @@ namespace VT_Api.Extension
             return UERandom.Range(1f, 100f) <= serializedItem.Chance;
         }
 
+
         public static ScpRecontainmentType GetScpRecontainmentType(this DamageType damage, Player player = null)
         {
             switch (damage)
@@ -171,6 +167,7 @@ namespace VT_Api.Extension
                     return ScpRecontainmentType.Unspecified;
             }
         }
+
 
         public static bool TryAddOrDrop(this PlayerInventory playerInv, SynapseItem item)
         {
@@ -213,6 +210,7 @@ namespace VT_Api.Extension
             }
         }
 
+
         public static void SetDisplayInfoRole(this Player player, string roleName)
         {
             player.RemoveDisplayInfo(PlayerInfoArea.Role);
@@ -228,19 +226,6 @@ namespace VT_Api.Extension
             }
         }
 
-        public static Player GetPlayercoprs(this Map map, Player player, float rayon)
-        {
-            var ragdolls =
-                map.Ragdolls.Where(r => Vector3.Distance(r.GameObject.transform.position, player.Position) < rayon).ToList();
-            ragdolls.Sort((Synapse.Api.Ragdoll x, Synapse.Api.Ragdoll y) =>
-                Vector3.Distance(x.GameObject.transform.position, player.Position).CompareTo(Vector3.Distance(y.GameObject.transform.position, player.Position)));
-            if (ragdolls.Count == 0)
-                return null;
-            Player owner = ragdolls.First().Owner;
-            if (owner != null && owner.RoleID == (int)RoleType.Spectator)
-                 return owner;
-            else return null;
-        }
 
         public static int GetTeam(this RoleID roleID)
         {

@@ -3,10 +3,9 @@ using Synapse.Api;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using UnityEngine;
 using VT_Api.Extension;
+using VT_Api.Reflexion;
 using UERandom = UnityEngine.Random;
 
 namespace VT_Api.Core
@@ -104,6 +103,45 @@ namespace VT_Api.Core
             OutsideRoom.ChangeRoomLightColor(new Color(1, 0, 0), false);
             Map.Get.Cassie("outside zone termination completed .", false);
             yield break;
+        }
+
+
+
+        public Player GetPlayercoprs(Player player, float rayon)
+        {
+            var ragdolls =
+               Map.Get.Ragdolls.Where(r => Vector3.Distance(r.GameObject.transform.position, player.Position) < rayon).ToList();
+            ragdolls.Sort((Synapse.Api.Ragdoll x, Synapse.Api.Ragdoll y) =>
+                Vector3.Distance(x.GameObject.transform.position, player.Position).CompareTo(Vector3.Distance(y.GameObject.transform.position, player.Position)));
+            if (ragdolls.Count == 0)
+                return null;
+            Player owner = ragdolls.First().Owner;
+            if (owner != null && owner.RoleID == (int)RoleType.Spectator)
+                return owner;
+            else return null;
+        }
+
+        public int GetVoltage()
+        {
+            float totalvoltagefloat = 0;
+            foreach (var generator in Map.Get.Generators)
+                totalvoltagefloat += generator.generator._currentTime / generator.generator._totalActivationTime * 1000;
+            return (int)totalvoltagefloat;
+        }
+
+        public void StartAirBombardement()
+            => MEC.Timing.RunCoroutine(MapActionManager.Get.AirBomb(10, 5));
+
+        public void PlayAmbientSound(int id)
+            => Server.Get.Host.GetComponent<AmbientSoundPlayer>().CallMethod("RpcPlaySound", id);
+
+        public void StopAirBombardement()
+            => MapActionManager.Get.isAirBombCurrently = false;
+
+        public void ResetRoomsLightColor()
+        {
+            foreach (Room room in Map.Get.Rooms)
+                room.ResetRoomLightColor();
         }
     }
 }
