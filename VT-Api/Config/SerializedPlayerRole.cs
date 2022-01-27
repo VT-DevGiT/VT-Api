@@ -4,6 +4,7 @@ using Synapse.Api.Items;
 using Synapse.Config;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 using VT_Api.Extension;
 
@@ -24,7 +25,7 @@ namespace VT_Api.Config
 
         public SerializedVector2 Rotation { get; set; }
 
-        public SerializedMapPoint SpawnPoint { get; set; }
+        public List<SerializedMapPoint> SpawnPoints { get; set; }
 
         public SerializedPlayerInventory Inventory { get; set; }
         #endregion
@@ -48,8 +49,8 @@ namespace VT_Api.Config
                 player.Rotation = Rotation.Parse();
             if (Inventory != null)
                 Inventory.Apply(player);
-            if (SpawnPoint != null)
-                player.Position = SpawnPoint.Parse().Position;
+            if (SpawnPoints != null && SpawnPoints.Any())
+                player.Position = SpawnPoints[UnityEngine.Random.Range(0, SpawnPoints.Count)].Parse().Position;
         }
         #endregion
 

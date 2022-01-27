@@ -18,7 +18,7 @@ using UERandom = UnityEngine.Random;
 
 namespace VT_Api.Extension
 {
-    static internal class VtExtensions
+    public static class VtExtensions
     {
         public static void PlayAmbientSound(this Map _, int id)
             => VtController.Get.MapAction.PlayAmbientSound(id);
@@ -99,7 +99,7 @@ namespace VT_Api.Extension
 
         public static void Extract(this SerializedPlayerRole playerRole, Player player, out MapPoint postion, out Vector2 rotation, out List<SynapseItem> items, out Dictionary<AmmoType, ushort> ammos)
         {
-            postion = playerRole.SpawnPoint?.Parse();
+            postion = playerRole.SpawnPoints?[UnityEngine.Random.Range(0, playerRole.SpawnPoints.Count)].Parse();
 
             if (playerRole.Rotation != null)
                 rotation = playerRole.Rotation;
