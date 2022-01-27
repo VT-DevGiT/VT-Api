@@ -24,6 +24,7 @@ public class VtController
     public RoleManager Role { get => Singleton<RoleManager>.Instance; }
     public TeamManager Team { get => Singleton<TeamManager>.Instance; }
     public EventHandler Events { get => Singleton<EventHandler>.Instance; }
+    public MapActionManager MapAction { get => Singleton<MapActionManager>.Instance; }
     internal CommandHandler Commands { get => Singleton<CommandHandler>.Instance; } // nothing  public (yet)
     public Config Configs { get => Singleton<Config>.Instance; }
 
@@ -75,7 +76,6 @@ public class VtController
             Configs.Init();
             Team.Init();
             Role.Init();
-
         }
         catch (Exception e)
         {

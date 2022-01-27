@@ -4,11 +4,10 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace VT_Api.Core.Items
+namespace VT_Api.Core.Roles
 {
-    public interface IItem
+    public interface IUtrRole
     {
 
-        VtItemInformation Info { get; set; }
     }
 }

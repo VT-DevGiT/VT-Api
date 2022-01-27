@@ -3,7 +3,7 @@ using System;
 
 namespace VT_Api.Core.Items
 {
-    internal class VtItemInformation : Attribute
+    public class VtItemInformation : Attribute
     {
         public VtItemInformation()
         {

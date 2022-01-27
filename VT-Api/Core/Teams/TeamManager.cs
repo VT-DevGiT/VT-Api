@@ -6,6 +6,8 @@ using System.Linq;
 using VT_Api.Core.Enum;
 using rnd = UnityEngine.Random;
 using Manager = Synapse.Api.Teams.TeamManager;
+using Respawning.NamingRules;
+using VT_Api.Reflexion;
 
 namespace VT_Api.Core.Teams
 {
@@ -26,6 +28,20 @@ namespace VT_Api.Core.Teams
         internal void Init()
         {
             Synapse.Api.Events.EventHandler.Get.Round.TeamRespawnEvent += OnRespawn;
+        }
+
+        public string GenerateNtfUnitName()
+        {
+            var combi = UnitNamingRule.UsedCombinations;
+            string regular;
+            do
+            {
+                var arrayOfValues = NineTailedFoxNamingRule.PossibleCodes;
+                regular = arrayOfValues[UnityEngine.Random.Range(0, arrayOfValues.Length)] + "-" + UnityEngine.Random.Range(1, 20).ToString("00");
+            }
+            while (combi.Contains(regular));
+            combi.Add(regular);
+            return regular;
         }
 
         #endregion

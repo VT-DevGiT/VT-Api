@@ -8,12 +8,11 @@ namespace VT_Api.Config
     {
         public static Config Get { get => VtController.Get.Configs; }
 
-        //[Synapse.Api.Plugin.Config(section = "VT-API Configuration")]
-        //public VtApiConfiguration VtConfiguration { get; }
+        public VtApiConfiguration VtConfiguration;
 
-        public SynapseConfiguration SynapseConfiguration => Synapse.Server.Get.Configs.GetFieldValueOrPerties<SynapseConfiguration>("synapseConfiguration");
 
         public SynapseTranslation<VtApiTranslation> VtTranslation;
+        public SynapseConfiguration SynapseConfiguration => Synapse.Server.Get.Configs.GetFieldValueOrPerties<SynapseConfiguration>("synapseConfiguration");
 
 
 
@@ -31,6 +30,9 @@ namespace VT_Api.Config
                 NoPower = "Tu n'as aucun pouvoir",
                 NotANumber = "L'argument doit être un nombre. Exemple 1"
             }, "FRENCH");
+
+            VtConfiguration = new VtApiConfiguration();
+            VtConfiguration = Synapse.Server.Get.Configs.GetOrSetDefault("VT-API", new VtApiConfiguration());
         }
     }
 }

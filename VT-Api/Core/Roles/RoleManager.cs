@@ -3,7 +3,9 @@ using Synapse.Api;
 using Synapse.Api.Events.SynapseEventArguments;
 using System.Collections.Generic;
 using UnityEngine;
+using VT_Api.Core.Enum;
 using VT_Api.Extension;
+using SynRoleManager = Synapse.Api.Roles.RoleManager;
 
 namespace VT_Api.Core.Roles
 {
@@ -18,6 +20,16 @@ namespace VT_Api.Core.Roles
             Synapse.Api.Events.EventHandler.Get.Player.PlayerSetClassEvent += OnSetClass;
             Synapse.Api.Events.EventHandler.Get.Player.PlayerDeathEvent += OnPlayerDeath;
             Synapse.Api.Events.EventHandler.Get.Player.PlayerKeyPressEvent += OnPressKey;
+        }
+
+        public int OldTeam(Player player)
+        {
+            if (OldPlayerRole.ContainsKey(player))
+            {
+                int oldRoleID = OldPlayerRole[player];
+                return ((RoleID)oldRoleID).GetTeam();
+            }
+            return (int)TeamID.None;
         }
 
         private void OnPressKey(PlayerKeyPressEventArgs ev)

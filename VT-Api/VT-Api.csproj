@@ -95,6 +95,7 @@
     <Compile Include="Config\Config.cs" />
     <Compile Include="Config\VtApiConfiguration.cs" />
     <Compile Include="Config\VtApiTranslation.cs" />
+    <Compile Include="Core\MapActionManager.cs" />
     <Compile Include="Core\Behaviour\RepeatingBehaviour.cs" />
     <Compile Include="Core\Behaviour\RoundBehaviour.cs" />
     <Compile Include="Core\Command\CommandHandler.cs" />
@@ -119,6 +120,7 @@
     <Compile Include="Core\Events\RoundEvents.cs" />
     <Compile Include="Core\Events\ScpEvents.cs" />
     <Compile Include="Core\Events\ServerEvents.cs" />
+    <Compile Include="Core\Items\AbstractWeapon.cs" />
     <Compile Include="Core\Items\IItem.cs" />
     <Compile Include="Core\Items\VtItemInformation.cs" />
     <Compile Include="Core\MiniGame\IMiniGame.cs" />
@@ -137,6 +139,7 @@
     <Compile Include="Core\Plugin\VtAbstractPlugins.cs" />
     <Compile Include="Core\Roles\AbstractRole.cs" />
     <Compile Include="Core\Roles\IScpDeathAnnonce.cs" />
+    <Compile Include="Core\Roles\IUtrRole.cs" />
     <Compile Include="Core\Roles\IVtRole.cs" />
     <Compile Include="Core\Roles\RoleManager.cs" />
     <Compile Include="Config\SerializedPlayerRole.cs" />

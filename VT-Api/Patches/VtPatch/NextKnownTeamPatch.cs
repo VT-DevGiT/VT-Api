@@ -1,5 +1,6 @@
 ﻿using HarmonyLib;
 using Respawning;
+using Synapse;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -15,32 +16,35 @@ namespace VT_Api.Patches.VtPatch
         [HarmonyPrefix]
         private static bool SelectNextKnownTeam(RespawnManager __instance) //todo
         {
+            if (true) return true;
+
             try
             {
                 if (__instance._stopwatch.Elapsed.TotalSeconds > __instance._timeForNextSequence)
                     ++__instance._curSequence;
 
+                if (__instance.NextKnownTeam == SpawnableTeamType.None)
+                    __instance.NextKnownTeam = RespawnTickets.Singleton.DrawRandomTeam();
+
                 if (__instance._curSequence == RespawnSequencePhase.SelectingTeam)
                 {
-                    SpawnableTeamType spawnableTeamType = RespawnTickets.Singleton.DrawRandomTeam();
-                    if (spawnableTeamType == SpawnableTeamType.None)
+                    if (!Server.Get.Players.Where(p => p.RoleType == RoleType.Spectator && !p.OverWatch).Any())
                     {
                         __instance.RestartSequence();
                         return false;
                     }
 
-                    if (!RespawnWaveGenerator.SpawnableTeams.TryGetValue(spawnableTeamType, out SpawnableTeamHandlerBase value))
+                    if (!RespawnWaveGenerator.SpawnableTeams.TryGetValue(__instance.NextKnownTeam, out SpawnableTeamHandlerBase value))
                     {
-                        ServerConsole.AddLog(string.Concat("Fatal error, unable to find the '", spawnableTeamType, "' team"), ConsoleColor.Red);
+                        ServerConsole.AddLog(string.Concat("Fatal error, unable to find the '", __instance.NextKnownTeam, "' team"), ConsoleColor.Red);
                         __instance.RestartSequence();
                         return false;
                     }
 
-                    __instance.NextKnownTeam = spawnableTeamType;
                     __instance._curSequence = RespawnSequencePhase.PlayingEntryAnimations;
                     __instance._stopwatch.Restart();
                     __instance._timeForNextSequence = value.EffectTime;
-                    RespawnEffectsController.ExecuteAllEffects(RespawnEffectsController.EffectType.Selection, spawnableTeamType);
+                    RespawnEffectsController.ExecuteAllEffects(RespawnEffectsController.EffectType.Selection, __instance.NextKnownTeam);
                 }
 
                 if (__instance._curSequence == RespawnSequencePhase.SpawningSelectedTeam)
