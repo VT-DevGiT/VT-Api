@@ -42,7 +42,13 @@ namespace VT_Api.Extension
         internal static void Debug(this SynLogger logger, object message)
             => logger.Send($"VtApi-Debug: {message}", ConsoleColor.DarkYellow);
 
-       
+
+        public static List<Player> GetPlayer(this RoleID[] roleID)
+            => SynapseController.Server.Players.Where(x => roleID.Any(r => x.RoleID == (int)r)).ToList();
+
+        public static List<Player> GetPlayer(this RoleID roleID)
+            => SynapseController.Server.Players.Where(x => x.RoleID == (int)roleID).ToList();
+
         public static bool Is939(this RoleType roleType)
             => roleType == RoleType.Scp93953 || roleType == RoleType.Scp93989;
 
@@ -97,32 +103,38 @@ namespace VT_Api.Extension
         public static bool IsDefined(this SynapseItem item)
             => item != null && item != SynapseItem.None && item.ItemType != ItemType.None;
 
-        public static void Extract(this SerializedPlayerRole playerRole, Player player, out MapPoint postion, out Vector2 rotation, out List<SynapseItem> items, out Dictionary<AmmoType, ushort> ammos)
+        public static void Extract(this SerializedPlayerRole playerRole, Player player, out MapPoint postion, out Vector2? rotation, out List<SynapseItem> items, out Dictionary<AmmoType, ushort> ammos)
         {
             postion = playerRole.SpawnPoints?[UnityEngine.Random.Range(0, playerRole.SpawnPoints.Count)].Parse();
 
-            if (playerRole.Rotation != null)
-                rotation = playerRole.Rotation;
-            else rotation = Vector2.zero;
-
-            if (playerRole.Inventory != null)
+            rotation = playerRole.Rotation;
+          
+            if (playerRole.Inventory != null && playerRole.Inventory.IsDefined()) 
                 playerRole.Inventory.Extract(player, out items, out ammos);
             else
             {
-                items = new List<SynapseItem>();
-                ammos = new Dictionary<AmmoType, ushort>();
+                items = null;
+                ammos = null;
             }
         }
 
         public static void Extract(this SerializedPlayerInventory playerInventory, Player player, out List<SynapseItem> items, out Dictionary<AmmoType, ushort> ammos)
         {
-            items = new List<SynapseItem>();
-
-            if (playerInventory.Items != null) foreach (var item in playerInventory.Items)
+            if (playerInventory.Items != null)
             {
-                if (item.Extract(player, out var synapseItem))  
-                    items.Add(synapseItem);
+                items = new List<SynapseItem>();
+                
+                foreach (var item in playerInventory.Items)
+                {
+                    if (item.Extract(player, out var synapseItem))
+                        items.Add(synapseItem);
+                }
             }
+            else
+            {
+                items = null;
+            }
+
 
             if (playerInventory.Ammo != null)
                 playerInventory.Ammo.Extract(out ammos);

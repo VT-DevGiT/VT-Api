@@ -1,5 +1,7 @@
 ﻿using Synapse.Api;
 using Synapse.Api.Enum;
+using System.Collections.Generic;
+using System.Linq;
 using VT_Api.Config;
 using VT_Api.Core.Enum;
 using VT_Api.Core.Roles;
@@ -11,9 +13,9 @@ namespace Exemple_Plugin
     {
         protected override string SpawnMessage => PluginClass.Instance.Translation.ActiveTranslation.SpawnMessage;
 
-        protected override int[] EnemysList => TeamManager.Groupe.CHIenemy;
+        protected override List<int> EnemysList => TeamManager.Groupe.CHIenemy.ToList();
 
-        protected override int[] FriendsList => TeamManager.Groupe.CHIally;
+        protected override List<int> FriendsList => TeamManager.Groupe.CHIally.ToList();
 
         protected override RoleType RoleType => RoleType.NtfPrivate;
 

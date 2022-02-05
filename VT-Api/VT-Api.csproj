@@ -95,6 +95,7 @@
     <Compile Include="Config\Config.cs" />
     <Compile Include="Config\VtApiConfiguration.cs" />
     <Compile Include="Config\VtApiTranslation.cs" />
+    <Compile Include="Core\ISengleton.cs" />
     <Compile Include="Core\MapActionManager.cs" />
     <Compile Include="Core\Behaviour\RepeatingBehaviour.cs" />
     <Compile Include="Core\Behaviour\RoundBehaviour.cs" />
@@ -146,6 +147,7 @@
     <Compile Include="Config\SerializedVector2.cs" />
     <Compile Include="Core\Roles\SpawnManager.cs" />
     <Compile Include="Core\Singleton.cs" />
+    <Compile Include="Core\Structur\StructureManager.cs" />
     <Compile Include="Core\Teams\AbstractTeam.cs" />
     <Compile Include="Core\Teams\RespawnTeamInfo.cs" />
     <Compile Include="Core\Teams\TeamManager.cs" />
@@ -182,7 +184,6 @@
     <Folder Include="Core\DataBase\" />
     <Folder Include="Core\NPC\" />
     <Folder Include="Core\SoundManager\" />
-    <Folder Include="Core\Structur\" />
     <Folder Include="Patches\VtFix\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

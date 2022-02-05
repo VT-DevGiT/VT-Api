@@ -30,14 +30,14 @@ namespace VT_Api.Core.Teams
             Synapse.Api.Events.EventHandler.Get.Round.TeamRespawnEvent += OnRespawn;
         }
 
-        public string GenerateNtfUnitName()
+        public string GenerateNtfUnitName(byte maxNubmer = 20)
         {
             var combi = UnitNamingRule.UsedCombinations;
             string regular;
             do
             {
                 var arrayOfValues = NineTailedFoxNamingRule.PossibleCodes;
-                regular = arrayOfValues[UnityEngine.Random.Range(0, arrayOfValues.Length)] + "-" + UnityEngine.Random.Range(1, 20).ToString("00");
+                regular = arrayOfValues[UnityEngine.Random.Range(0, arrayOfValues.Length)] + "-" + UnityEngine.Random.Range(1, maxNubmer).ToString("00");
             }
             while (combi.Contains(regular));
             combi.Add(regular);
@@ -53,7 +53,7 @@ namespace VT_Api.Core.Teams
                 return;
 
             if (NextRespawnInfo.AmountOfPlayers != -1)
-                FillOrRemoveWithSpectator(ev.Players, NextRespawnInfo.AmountOfPlayers);
+                RemoveOrFillWithSpectator(ev.Players, NextRespawnInfo.AmountOfPlayers);
 
             if (!NextRespawnInfo.Roles.Any())
             {
@@ -90,7 +90,7 @@ namespace VT_Api.Core.Teams
             }
         }
 
-        public void FillOrRemoveWithSpectator(List<Player> players, int amount)
+        public void RemoveOrFillWithSpectator(List<Player> players, int amount)
         {
             if (players.Count > amount)
             {
@@ -106,22 +106,23 @@ namespace VT_Api.Core.Teams
             }
         }
 
-
-        public void CustomSpawn(List<RespawnRoleInfo> rolesinfos, List<Player> players, Action<List<Player>> action = null, string cassie = "")
+        public void CustomSpawn(List<RespawnRoleInfo> rolesinfos, List<Player> players, Action<List<Player>> action = null, string uniteName = "", string cassie = "")
         {
             var playersSpwned = new List<Player>();
 
             foreach (var info in rolesinfos.OrderBy(p => p.Priority))
             {
-                var amout = rnd.Range(info.Min, info.Max);
+
+                var amout = info.Min != -1 ? rnd.Range(info.Min, info.Max) : info.Max;
                 var PriorityPlys = info.PriorityPlayer.Where(p => players.Contains(p)).ToList();
 
-                for (int i = 0; i < amout; i++)
+                for (int i = 0; (i < amout || info.Max == -1) && players.Any(); i++)
                 {
                     if (PriorityPlys.Any())
                     {
                         var ply = PriorityPlys[rnd.Range(0, PriorityPlys.Count() - 1)];
                         ply.RoleID = info.RoleID;
+                        ply.UnitName = uniteName;
 
                         players.Remove(ply);
                         PriorityPlys.Remove(ply);
@@ -131,6 +132,7 @@ namespace VT_Api.Core.Teams
                     {
                         var ply = players[rnd.Range(0, players.Count() - 1)];
                         ply.RoleID = info.RoleID;
+                        ply.UnitName = uniteName;
 
                         players.Remove(ply);
                         playersSpwned.Add(ply);

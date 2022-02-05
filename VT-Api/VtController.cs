@@ -62,7 +62,7 @@ public class VtController
             Logger.Get.Warn("Debug Version of Vt-Api loaded! This Version should only be used for testing and not playing");
 
         if (VtVersion.BasedGameVersion != GameCore.Version.VersionString)
-            Logger.Get.Warn("Vt-Api : Different Game Version than expected. Bugs may occurre");
+            Logger.Get.Warn("Vt-Version : Different Game Version than expected. Bugs may occurre");
     }
 
     private void InitAll()

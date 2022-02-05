@@ -18,8 +18,9 @@ namespace VT_Api.Core.Roles
         #region Attributes & Properties
         protected abstract string SpawnMessage { get; }
         protected virtual bool SetDisplayInfo => true;
-        protected abstract int[] EnemysList { get; }
-        protected abstract int[] FriendsList { get; }
+        protected abstract List<int> EnemysList { get; }
+        protected abstract List<int> FriendsList { get; }
+        protected virtual List<int> FfFriendsList { get; } = new List<int>();
         protected abstract RoleType RoleType { get; }
         protected abstract int RoleTeam { get; }
         protected abstract int RoleId { get; }
@@ -27,12 +28,13 @@ namespace VT_Api.Core.Roles
         protected abstract SerializedPlayerRole Config { get; }
 
 
+
         public SerializedPlayerRole GetConfig() => Config;
-        public override List<int> GetEnemiesID() => EnemysList.ToList();
-        public override List<int> GetFriendsID() => FriendsList.ToList();
-        public override int GetRoleID() => RoleId;
-        public override string GetRoleName() => RoleName;
-        public override int GetTeamID() => RoleTeam;
+        public sealed override List<int> GetEnemiesID() => EnemysList.ToList();
+        public sealed override List<int> GetFriendsID() => Server.Get.FF ? FfFriendsList : FriendsList;
+        public sealed override int GetRoleID() => RoleId;
+        public sealed override string GetRoleName() => RoleName;
+        public sealed override int GetTeamID() => RoleTeam;
         public virtual bool CallPower(byte power, out string message)
         {
             message = VtController.Get.Configs.VtTranslation.ActiveTranslation.NoPower;
@@ -95,12 +97,35 @@ namespace VT_Api.Core.Roles
         {
             Spawned = true;
 
-            InitPlayer(ev);
+            if ()
+                InitEvent();
+
+            PlayerInit(ev);
 
             AditionalInit(ev);
         }
 
-        private void InitPlayer(PlayerSetClassEventArgs ev)
+        /**
+         * <summary> 
+         * This method is call only one time when the first player spawn in this role. 
+         * <para>Use <see langword="static"/> method for the <see langword="event"/> method ! <example>For exemple :
+         * <code>
+         * <see langword="protected"/> <see langword="override"/> <see langword="void"/> DeSpawn()
+         * {
+         *   Server.Get.Events.Player.PlayerDamageEvent += OnDamage;
+         * }
+         * </code><code>
+         * <see langword="static"/> <see langword="void"/> OnDamage(PlayerDamageEventArgs ev)
+         * {
+         *   if (ev.Victim.roleID == (int)RoleID.TestClass)
+         *       ev.allow = false;
+         * }
+         * </code> </example> </para> </summary> 
+         */
+        [API]
+        protected virtual void InitEvent() { }
+
+        private void PlayerInit(PlayerSetClassEventArgs ev)
         {
             if (Config == null) return;
 
@@ -112,9 +137,9 @@ namespace VT_Api.Core.Roles
                 
                 ev.Items = items ?? new List<SynapseItem>();
                 ev.Ammo  = ammos ?? new Dictionary<AmmoType, ushort>();
-                ev.Rotation = rotation.x;
+                ev.Rotation = rotation?.x ?? 0;
                 
-                if (postion != null) 
+                if (postion != null)
                     ev.Position = postion.Position;
 
                 if (Config.Health != null)

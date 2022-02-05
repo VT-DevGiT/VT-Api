@@ -109,13 +109,17 @@ namespace VT_Api.Core
 
         public Player GetPlayercoprs(Player player, float rayon)
         {
-            var ragdolls =
-               Map.Get.Ragdolls.Where(r => Vector3.Distance(r.GameObject.transform.position, player.Position) < rayon).ToList();
-            ragdolls.Sort((Synapse.Api.Ragdoll x, Synapse.Api.Ragdoll y) =>
-                Vector3.Distance(x.GameObject.transform.position, player.Position).CompareTo(Vector3.Distance(y.GameObject.transform.position, player.Position)));
+            var ragdolls = Map.Get.Ragdolls.Where(r => Vector3.Distance(r.GameObject.transform.position, player.Position) < rayon).ToList();
+            
+            ragdolls.Sort(
+                (Synapse.Api.Ragdoll x, Synapse.Api.Ragdoll y) 
+                => Vector3.Distance(x.GameObject.transform.position, player.Position).CompareTo(Vector3.Distance(y.GameObject.transform.position, player.Position)));
+            
             if (ragdolls.Count == 0)
                 return null;
+            
             Player owner = ragdolls.First().Owner;
+            
             if (owner != null && owner.RoleID == (int)RoleType.Spectator)
                 return owner;
             else return null;
@@ -124,16 +128,18 @@ namespace VT_Api.Core
         public int GetVoltage()
         {
             float totalvoltagefloat = 0;
+            
             foreach (var generator in Map.Get.Generators)
                 totalvoltagefloat += generator.generator._currentTime / generator.generator._totalActivationTime * 1000;
+            
             return (int)totalvoltagefloat;
         }
 
-        public void StartAirBombardement()
-            => MEC.Timing.RunCoroutine(MapActionManager.Get.AirBomb(10, 5));
+        public void StartAirBombardement(int waitforready = 10, int limit = 5)
+            => MEC.Timing.RunCoroutine(MapActionManager.Get.AirBomb(waitforready, limit));
 
         public void PlayAmbientSound(int id)
-            => Server.Get.Host.GetComponent<AmbientSoundPlayer>().CallMethod("RpcPlaySound", id);
+            => Server.Get.Host.GetComponent<AmbientSoundPlayer>().RpcPlaySound(id);
 
         public void StopAirBombardement()
             => MapActionManager.Get.isAirBombCurrently = false;
