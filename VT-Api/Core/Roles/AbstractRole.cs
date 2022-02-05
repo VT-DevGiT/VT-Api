@@ -28,20 +28,22 @@ namespace VT_Api.Core.Roles
         protected abstract SerializedPlayerRole Config { get; }
 
 
-
         public SerializedPlayerRole GetConfig() => Config;
         public sealed override List<int> GetEnemiesID() => EnemysList.ToList();
         public sealed override List<int> GetFriendsID() => Server.Get.FF ? FfFriendsList : FriendsList;
         public sealed override int GetRoleID() => RoleId;
         public sealed override string GetRoleName() => RoleName;
         public sealed override int GetTeamID() => RoleTeam;
+        
         public virtual bool CallPower(byte power, out string message)
         {
             message = VtController.Get.Configs.VtTranslation.ActiveTranslation.NoPower;
             return false;
         }
-
+        
         public bool Spawned { get; set; } = false;
+
+        private bool _fristSpawn = true;
         #endregion
 
         #region Constructors & Destructor
@@ -97,9 +99,12 @@ namespace VT_Api.Core.Roles
         {
             Spawned = true;
 
-            if ()
+            if (_fristSpawn)
+            {
                 InitEvent();
-
+                _fristSpawn = false;
+            }
+               
             PlayerInit(ev);
 
             AditionalInit(ev);
