@@ -4,6 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 
 namespace VT_Api.Core.Items
@@ -11,14 +12,16 @@ namespace VT_Api.Core.Items
     public abstract class AbstractItem : IItem
     {
         #region Attributes & Properties
-        public int ID { get => Info.ID; }
-        public ItemType ItemType { get => Info.BasedItemType; }
-        private string Name { get => Info.Name; }
+        public int      ID          => Info.ID;
+        public ItemType ItemType    => Info.BasedItemType;
+        public string   Name        => Info.Name;
 
         public virtual string ScrenName { get; set; } = null;
         public virtual string MessagePickUp { get; set; } = null;
         public virtual string MessageChangeTo { get; set; } = null;
         public VtItemInformation Info { get; set; }
+
+        
 
         #endregion
 
@@ -48,7 +51,7 @@ namespace VT_Api.Core.Items
         {
             if (!string.IsNullOrEmpty(MessageChangeTo))
             {
-                string message = MessageChangeTo.Replace("%Name%", ScrenName);
+                string message = Regex.Replace(MessageChangeTo, "%Name%", ScrenName, RegexOptions.IgnoreCase);
                 ev.Player.GiveTextHint(message);
             }
         }
@@ -59,7 +62,7 @@ namespace VT_Api.Core.Items
         {
             if (!string.IsNullOrEmpty(MessagePickUp))
             {
-                string message = MessagePickUp.Replace("%Name%", ScrenName);
+                string message = Regex.Replace(MessagePickUp, "%Name%", ScrenName, RegexOptions.IgnoreCase);
                 ev.Player.GiveTextHint(message);
             }
         }

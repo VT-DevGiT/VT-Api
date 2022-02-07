@@ -96,5 +96,8 @@
         Scp035_Item_GunRevolver = 139,
         Scp035_Item_GunAK = 140,
         Scp035_Item_GunShotgun = 141,
+        MiniGun = 200,
+        BulletPlate = 201,
+        turret = 202,
     }
 }

@@ -28,6 +28,33 @@ namespace VT_Api.Core.Teams
 
     public struct RespawnRoleInfo
     {
+        public RespawnRoleInfo(int roleID)
+        {
+            RoleID = roleID;
+            Priority = 0;
+            Max = -1;
+            Min = -1;
+            PriorityPlayer = new Player[0];
+        }
+
+        public RespawnRoleInfo(int roleID, int priority, int max)
+        {
+            RoleID = roleID;
+            Priority = priority;
+            Max = max;
+            Min = -1;
+            PriorityPlayer = new Player[0];
+        }
+
+        public RespawnRoleInfo(int roleID, int priority, int max, int min)
+        {
+            RoleID = roleID;
+            Priority = priority;
+            Max = max;
+            Min = min;
+            PriorityPlayer = new Player[0];
+        }
+
         public int Priority;
 
         public int RoleID;

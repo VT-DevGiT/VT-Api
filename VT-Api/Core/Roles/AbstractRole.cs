@@ -7,6 +7,7 @@ using Synapse.Config;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text.RegularExpressions;
 using VT_Api.Config;
 using VT_Api.Core.Behaviour;
 using VT_Api.Extension;
@@ -17,7 +18,6 @@ namespace VT_Api.Core.Roles
     {
         #region Attributes & Properties
         protected abstract string SpawnMessage { get; }
-        protected virtual bool SetDisplayInfo => true;
         protected abstract List<int> EnemysList { get; }
         protected abstract List<int> FriendsList { get; }
         protected virtual List<int> FfFriendsList { get; } = new List<int>();
@@ -89,10 +89,14 @@ namespace VT_Api.Core.Roles
             Player.RoleType = RoleType;
 
             if (!string.IsNullOrEmpty(SpawnMessage))
-                Player.OpenReportWindow(SpawnMessage.Replace("%RoleName%", RoleName));
+                Player.OpenReportWindow(Regex.Replace(SpawnMessage, "%RoleName%", RoleName, RegexOptions.IgnoreCase));
 
-            if (SetDisplayInfo)
-                Player.SetDisplayInfoRole(RoleName);
+            SetDisplayInfo();
+        }
+
+        public virtual void SetDisplayInfo()
+        {
+            Player.SetDisplayInfoRole(RoleName);
         }
 
         public void InitAll(PlayerSetClassEventArgs ev)

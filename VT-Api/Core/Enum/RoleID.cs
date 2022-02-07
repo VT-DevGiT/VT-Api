@@ -29,7 +29,7 @@
         Scp035 = 35,
         Scp056 = 56,
         Scp079Robot = 79,
-        Concierge = 100,
+        Janitor = 100,
         GardeSuperviseur = 101,
         ScientifiqueSuperviseur = 102,
         DirecteurSite = 103,

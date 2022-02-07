@@ -32,6 +32,9 @@ namespace VT_Api.Extension
         public static void ResetRoomsLightColor(this Map _)
             => VtController.Get.MapAction.ResetRoomsLightColor();
 
+        public static void ChangeRoomsLightColor(this Map _, Color color)
+            => VtController.Get.MapAction.ChangeRoomsLightColor(color);
+
         public static int GetVoltage(this Map map)
             => VtController.Get.MapAction.GetVoltage();
 
@@ -49,8 +52,8 @@ namespace VT_Api.Extension
         public static List<Player> GetPlayer(this RoleID roleID)
             => SynapseController.Server.Players.Where(x => x.RoleID == (int)roleID).ToList();
 
-        public static bool Is939(this RoleType roleType)
-            => roleType == RoleType.Scp93953 || roleType == RoleType.Scp93989;
+        public static bool Is939(this Player player)
+            => player.RoleID == (int)RoleID.Scp93953 || player.RoleID == (int)RoleID.Scp93989;
 
         public static bool Is939(this RoleID roleID)
             => roleID == RoleID.Scp93953 || roleID == RoleID.Scp93989;

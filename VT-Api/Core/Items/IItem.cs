@@ -8,7 +8,9 @@ namespace VT_Api.Core.Items
 {
     public interface IItem
     {
-
         VtItemInformation Info { get; set; }
+        int ID { get; }
+        ItemType ItemType { get; }
+        string Name { get; }
     }
 }

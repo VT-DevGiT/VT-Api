@@ -144,6 +144,12 @@ namespace VT_Api.Core
         public void StopAirBombardement()
             => MapActionManager.Get.isAirBombCurrently = false;
 
+        public void ChangeRoomsLightColor(Color color)
+        {
+            foreach (Room room in Map.Get.Rooms)
+                room.ChangeRoomLightColor(color);
+        }
+
         public void ResetRoomsLightColor()
         {
             foreach (Room room in Map.Get.Rooms)

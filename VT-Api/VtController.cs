@@ -2,17 +2,19 @@
 using HarmonyLib;
 using Synapse.Api;
 using System;
+
 using VT_Api.Core.Plugin;
 using VT_Api.Core.MiniGame;
 using VT_Api.Core.Events;
 using VT_Api.Core;
 using VT_Api.Config;
 using VT_Api.Exceptions;
-
-using EventHandler = VT_Api.Core.Events.EventHandler;
 using VT_Api.Core.Command;
 using VT_Api.Core.Roles;
 using VT_Api.Core.Teams;
+using VT_Api.Core.Items;
+
+using EventHandler = VT_Api.Core.Events.EventHandler;
 
 public class VtController
 {
@@ -25,6 +27,7 @@ public class VtController
     public TeamManager Team { get => Singleton<TeamManager>.Instance; }
     public EventHandler Events { get => Singleton<EventHandler>.Instance; }
     public MapActionManager MapAction { get => Singleton<MapActionManager>.Instance; }
+    internal ItemManager Item { get => Singleton<ItemManager>.Instance; } // nothing  public (yet)
     internal CommandHandler Commands { get => Singleton<CommandHandler>.Instance; } // nothing  public (yet)
     public Config Configs { get => Singleton<Config>.Instance; }
 
@@ -34,7 +37,7 @@ public class VtController
     #region Constructor & Destructor
     private VtController()
     { 
-    
+        
     }
     #endregion
 

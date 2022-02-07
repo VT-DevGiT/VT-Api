@@ -30,7 +30,7 @@ namespace VT_Api.Core.Items
 
         protected virtual void Reload(PlayerReloadEventArgs ev)
         {
-            if (ev.Item.Durabillity < Ammos)
+            if (ev.Item.Durabillity < Ammos && ev.Allow)
             {
                 ushort ammo = Math.Min(ev.Player.AmmoBox[AmmoType], Ammos);
                 ev.Player.AmmoBox[AmmoType] -= ammo;

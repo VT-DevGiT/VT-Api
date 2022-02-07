@@ -1,13 +1,12 @@
-﻿using Synapse.Api;
+﻿using Respawning.NamingRules;
+using Synapse.Api;
 using Synapse.Api.Events.SynapseEventArguments;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using VT_Api.Core.Enum;
-using rnd = UnityEngine.Random;
 using Manager = Synapse.Api.Teams.TeamManager;
-using Respawning.NamingRules;
-using VT_Api.Reflexion;
+using rnd = UnityEngine.Random;
 
 namespace VT_Api.Core.Teams
 {
@@ -147,7 +146,7 @@ namespace VT_Api.Core.Teams
         }
         #endregion
 
-        public static class Groupe
+        public static class Group
         {
             #region Ally
             public static int[] SCPally = { (int)TeamID.SCP };

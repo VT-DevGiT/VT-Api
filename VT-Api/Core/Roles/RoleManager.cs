@@ -13,6 +13,8 @@ namespace VT_Api.Core.Roles
     {
         public Dictionary<Player, int> OldPlayerRole = new Dictionary<Player, int>();
 
+        public static RoleManager Get => VtController.Get.Role;
+
         internal RoleManager() { }
 
         internal void Init()
@@ -20,6 +22,13 @@ namespace VT_Api.Core.Roles
             Synapse.Api.Events.EventHandler.Get.Player.PlayerSetClassEvent += OnSetClass;
             Synapse.Api.Events.EventHandler.Get.Player.PlayerDeathEvent += OnPlayerDeath;
             Synapse.Api.Events.EventHandler.Get.Player.PlayerKeyPressEvent += OnPressKey;
+        }
+
+        public int OldRoleID(Player player)
+        {
+            if (OldPlayerRole.ContainsKey(player))
+                return OldPlayerRole[player];
+            return (int)TeamID.None;
         }
 
         public int OldTeam(Player player)
@@ -36,16 +45,23 @@ namespace VT_Api.Core.Roles
         {
             if (ev.Player.CustomRole is IVtRole role)
             {
-                if (ev.Player.RealTeam == Team.SCP && ev.KeyCode >= KeyCode.Alpha0 && ev.KeyCode <= KeyCode.Alpha9)
+                var key = ev.KeyCode;
+                if (ev.Player.RealTeam == Team.SCP && key >= KeyCode.Alpha0 && key <= KeyCode.Alpha9)
                 {
-                    if (!role.CallPower((byte)(ev.KeyCode - KeyCode.Slash), out var message))
+                    if (key == KeyCode.Alpha0)
+                        key = KeyCode.Alpha9 + 1; 
+
+                    if (!role.CallPower((byte)(key - KeyCode.Alpha0 + 1), out var message))
                         message = "<color=red>" + message + "</color>";
                     
                     ev.Player.GiveTextHint(message, 3);
                 }
-                else if (ev.Player.RealTeam != Team.SCP && ev.KeyCode >= KeyCode.Alpha5 && ev.KeyCode <= KeyCode.Alpha9)
+                else if (ev.Player.RealTeam != Team.SCP && (key >= KeyCode.Alpha5 && key <= KeyCode.Alpha9 || key == KeyCode.Alpha0))
                 {
-                    if (!role.CallPower((byte)(ev.KeyCode - KeyCode.Alpha4), out var message))
+                    if (key == KeyCode.Alpha0)
+                        key = KeyCode.Alpha9 + 1;
+
+                    if (!role.CallPower((byte)(ev.KeyCode - KeyCode.Alpha5 + 1), out var message))
                         message = "<color=red>" + message + "</color>";
 
                     ev.Player.GiveTextHint(message, 3);

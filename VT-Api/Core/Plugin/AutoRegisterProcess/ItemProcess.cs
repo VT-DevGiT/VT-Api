@@ -19,14 +19,9 @@ namespace VT_Api.Core.Plugin.AutoRegisterProcess
                     if (!typeof(IItem).IsAssignableFrom(itemType) ||
                         itemType.GetCustomAttribute<AutoRegisterManager.Ignore>() != null)
                         continue;
-
-                    var customItem = Activator.CreateInstance(itemType) as IItem;
-                    var info = customItem.Info;
-
-                    if (info == null)
-                        customItem.Info = itemType.GetCustomAttribute<VtItemInformation>();
-
-                    Synapse.Api.Items.ItemManager.Get.RegisterCustomItem(info);
+                    
+                    VtController.Get.Item.ItemsToRegister.Add(itemType);
+                    
                 }
                 catch (Exception e)
                 {

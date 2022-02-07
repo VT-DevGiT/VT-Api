@@ -3,7 +3,7 @@ using System.Reflection;
 
 namespace VT_Api.Reflexion
 {
-    static internal class VtExtensionsReflexion
+    public static class VtExtensionsReflexion
     {
         public static object CallMethod(this Type o, string methodName, params object[] args)
         {

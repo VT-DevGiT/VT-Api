@@ -7,8 +7,8 @@ using System.IO;
 
 namespace VT_Api.Core.Plugin
 {
-    public abstract class VtAbstractPlugin<TEventManager, TConfig, TTranslation> : IPlugin, IVtPlugin
-        where TEventManager : new()
+    public abstract class VtAbstractPlugin<TEventHandler, TConfig, TTranslation> : IPlugin, IVtPlugin
+        where TEventHandler : new()
         where TConfig : IConfigSection
         where TTranslation : IPluginTranslation, new()
     {
@@ -16,7 +16,7 @@ namespace VT_Api.Core.Plugin
 
         public abstract bool AutoRegister { get; }
 
-        public static VtAbstractPlugin<TEventManager, TConfig, TTranslation> Instance { get; protected set; }
+        public static VtAbstractPlugin<TEventHandler, TConfig, TTranslation> Instance { get; protected set; }
 
         [Synapse.Api.Plugin.SynapseTranslation]
         public SynapseTranslation<TTranslation> Translation { get; set; }
@@ -24,7 +24,7 @@ namespace VT_Api.Core.Plugin
         [Synapse.Api.Plugin.Config]
         public virtual TConfig Config { get; protected set; }
 
-        public TEventManager EventManager { get; protected set; }
+        public TEventHandler EventHandler { get; protected set; }
 
         public PluginInformation Information { get; set; }
 
@@ -60,7 +60,7 @@ namespace VT_Api.Core.Plugin
         public virtual void Load()
         {
             Instance = this;
-            EventManager = new TEventManager();
+            EventHandler = new TEventHandler();
             Translation.AddTranslation(new TTranslation());
 
             Logger.Get.Info(Information.Name + " by " + Information.Author + " has loaded!");
@@ -79,20 +79,20 @@ namespace VT_Api.Core.Plugin
         #endregion
     }
 
-    public abstract class VtAbstractPlugin<TEventManager, TConfig> : IPlugin, IVtPlugin
-    where TEventManager : new()
+    public abstract class VtAbstractPlugin<TEventHandler, TConfig> : IPlugin, IVtPlugin
+    where TEventHandler : new()
     where TConfig : IConfigSection
     {
         #region Properties & Variable
 
         public abstract bool AutoRegister { get; }
 
-        public static VtAbstractPlugin<TEventManager, TConfig> Instance { get; protected set; }
+        public static VtAbstractPlugin<TEventHandler, TConfig> Instance { get; protected set; }
 
         [Synapse.Api.Plugin.Config]
         public virtual TConfig Config { get; protected set; }
 
-        public TEventManager EventManager { get; protected set; }
+        public TEventHandler EventHandler { get; protected set; }
 
         public PluginInformation Information { get; set; }
 
@@ -128,7 +128,7 @@ namespace VT_Api.Core.Plugin
         public virtual void Load()
         {
             Instance = this;
-            EventManager = new TEventManager();
+            EventHandler = new TEventHandler();
 
             Logger.Get.Info(Information.Name + " by " + Information.Author + " has loaded!");
         }
@@ -146,16 +146,16 @@ namespace VT_Api.Core.Plugin
         #endregion
     }
 
-    public abstract class VtAbstractPlugin<TEventManager> : IPlugin, IVtPlugin
-    where TEventManager : new()
+    public abstract class VtAbstractPlugin<TEventHandler> : IPlugin, IVtPlugin
+    where TEventHandler : new()
     {
         #region Properties & Variable
 
         public abstract bool AutoRegister { get; }
 
-        public static VtAbstractPlugin<TEventManager> Instance { get; protected set; }
+        public static VtAbstractPlugin<TEventHandler> Instance { get; protected set; }
 
-        public TEventManager EventManager { get; protected set; }
+        public TEventHandler EventHandler { get; protected set; }
 
         public PluginInformation Information { get; set; }
 
@@ -191,7 +191,7 @@ namespace VT_Api.Core.Plugin
         public virtual void Load()
         {
             Instance = this;
-            EventManager = new TEventManager();
+            EventHandler = new TEventHandler();
 
             Logger.Get.Info(Information.Name + " by " + Information.Author + " has loaded!");
         }

@@ -13,9 +13,9 @@ namespace Exemple_Plugin
     {
         protected override string SpawnMessage => PluginClass.Instance.Translation.ActiveTranslation.SpawnMessage;
 
-        protected override List<int> EnemysList => TeamManager.Groupe.CHIenemy.ToList();
+        protected override List<int> EnemysList => TeamManager.Group.CHIenemy.ToList();
 
-        protected override List<int> FriendsList => TeamManager.Groupe.CHIally.ToList();
+        protected override List<int> FriendsList => TeamManager.Group.CHIally.ToList();
 
         protected override RoleType RoleType => RoleType.NtfPrivate;
 
