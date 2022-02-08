@@ -2,10 +2,10 @@ name: TestBuild
 
 on:
   pull_request:
-    branches: [ master, devlopement ]
+    branches: [ main, devlopement ]
     
   push:
-    branches: [ master ]
+    branches: [ main ]
 
 env:
   # Path to the solution file relative to the root of the project.
