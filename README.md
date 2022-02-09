@@ -7,5 +7,5 @@ Download the last release (here)[https://github.com/VT-DevGiT/VT-Api/releases]. 
 # Developers
 If you want to add my code to synapse do it !
 If you want to contribute go ahead, but tempted to use my conventions ! 
-If you want to use my API, use there! You can check my exemple (here)[] !
+If you want to use my API, use there! You can check my exemple (here)[https://github.com/VT-DevGiT/VT-Api/tree/main/Exemple-Plugin] !
 

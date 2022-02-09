@@ -35,7 +35,7 @@ namespace VT_Api.Patches.VtEvent.MapPaches
 
                     foreach (ItemType newType in items)
                     {
-                        if (item is Firearm firearm1 == false)
+                        if (!(item is Firearm firearm1))
                             throw new InvalidOperationException("FirearmItemProcessor can't be used for non-firearm items, such as " + item.ItemTypeId);
 
                         var destroyOldItem = newType == oldItem.ItemType;
