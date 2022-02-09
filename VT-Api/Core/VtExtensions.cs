@@ -43,8 +43,10 @@ namespace VT_Api.Extension
 
 
         internal static void Debug(this SynLogger logger, object message)
-            => logger.Send($"VtApi-Debug: {message}", ConsoleColor.DarkYellow);
-
+        {
+            if (VtVersion.Debug) 
+                logger.Send($"VtApi-Debug: {message}", ConsoleColor.DarkYellow);
+        }
 
         public static List<Player> GetPlayer(this RoleID[] roleID)
             => SynapseController.Server.Players.Where(x => roleID.Any(r => x.RoleID == (int)r)).ToList();

@@ -156,7 +156,7 @@
     <Compile Include="Exceptions\VtInitExceptions.cs" />
     <Compile Include="Exceptions\VtMiniGameExceptions.cs" />
     <Compile Include="Patches\VtEvent\ItemPatches\ChangeIntoGrenadePatch.cs" />
-    <Compile Include="Patches\VtEvent\ItemPatches\CollisionGrenadePatch.cs" />
+    <Compile Include="Patches\VtEvent\ItemPatches\CollisionItemPatch.cs" />
     <Compile Include="Patches\VtEvent\ItemPatches\ExplosionGrenadePatches.cs" />
     <Compile Include="Patches\VtEvent\MapPaches\GeneratorActivated.cs" />
     <Compile Include="Patches\VtEvent\MapPaches\CassieAnnoncementPatch.cs" />

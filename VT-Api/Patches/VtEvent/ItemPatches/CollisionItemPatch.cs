@@ -6,6 +6,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using UnityEngine;
+using VT_Api.Extension;
 
 namespace VT_Api.Patches.VtEvent.ItemPatches
 {
@@ -18,7 +19,11 @@ namespace VT_Api.Patches.VtEvent.ItemPatches
             try
             {
                 var allow = true;
-                var item = __instance.GetSynapseItem();
+
+                var item = __instance?.GetSynapseItem();
+
+                if (item == null)
+                    return true;
 
                 VtController.Get.Events.Item.InvokeCollisionEvent(item, ref allow);
 
