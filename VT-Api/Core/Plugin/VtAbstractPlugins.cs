@@ -4,6 +4,7 @@ using Synapse.Config;
 using Synapse.Translation;
 using System;
 using System.IO;
+using VT_Api.Extension;
 
 namespace VT_Api.Core.Plugin
 {
@@ -53,13 +54,13 @@ namespace VT_Api.Core.Plugin
         {
             AppDomain.CurrentDomain.ProcessExit += Unload;
             VtController.InitApi();
+            Instance = this;
         }
         #endregion
 
         #region Methods
         public virtual void Load()
         {
-            Instance = this;
             EventHandler = new TEventHandler();
             Translation.AddTranslation(new TTranslation());
 
@@ -121,13 +122,13 @@ namespace VT_Api.Core.Plugin
         {
             AppDomain.CurrentDomain.ProcessExit += Unload;
             VtController.InitApi();
+            Instance = this;
         }
         #endregion
 
         #region Methods
         public virtual void Load()
         {
-            Instance = this;
             EventHandler = new TEventHandler();
 
             Logger.Get.Info(Information.Name + " by " + Information.Author + " has loaded!");
@@ -184,13 +185,13 @@ namespace VT_Api.Core.Plugin
         {
             AppDomain.CurrentDomain.ProcessExit += Unload;
             VtController.InitApi();
+            Instance = this;
         }
         #endregion
 
         #region Methods
         public virtual void Load()
         {
-            Instance = this;
             EventHandler = new TEventHandler();
 
             Logger.Get.Info(Information.Name + " by " + Information.Author + " has loaded!");

@@ -1,5 +1,6 @@
 ﻿using Synapse;
 using Synapse.Api.Events.SynapseEventArguments;
+using Synapse.Api.Items;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -16,42 +17,26 @@ namespace VT_Api.Core.Items
         public ItemType ItemType    => Info.BasedItemType;
         public string   Name        => Info.Name;
 
-        public virtual string ScrenName { get; set; } = null;
+        public virtual string ScreenName { get; set; } = null;
         public virtual string MessagePickUp { get; set; } = null;
         public virtual string MessageChangeTo { get; set; } = null;
         public VtItemInformation Info { get; set; }
 
-        
-
         #endregion
 
         #region Constructors & Destructor
-        public AbstractItem() => Event();
+        public AbstractItem()
+        {
+
+        }
         #endregion
 
         #region Methods
-
-        protected virtual void Event()
-        {
-            Server.Get.Events.Player.PlayerDropItemEvent += OnDrop;
-            Server.Get.Events.Player.PlayerItemUseEvent += OnUse;
-            Server.Get.Events.Player.PlayerPickUpItemEvent += OnPickUp;
-            Server.Get.Events.Player.PlayerChangeItemEvent += OnChangeItem;
-        }
-
-        private void OnChangeItem(PlayerChangeItemEventArgs ev)
-        {
-            if (ev.NewItem?.ID == ID)
-                this.ChangeToItem(ev);
-            else if (ev.OldItem?.ID == ID)
-                this.ChangedFromItem(ev);
-        }
-
         protected virtual void ChangeToItem(PlayerChangeItemEventArgs ev)
         {
             if (!string.IsNullOrEmpty(MessageChangeTo))
             {
-                string message = Regex.Replace(MessageChangeTo, "%Name%", ScrenName, RegexOptions.IgnoreCase);
+                string message = Regex.Replace(MessageChangeTo, "%Name%", ScreenName, RegexOptions.IgnoreCase);
                 ev.Player.GiveTextHint(message);
             }
         }
@@ -62,29 +47,10 @@ namespace VT_Api.Core.Items
         {
             if (!string.IsNullOrEmpty(MessagePickUp))
             {
-                string message = Regex.Replace(MessagePickUp, "%Name%", ScrenName, RegexOptions.IgnoreCase);
+                string message = Regex.Replace(MessagePickUp, "%Name%", ScreenName, RegexOptions.IgnoreCase);
                 ev.Player.GiveTextHint(message);
             }
         }
-        #endregion
-
-        #region Events
-        private void OnUse(PlayerItemInteractEventArgs ev)
-        {
-            if (ev.CurrentItem.ID == ID)
-                this.Use(ev);
-        }
-        private void OnPickUp(PlayerPickUpItemEventArgs ev)
-        {
-            if (ev.Item.ID == ID)
-                this.PickUp(ev);
-        }
-        private void OnDrop(PlayerDropItemEventArgs ev)
-        {
-            if (ev.Item.ID == ID)
-                this.Drop(ev);
-        }
-
         #endregion
     }
 }

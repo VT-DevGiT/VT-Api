@@ -1,4 +1,5 @@
-﻿using Synapse.Api.Events.SynapseEventArguments;
+﻿using Synapse.Api;
+using Synapse.Api.Events.SynapseEventArguments;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -40,7 +41,6 @@ namespace VT_Api.Core.MiniGame
             Synapse.Api.Events.EventHandler.Get.Round.RoundEndEvent += OnEndRound;
             Synapse.Api.Events.EventHandler.Get.Round.RoundCheckEvent += OnCheckEnd;
         }
-
         public string GetMiniGameName(int id)
         {
             if (!IsIDRegistered(id)) 
@@ -79,7 +79,7 @@ namespace VT_Api.Core.MiniGame
         public void RegisterMiniGame<TMiniGame>() where TMiniGame : IMiniGame
         {
             var miniGame = (TMiniGame)Activator.CreateInstance(typeof(TMiniGame));
-            var info = new MiniGameInformation(miniGame.GetMiniGameName(), miniGame.GetMiniGameID(), typeof(TMiniGame));
+            var info = new MiniGameInformation(miniGame);
 
             if (IsIDRegistered(miniGame.GetMiniGameID())) 
                 throw new VtMiniGameAlreadyRegisteredException("A MiniGame was registered with an already registered ID.", info);

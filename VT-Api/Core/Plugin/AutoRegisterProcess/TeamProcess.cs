@@ -12,32 +12,36 @@ namespace VT_Api.Core.Plugin.AutoRegisterProcess
     {
         public void Process(PluginLoadContext context)
         {
-            if (!(context.PluginType is IVtPlugin vtPlugin) || !vtPlugin.AutoRegister) return;
+            if (!(context.Plugin is IVtPlugin vtPlugin) || !vtPlugin.AutoRegister) return;
 
             foreach (var teamType in context.Classes)
             {
+                if (!typeof(Synapse.Api.Teams.ISynapseTeam).IsAssignableFrom(teamType) || teamType.GetCustomAttribute<AutoRegisterManager.Ignore>() != null)
+                    continue;
+
                 try
                 {
-                    if (!typeof(Synapse.Api.Teams.ISynapseTeam).IsAssignableFrom(teamType) ||
-                        teamType.GetCustomAttribute<AutoRegisterManager.Ignore>() != null)
-                        continue;
-
                     ISynapseTeam synapseTeam = Activator.CreateInstance(teamType) as ISynapseTeam;
+
                     if (synapseTeam.Info == null)
                         synapseTeam.Info = teamType.GetCustomAttribute<SynapseTeamInformation>();
-                    
 
-                    if (TeamManager.Get.IsIDRegistered(synapseTeam.Info.ID))
-                        throw new Exception("A Plugin tried to register a CustomTeam with an already used Id");
-                    
+                    if (synapseTeam.Info == null)
+                        Logger.Get.Error($"The custom Item {teamType.Name} ave no information !");
 
-                    TeamManager.Get.GetFieldValueOrPerties<List<ISynapseTeam>>("teams").Add(synapseTeam);
+                    if (Synapse.Api.Teams.TeamManager.Get.IsIDRegistered(synapseTeam.Info.ID))
+                        Logger.Get.Error($"A Plugin tried to register a CustomTeam with an already used Id : {synapseTeam.Info.ID}");
+
+
+                    Synapse.Api.Teams.TeamManager.Get.GetFieldValueOrPerties<List<ISynapseTeam>>("teams").Add(synapseTeam);
                     synapseTeam.Initialise();
                 }
                 catch (Exception e)
                 {
-                    Logger.Get.Error($"Error auto register tem {teamType.Name} from {context.Information.Name}\n{e}");
+                    Logger.Get.Error($"Error auto register tem {teamType.Name} from {context.Plugin.Information.Name}\n{e}");
                 }
+
+                //VtController.Get.Team.AwaitingFinalization.Add(teamType, info);
             }
         }
     }

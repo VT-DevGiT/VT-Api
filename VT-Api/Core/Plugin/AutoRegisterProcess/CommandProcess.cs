@@ -1,10 +1,12 @@
-﻿using Synapse.Api.Plugin;
+﻿using Synapse.Api;
+using Synapse.Api.Plugin;
 using Synapse.Command;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using VT_Api.Core.Command;
+using VT_Api.Extension;
 using VT_Api.Reflexion;
 using CommandCtrl = VT_Api.Core.Command.CommandHandler;
 

@@ -11,34 +11,27 @@ namespace VT_Api.Core.Plugin.AutoRegisterProcess
     {
         public void Process(PluginLoadContext context)
         {
-            if (!(context.PluginType is IVtPlugin vtPlugin) || !vtPlugin.AutoRegister) return;
+            if (!(context.Plugin is IVtPlugin vtPlugin && vtPlugin.AutoRegister)) return;
 
             foreach (var roleType in context.Classes)
             {
+
+                if (!typeof(IRole).IsAssignableFrom(roleType) || roleType.GetCustomAttribute<AutoRegisterManager.Ignore>() != null)
+                        continue;
+
                 try
                 {
-                    if (!(typeof(IRole).IsAssignableFrom(roleType) ||
-                        roleType.GetCustomAttribute<AutoRegisterManager.Ignore>() != null))
-                    {
-                        Logger.Get.Debug($"{roleType.Assembly}--{roleType.Namespace}--{roleType.Name} : Ignored");
-                        continue;
-                    }
-                    
-                    Logger.Get.Debug($"{roleType.Assembly}--{roleType.Namespace}--{roleType.Name} : CreateInstance");
-                    
+                    var customRole = Activator.CreateInstance(roleType) as IRole;
+                    var info = new RoleInformation(customRole.GetRoleName(), customRole.GetRoleID(), roleType);
 
-                    var classObject = (IRole)Activator.CreateInstance(roleType);
-
-                    Logger.Get.Debug($"{roleType.Assembly}--{roleType.Namespace}--{roleType.Name} : info {classObject.GetRoleName()}, {classObject.GetRoleID()}, {roleType}");
-                    var info = new RoleInformation(classObject.GetRoleName(), classObject.GetRoleID(), roleType);
-
-                    RoleManager.Get.RegisterCustomRole(info);
-                    Logger.Get.Debug($"Registred !");
+                    Synapse.Api.Roles.RoleManager.Get.RegisterCustomRole(info);
                 }
                 catch (Exception e)
                 {
-                    Logger.Get.Error($"Error auto register role {roleType.Name} from {context.Information.Name}\n{e}");
+                    Synapse.Api.Logger.Get.Error($"Error auto register role {roleType.Name} from {context.Plugin.Information.Name}\n{e}");
                 }
+
+                //VtController.Get.Role.AwaitingFinalization.Add(roleType);
             }
         }
     }

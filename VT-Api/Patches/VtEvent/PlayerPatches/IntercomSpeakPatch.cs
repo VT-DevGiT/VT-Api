@@ -1,10 +1,11 @@
 ﻿using HarmonyLib;
 using Synapse;
 using System;
+using VT_Api.Extension;
 
 namespace VT_Api.Patches.VtEvent.PlayerPatches
 {
-    [HarmonyPatch(typeof(Intercom), nameof(Intercom.CmdSetTransmit))]
+    [HarmonyPatch(typeof(Intercom), nameof(Intercom.UserCode_CmdSetTransmit))]
 
     class IntercomSpeakPatch
     {
@@ -25,7 +26,7 @@ namespace VT_Api.Patches.VtEvent.PlayerPatches
                     var Player = __instance.GetPlayer();
 
                     VtController.Get.Events.Player.InvokePlayerSpeakIntercomEvent(Player, ref flag);
-                    
+
                     if (flag) 
                         Intercom.host.RequestTransmission(__instance.gameObject);
                 }

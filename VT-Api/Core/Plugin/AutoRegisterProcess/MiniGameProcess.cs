@@ -10,27 +10,26 @@ namespace VT_Api.Core.Plugin.AutoRegisterProcess
     {
         public void Process(PluginLoadContext context)
         {
-            if (!(context.PluginType is IVtPlugin vtPlugin) || !vtPlugin.AutoRegister) return;
+            if (!(context.Plugin is IVtPlugin vtPlugin) || !vtPlugin.AutoRegister) return;
 
             foreach (var miniGameType in context.Classes)
             {
-                try
-                {
-                    if (!typeof(IMiniGame).IsAssignableFrom(miniGameType) ||
-                        miniGameType.GetCustomAttribute<AutoRegisterManager.Ignore>() != null)
+                if (!typeof(IMiniGame).IsAssignableFrom(miniGameType) || miniGameType.GetCustomAttribute<AutoRegisterManager.Ignore>() != null)
                         continue;
 
-                    var classObject = (IMiniGame)Activator.CreateInstance(miniGameType);
+                try
+                {
+                    var miniGame = (IMiniGame)Activator.CreateInstance(miniGameType);
+                    var info = new MiniGameInformation(miniGame);
 
-                    var info = new MiniGameInformation(classObject.GetMiniGameName(), classObject.GetMiniGameID(), miniGameType);
-
-                    VtController.Get.MinGames.RegisterMiniGame(info);
-
+                    VT_Api.Core.MiniGame.MiniGameManager.Get.RegisterMiniGame(info);
                 }
                 catch (Exception e)
                 {
-                    Logger.Get.Error($"Error auto register minigame {miniGameType.Name} from {context.Information.Name}\n{e}");
+                    Logger.Get.Error($"Error auto register minigame {miniGameType.Name} from {context.Plugin.Information.Name}\n{e}");
                 }
+
+                //VtController.Get.MinGames.AwaitingFinalization.Add(miniGameType);
             }
         }
     }

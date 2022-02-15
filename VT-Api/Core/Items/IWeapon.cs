@@ -1,5 +1,4 @@
-﻿using Synapse.Api.Items;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -7,9 +6,8 @@ using System.Threading.Tasks;
 
 namespace VT_Api.Core.Items
 {
-    public interface IItem
+    internal interface IWeapon : IItem
     {
-        VtItemInformation Info { get; }
 
     }
 }

@@ -1,7 +1,9 @@
-﻿using Synapse.Api.Plugin;
+﻿using Synapse.Api;
+using Synapse.Api.Plugin;
 using System;
 using System.Collections.Generic;
 using VT_Api.Core.Plugin.AutoRegisterProcess;
+using VT_Api.Extension;
 using VT_Api.Reflexion;
 
 namespace VT_Api.Core.Plugin
@@ -17,8 +19,9 @@ namespace VT_Api.Core.Plugin
         {
             var processors = SynapseController.PluginLoader.GetFieldValueOrPerties<List<IContextProcessor>>("_processors");
             processors.RemoveAll(p => p is Synapse.Api.Plugin.Processors.CommandProcessor);
-            foreach (var addProcesses in AddedRegisterProcesses)
-                processors.Add(addProcesses);
+            foreach (var addProcesse in AddedRegisterProcesses)
+                processors.Add(addProcesse);
+            
         }
 
 

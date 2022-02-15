@@ -43,7 +43,7 @@ namespace VT_Api.Core.Roles
         
         public bool Spawned { get; set; } = false;
 
-        private bool _fristSpawn = true;
+        private static bool _fristSpawn = true;
         #endregion
 
         #region Constructors & Destructor
@@ -138,15 +138,15 @@ namespace VT_Api.Core.Roles
         {
             if (Config == null) return;
 
-            checkItems(Config.Inventory);
-
             try
             {
+                checkItems(Config.Inventory);
+
                 Config.Extract(Player, out var postion, out var rotation, out var items, out var ammos);
                 
                 ev.Items = items ?? new List<SynapseItem>();
                 ev.Ammo  = ammos ?? new Dictionary<AmmoType, ushort>();
-                ev.Rotation = rotation?.x ?? 0;
+                ev.Rotation = rotation.x;
                 
                 if (postion != null)
                     ev.Position = postion.Position;

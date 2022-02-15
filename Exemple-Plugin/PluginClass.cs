@@ -32,9 +32,17 @@ namespace Exemple_Plugin
         [Config(section = "Example VT-Plugin")]
         public override PluginConfig Config { get => base.Config; protected set => base.Config = value; }
 
+        public PluginClass() : base()
+        {
+            
+        }
+
         public override void Load()
         {
+            // the base load init the API, create the EventHandlers and the instance of the plugin 
+            base.Load();
 
+            // Add some Translation
             Translation.AddTranslation(new PluginTranslation()
             {
                 ClassName = "Espion",
@@ -45,9 +53,6 @@ namespace Exemple_Plugin
                 ClassName = "Spion",
                 SpawnMessage = "Du spawnst als %RoleName%!\nTöte die anderen NTF."
             }, "GERMAN");
-
-            // the base load init the API, create the EventHandlers and the instance of the plugin 
-            base.Load();
         }
 
         //This Method can be use for plugins which should close connections or stop a task, it was call when the serveur shut down
@@ -56,7 +61,7 @@ namespace Exemple_Plugin
 
         }
 
-        //This Method is only needed if you want to reload anything(Translation and Config will be reloaded by Synapse!)
+        //This Method is only needed if you want to reload anything (Translation and Config will be reloaded by Synapse!)
         public override void ReloadConfigs()
         {
 

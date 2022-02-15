@@ -63,6 +63,9 @@
     <Reference Include="Mirror, Version=0.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\SynapseSL.2.8.1\lib\net472\Mirror.dll</HintPath>
     </Reference>
+    <Reference Include="NorthwoodLib-Publicized">
+      <HintPath>..\ref\NorthwoodLib-Publicized.dll</HintPath>
+    </Reference>
     <Reference Include="Synapse, Version=2.8.1.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\SynapseSL.2.8.1\lib\net472\Synapse.dll</HintPath>
     </Reference>
@@ -96,6 +99,7 @@
     <Compile Include="Config\VtApiConfiguration.cs" />
     <Compile Include="Config\VtApiTranslation.cs" />
     <Compile Include="Core\ISengleton.cs" />
+    <Compile Include="Core\Items\IWeapon.cs" />
     <Compile Include="Core\MapActionManager.cs" />
     <Compile Include="Core\Behaviour\RepeatingBehaviour.cs" />
     <Compile Include="Core\Behaviour\RoundBehaviour.cs" />
@@ -158,6 +162,7 @@
     <Compile Include="Patches\VtEvent\ItemPatches\ChangeIntoGrenadePatch.cs" />
     <Compile Include="Patches\VtEvent\ItemPatches\CollisionItemPatch.cs" />
     <Compile Include="Patches\VtEvent\ItemPatches\ExplosionGrenadePatches.cs" />
+    <Compile Include="Patches\VtEvent\ItemPatches\RemoveExceedingLimitsPatch.cs" />
     <Compile Include="Patches\VtEvent\MapPaches\GeneratorActivated.cs" />
     <Compile Include="Patches\VtEvent\MapPaches\CassieAnnoncementPatch.cs" />
     <Compile Include="Patches\VtEvent\MapPaches\Scp914InteractPatch.cs" />
@@ -171,6 +176,7 @@
     <Compile Include="Patches\VtEvent\PlayerPatches\IntercomSpeakPatch.cs" />
     <Compile Include="Patches\VtEvent\PlayerPatches\SynapseDamagePatch.cs" />
     <Compile Include="Patches\VtEvent\ScpPatches\Scp106\Scp106UsePortalPatch.cs" />
+    <Compile Include="Patches\VtPatch\SynapseItemPatch.cs" />
     <Compile Include="Patches\VtPatch\NextKnownTeamPatch.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="VtController.cs" />

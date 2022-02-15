@@ -1,12 +1,15 @@
 ﻿using Respawning.NamingRules;
 using Synapse.Api;
 using Synapse.Api.Events.SynapseEventArguments;
+using Synapse.Api.Teams;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
 using VT_Api.Core.Enum;
-using Manager = Synapse.Api.Teams.TeamManager;
+using SynManager = Synapse.Api.Teams.TeamManager;
 using rnd = UnityEngine.Random;
+using VT_Api.Reflexion;
 
 namespace VT_Api.Core.Teams
 {
@@ -15,7 +18,6 @@ namespace VT_Api.Core.Teams
 
         #region Properties & Variable
         public static TeamManager Get => VtController.Get.Team;
-
         public RespawnTeamInfo NextRespawnInfo { get; set; } = new RespawnTeamInfo();
         #endregion
 
@@ -28,7 +30,6 @@ namespace VT_Api.Core.Teams
         {
             Synapse.Api.Events.EventHandler.Get.Round.TeamRespawnEvent += OnRespawn;
         }
-
         public string GenerateNtfUnitName(byte maxNubmer = 20)
         {
             var combi = UnitNamingRule.UsedCombinations;
@@ -56,7 +57,7 @@ namespace VT_Api.Core.Teams
 
             if (!NextRespawnInfo.Roles.Any())
             {
-                if (!Manager.Get.IsDefaultSpawnableID(NextRespawnInfo.TeamID))
+                if (!SynManager.Get.IsDefaultSpawnableID(NextRespawnInfo.TeamID))
                 { 
                     ev.Team = Respawning.SpawnableTeamType.None;
                     ev.TeamID = NextRespawnInfo.TeamID;
