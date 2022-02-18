@@ -241,7 +241,7 @@ namespace VT_Api.Extension
             /*
              * TODO Rework This :
              * 
-             * Badge 
+             * Badge "pas touche"
              * 
              * Nickname
              * Role (Unit)

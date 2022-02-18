@@ -119,16 +119,23 @@ namespace VT_Api.Reflexion
             var eventsField = element.GetType().GetField(eventName, BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance);
             if (eventsField != null)
             {
-                object eventHandlerList = eventsField.GetValue(element);
-                if (eventHandlerList != null)
+                try
                 {
-                    var my_event_invoke = eventHandlerList.GetType().GetMethod("Invoke");
-                    if (my_event_invoke != null)
+                    object eventHandlerList = eventsField.GetValue(element);
+                    if (eventHandlerList != null)
                     {
-                        my_event_invoke.Invoke(eventHandlerList, parameters);
+                        var my_event_invoke = eventHandlerList.GetType().GetMethod("Invoke");
+                        if (my_event_invoke != null)
+                        {
+                            my_event_invoke.Invoke(eventHandlerList, parameters);
+                        }
                     }
                 }
-                else Synapse.Api.Logger.Get.Error("Vt-Reflexion: CallEvent failed!! \n eventHandlerList null");
+                catch (Exception e)
+                {
+                    Synapse.Api.Logger.Get.Error($"Vt-Reflexion: CallEvent {eventName} failed!!\n{e}\nStackTrace:\n{e.StackTrace}");
+                }
+                //else Synapse.Api.Logger.Get.Error("Vt-Reflexion: CallEvent failed!! \n eventHandlerList null");
             }
             else
             {

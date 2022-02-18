@@ -106,6 +106,7 @@ namespace VT_Api.Core.Roles
             if (_fristSpawn)
             {
                 InitEvent();
+                checkItems(Config.Inventory);
                 _fristSpawn = false;
             }
                
@@ -140,8 +141,6 @@ namespace VT_Api.Core.Roles
 
             try
             {
-                checkItems(Config.Inventory);
-
                 Config.Extract(Player, out var postion, out var rotation, out var items, out var ammos);
                 
                 ev.Items = items ?? new List<SynapseItem>();
@@ -169,7 +168,7 @@ namespace VT_Api.Core.Roles
 
         private void checkItems(SerializedPlayerInventory inventory)
         {
-            if (inventory.Items.Any())
+            if (inventory != null && inventory.Items.Any())
             {
                 var listToRemove = new List<SerializedPlayerItem>();
                 foreach (SerializedPlayerItem item in inventory.Items)

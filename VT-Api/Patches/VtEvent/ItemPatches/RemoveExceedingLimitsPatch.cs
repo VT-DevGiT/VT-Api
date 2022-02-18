@@ -18,7 +18,7 @@ namespace VT_Api.Patches.VtEvent.ItemPatches
 
     class RemoveExceedingLimitsPatch
     {
-        [HarmonyPrefix]
+        [HarmonyPrefix]// TODO
         private static bool ItemLimitPatch(Inventory inv, BodyArmor armor, bool removeItems = true, bool removeAmmo = true)
         {
             try

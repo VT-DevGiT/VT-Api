@@ -98,6 +98,7 @@
     <Compile Include="Config\Config.cs" />
     <Compile Include="Config\VtApiConfiguration.cs" />
     <Compile Include="Config\VtApiTranslation.cs" />
+    <Compile Include="Core\Behaviour\Display.cs" />
     <Compile Include="Core\ISengleton.cs" />
     <Compile Include="Core\Items\IWeapon.cs" />
     <Compile Include="Core\MapActionManager.cs" />

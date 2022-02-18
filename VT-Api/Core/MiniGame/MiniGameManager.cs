@@ -110,7 +110,9 @@ namespace VT_Api.Core.MiniGame
 
         private void OnCheckEnd(RoundCheckEventArgs ev)
         {
-            if (ev.EndRound = ActivMiniGame.RoundEnd || ev.EndRound)
+            if (ActivMiniGame == null)
+                return;
+            if (ev.EndRound = ActivMiniGame.RoundEnd)
                 ev.Team = ActivMiniGame.GetLeadingTeam();
         }
         #endregion

@@ -13,7 +13,7 @@ namespace VT_Api.Core.Events
         #region Events
         public event Synapse.Api.Events.EventHandler.OnSynapseEvent<WarHeadInteracteEventArgs> WarHeadStartEvent;
         public event Synapse.Api.Events.EventHandler.OnSynapseEvent<WarHeadInteracteEventArgs> WarheadUnlockEvent;
-        public event Synapse.Api.Events.EventHandler.OnSynapseEvent<WarHeadInteracteEventArgs> WarheadStopEventEvent;
+        public event Synapse.Api.Events.EventHandler.OnSynapseEvent<WarHeadInteracteEventArgs> WarheadStopEvent;
         public event Synapse.Api.Events.EventHandler.OnSynapseEvent<CassieAnnouncementEventArgs> CassieAnnouncementEvent;
         public event Synapse.Api.Events.EventHandler.OnSynapseEvent<GeneratorActivatedEventArgs> GeneratorActivatedEvent;
         public event Synapse.Api.Events.EventHandler.OnSynapseEvent<ElevatorIneractEventArgs> ElevatorIneractEvent;
@@ -33,7 +33,7 @@ namespace VT_Api.Core.Events
                 Allow = allow
             };
 
-            WarheadStopEventEvent?.Invoke(ev);
+            WarheadStopEvent?.Invoke(ev);
 
             allow = ev.Allow;
         }
