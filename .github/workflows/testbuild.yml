@@ -17,7 +17,7 @@ env:
   BUILD_CONFIGURATION: Release
 
 jobs:
-  build:
+  test-build:
     runs-on: windows-latest
 
     steps:
