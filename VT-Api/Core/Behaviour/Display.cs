@@ -9,7 +9,7 @@ using UnityEngine;
 namespace VT_Api.Core.Behaviour
 {
     //TODO: finish this
-    class Display : MonoBehaviour
+    internal class Display : MonoBehaviour
     {
         Player player;
 
