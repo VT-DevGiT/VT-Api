@@ -1,13 +1,12 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using Synapse.Api;
+using Synapse.Api.Enum;
 
 namespace VT_Api.Core.Items
 {
     internal interface IWeapon : IItem
     {
+        bool AllowAttack(Player victim, float damage, DamageType type);
+
 
     }
 }

@@ -1,15 +1,12 @@
 ﻿using Synapse.Api.Items;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace VT_Api.Core.Items
 {
     public interface IItem
     {
         VtItemInformation Info { get; }
-
+        SynapseItem Item { get; set; }
+        bool AllowDrop(bool Throw);
+            
     }
 }

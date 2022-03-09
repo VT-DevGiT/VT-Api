@@ -8,8 +8,10 @@ using System.Linq;
 using UnityEngine;
 using VT_Api.Extension;
 using VT_Api.Reflexion;
+
 using UERandom = UnityEngine.Random;
 using Logger = Synapse.Api.Logger;
+using SynRagdoll = Synapse.Api.Ragdoll;
 
 namespace VT_Api.Core
 {
@@ -109,23 +111,52 @@ namespace VT_Api.Core
         }
 
 
-
-        public Player GetPlayercoprs(Player player, float rayon)
+        public List<SynRagdoll> GetRagdolls(Vector3 pos, float radius)
         {
-            var ragdolls = Map.Get.Ragdolls.Where(r => Vector3.Distance(r.GameObject.transform.position, player.Position) < rayon).ToList();
-            
+            var ragdolls = Map.Get.Ragdolls.Where(r => Vector3.Distance(r.GameObject.transform.position, pos) < radius).ToList();
+
+            if (ragdolls.Count == 0)
+                return new List<SynRagdoll>();
+            return ragdolls;
+        }
+
+        public SynRagdoll GetRagdoll(Vector3 pos, float radius)
+        {
+            var ragdolls = Map.Get.Ragdolls.Where(r => Vector3.Distance(r.GameObject.transform.position, pos) < radius).ToList();
             ragdolls.Sort(
-                (Synapse.Api.Ragdoll x, Synapse.Api.Ragdoll y) 
-                => Vector3.Distance(x.GameObject.transform.position, player.Position).CompareTo(Vector3.Distance(y.GameObject.transform.position, player.Position)));
-            
+                (SynRagdoll x, SynRagdoll y)
+                => Vector3.Distance(x.GameObject.transform.position, pos).CompareTo(Vector3.Distance(y.GameObject.transform.position, pos)));
+
             if (ragdolls.Count == 0)
                 return null;
-            
-            Player owner = ragdolls.First().Owner;
-            
-            if (owner != null && owner.RoleID == (int)RoleType.Spectator)
-                return owner;
-            else return null;
+
+            return ragdolls.First();
+        }
+
+        public List<Player> GetRagdollOwners(Player player, float radius)
+        {
+            var ragdolls = GetRagdolls(player.Position, radius);
+            List<Player> players = new List<Player>();
+
+            foreach(var ragdoll in ragdolls)
+            {
+                if (ragdoll.Owner != null)
+                    players.Add(ragdoll.Owner);
+            }
+            return players;
+        }
+
+        public Player GetRagdollOwner(Player player, float radius)
+        {
+            var ragdolls = GetRagdolls(player.Position, radius);
+            if (ragdolls.Count == 0)
+                return null;
+
+            ragdolls.Sort(
+                (SynRagdoll x, SynRagdoll y) 
+                => Vector3.Distance(x.GameObject.transform.position, player.Position).CompareTo(Vector3.Distance(y.GameObject.transform.position, player.Position)));
+
+            return ragdolls.FirstOrDefault(r => r.Owner != null)?.Owner;
         }
 
         public int GetVoltage()
@@ -159,7 +190,7 @@ namespace VT_Api.Core
                 room.ResetRoomLightColor();
         }
 
-        public void MtfRespawn(bool isCI, List<Player> players, bool useTicket = true)
+        public void MtfRespawn(bool isCI, List<Player> players, bool useTicket = true) // TODO
         {
             SpawnableTeamType Team = isCI ? SpawnableTeamType.ChaosInsurgency : SpawnableTeamType.NineTailedFox;
             Logger.Get.Debug("MtfRespawn 1");

@@ -91,7 +91,6 @@ namespace VT_Api.Reflexion
             }
         }
 
-
         public static void CallEvent(this Type o, string eventName,params object[] parameters)
         {
             var eventsField = o.GetField(eventName, BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Static);

@@ -6,7 +6,7 @@ public static class VtVersion
 
     public const int Minor = 0;
 
-    public const int Patch = 0;
+    public const int Patch = 1;
 
     public const SynapseVersion.VersionType Type =
 

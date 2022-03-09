@@ -2,7 +2,7 @@
 
 namespace VT_Api.Core.Roles
 {
-    public interface IScpDeathAnnonce : IRole
+    public interface IScpDeathAnnonce
     {
         string ScpName { get; }
     }

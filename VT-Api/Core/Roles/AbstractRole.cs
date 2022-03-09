@@ -89,7 +89,10 @@ namespace VT_Api.Core.Roles
             Player.RoleType = RoleType;
 
             if (!string.IsNullOrEmpty(SpawnMessage))
-                Player.OpenReportWindow(Regex.Replace(SpawnMessage, "%RoleName%", RoleName, RegexOptions.IgnoreCase));
+            { 
+                string message = Regex.Replace(SpawnMessage, "%RoleName%", RoleName, RegexOptions.IgnoreCase);
+                Player.OpenReportWindow(message.Replace("\\n", "\n"));
+            }
 
             SetDisplayInfo();
         }
@@ -99,6 +102,9 @@ namespace VT_Api.Core.Roles
             Player.SetDisplayInfoRole(RoleName);
         }
 
+        /// <summary>
+        /// Dont call it if you dont no what you are dowing
+        /// </summary>
         public void InitAll(PlayerSetClassEventArgs ev)
         {
             Spawned = true;
@@ -106,7 +112,6 @@ namespace VT_Api.Core.Roles
             if (_fristSpawn)
             {
                 InitEvent();
-                checkItems(Config.Inventory);
                 _fristSpawn = false;
             }
                
@@ -116,29 +121,30 @@ namespace VT_Api.Core.Roles
         }
 
         /**
-         * <summary> 
-         * This method is call only one time when the first player spawn in this role. 
-         * <para>Use <see langword="static"/> method for the <see langword="event"/> method ! <example>For exemple :
-         * <code>
-         * <see langword="protected"/> <see langword="override"/> <see langword="void"/> DeSpawn()
-         * {
-         *   Server.Get.Events.Player.PlayerDamageEvent += OnDamage;
-         * }
-         * </code><code>
-         * <see langword="static"/> <see langword="void"/> OnDamage(PlayerDamageEventArgs ev)
-         * {
-         *   if (ev.Victim.roleID == (int)RoleID.TestClass)
-         *       ev.allow = false;
-         * }
-         * </code> </example> </para> </summary> 
-         */
+        * <summary> 
+        * Dont call this method ! 
+        * This method is call only one time when the first player spawn in this role. 
+        * <para>Use <see langword="static"/> method for the <see langword="event"/> method ! <example>For exemple :
+        * <code>
+        * <see langword="protected"/> <see langword="override"/> <see langword="void"/> DeSpawn()
+        * {
+        *   Server.Get.Events.Player.PlayerDamageEvent += OnDamage;
+        * }
+        * </code><code>
+        * <see langword="static"/> <see langword="void"/> OnDamage(<see cref="PlayerDamageEventArgs"/> ev)
+        * {
+        *   if (ev.Victim.roleID == (int)RoleID.TestClass)
+        *       ev.allow = false;
+        * }
+        * </code> </example> </para> </summary> 
+        */
         [API]
         protected virtual void InitEvent() { }
 
         private void PlayerInit(PlayerSetClassEventArgs ev)
         {
             if (Config == null) return;
-
+            CheckItems(Config.Inventory);
             try
             {
                 Config.Extract(Player, out var postion, out var rotation, out var items, out var ammos);
@@ -166,7 +172,7 @@ namespace VT_Api.Core.Roles
             }
         }
 
-        private void checkItems(SerializedPlayerInventory inventory)
+        private void CheckItems(SerializedPlayerInventory inventory)
         {
             if (inventory != null && inventory.Items.Any())
             {

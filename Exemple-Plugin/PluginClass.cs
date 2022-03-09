@@ -1,4 +1,5 @@
-﻿using Synapse.Api.Plugin;
+﻿using Synapse;
+using Synapse.Api.Plugin;
 using System;
 using VT_Api.Core.Plugin;
 
@@ -19,11 +20,11 @@ namespace Exemple_Plugin
             LoadPriority = 0,
             Name = "ExamplePlugin",
             SynapseMajor = 2,
-            SynapseMinor = 8,
-            SynapsePatch = 2,
+            SynapseMinor = 9,
+            SynapsePatch = 0,
             Version = "v1.0.0"
             )]
-    public class PluginClass : VtAbstractPlugin<EventHandlers,PluginConfig,PluginTranslation>
+    public class PluginClass : VtAbstractPlugin<PluginClass, EventHandlers, PluginConfig, PluginTranslation>
     {
         //If it was on true, the CustomRole, CustomTeam
         public override bool AutoRegister => true;

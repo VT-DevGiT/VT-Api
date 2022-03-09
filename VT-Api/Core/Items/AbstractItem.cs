@@ -22,6 +22,15 @@ namespace VT_Api.Core.Items
         public virtual string MessageChangeTo { get; set; } = null;
         public VtItemInformation Info { get; set; }
 
+        private SynapseItem item;
+        public SynapseItem Item { get => item; 
+            set
+            {
+                if (item == default)
+                    item = value;
+            }
+        }
+
         #endregion
 
         #region Constructors & Destructor
@@ -50,6 +59,11 @@ namespace VT_Api.Core.Items
                 string message = Regex.Replace(MessagePickUp, "%Name%", ScreenName, RegexOptions.IgnoreCase);
                 ev.Player.GiveTextHint(message);
             }
+        }
+
+        public bool AllowDrop(bool Throw)
+        {
+            throw new NotImplementedException();
         }
         #endregion
     }

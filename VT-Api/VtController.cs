@@ -27,6 +27,7 @@ public class VtController
     public TeamManager Team { get => Singleton<TeamManager>.Instance; }
     public EventHandler Events { get => Singleton<EventHandler>.Instance; }
     public MapActionManager MapAction { get => Singleton<MapActionManager>.Instance; }
+    public NetworkLiar NetworkLiar { get => Singleton<NetworkLiar>.Instance; }
     public ItemManager Item { get => Singleton<ItemManager>.Instance; }
     internal CommandHandler Commands { get => Singleton<CommandHandler>.Instance; } // nothing  public (yet)
     public Config Configs { get => Singleton<Config>.Instance; }

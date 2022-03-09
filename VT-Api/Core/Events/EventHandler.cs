@@ -23,7 +23,6 @@ namespace VT_Api.Core.Events
 
         public ItemEvents Item { get; } = new ItemEvents();
 
-        //public VT_Api.Config.VtApiConfiguration Conf => VtController.Get.Configs.VtConfiguration;
         #endregion
 
         #region Constructor & Destructor
@@ -35,13 +34,14 @@ namespace VT_Api.Core.Events
             SyanpseEventHandler.Get.Player.PlayerKeyPressEvent += KeyPress;
 #endif
         }
-        #endregion
 
-        #region Methods
         internal void Init()
         {
 
         }
+        #endregion
+
+        #region Methods
         #endregion
 
         #region Events

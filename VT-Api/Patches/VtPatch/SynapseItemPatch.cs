@@ -15,6 +15,7 @@ namespace VT_Api.Patches.VtPatch
         private static void AddCustomItemScript(SynapseItem __instance)
         {
             var script = VtController.Get.Item.GetNewScript(__instance.ID);
+            script.Item = __instance;
             __instance.ItemData.Add(Core.Items.ItemManager.KeySynapseItemData, script);
         }
 

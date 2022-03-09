@@ -18,7 +18,7 @@ namespace VT_Api.Patches.VtEvent.ItemPatches
 
     class RemoveExceedingLimitsPatch
     {
-        [HarmonyPrefix]// TODO
+        [HarmonyPrefix]// TODO And When Player try to pickup Item
         private static bool ItemLimitPatch(Inventory inv, BodyArmor armor, bool removeItems = true, bool removeAmmo = true)
         {
             try

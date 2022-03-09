@@ -1,29 +1,37 @@
-﻿using Synapse.Api;
+﻿using Mirror;
+using Synapse.Api;
 using Synapse.Api.Enum;
 using Synapse.Api.Items;
 using Synapse.Config;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
+using System.Reflection.Emit;
 using UnityEngine;
 using VT_Api.Config;
 using VT_Api.Core;
 using VT_Api.Core.Enum;
 using VT_Api.Core.Items;
 using VT_Api.Core.Roles;
-using VT_Api.Reflexion;
+
 using Server = Synapse.Server;
+using SynItemManager = Synapse.Api.Items.ItemManager;
 using SynLogger = Synapse.Api.Logger;
 using SynRoleManager = Synapse.Api.Roles.RoleManager;
-using SynItemManager = Synapse.Api.Items.ItemManager;
 using UERandom = UnityEngine.Random;
 using VtItemManager = VT_Api.Core.Items.ItemManager;
-using System.Reflection;
 
 namespace VT_Api.Extension
 {
     public static class VtExtensions
     {
+        internal static void Debug(this SynLogger logger, object message)
+        {
+            if (VtVersion.Debug)
+                logger.Send($"VtApi-Debug: {message}", ConsoleColor.DarkYellow);
+        }
+
         public static void PlayAmbientSound(this Map _, int id)
             => VtController.Get.MapAction.PlayAmbientSound(id);
 
@@ -42,13 +50,24 @@ namespace VT_Api.Extension
         public static int GetVoltage(this Map map)
             => VtController.Get.MapAction.GetVoltage();
 
-        public static Player GetPlayercoprs(this Map _, Player player, float rayon)
-            => VtController.Get.MapAction.GetPlayercoprs(player, rayon);
-
-        internal static void Debug(this SynLogger logger, object message)
+        public static List<Player> GetDeadPlayersInRangeOfPlayer(this Player player, float range)
         {
-            if (VtVersion.Debug) 
-                logger.Send($"VtApi-Debug: {message}", ConsoleColor.DarkYellow);
+            var players = MapActionManager.Get.GetRagdollOwners(player, range);
+
+            players.RemoveAll(p => p.Team == Team.RIP && !p.OverWatch);
+            
+            if (players.Any())
+                return players;
+            return new List<Player>();
+        }
+
+        public static Player GetDeadPlayerInRangeOfPlayer(this Player player, float range)
+        {
+            var players = MapActionManager.Get.GetRagdollOwners(player, range);
+
+            players.RemoveAll(p => p.Team == Team.RIP && !p.OverWatch);
+
+            return players.FirstOrDefault();
         }
 
         public static List<Player> GetPlayer(this RoleID[] roleID)
@@ -90,6 +109,12 @@ namespace VT_Api.Extension
             room.LightController.WarheadLightOverride = false;
         }
 
+        public static void FakeRole(this Player player, RoleType role)
+            => FakeRole(player, role, Server.Get.Players);
+
+        public static void FakeRole(this Player player, RoleType role, List<Player> players)
+            => NetworkLiar.Get.SendRole(player, role, players);
+
         public static bool IsTargetVisible(this Player player, GameObject obj)
             => IsTargetVisible(player.gameObject.GetComponent<UnityEngine.Camera>(), obj);
 
@@ -114,7 +139,7 @@ namespace VT_Api.Extension
         public static void Extract(this SerializedPlayerRole playerRole, Player player, out MapPoint postion, out Vector2 rotation, out List<SynapseItem> items, out Dictionary<AmmoType, ushort> ammos)
         {
             if (playerRole.SpawnPoints != null && playerRole.SpawnPoints.Any())
-                postion = playerRole.SpawnPoints[UnityEngine.Random.Range(0, playerRole.SpawnPoints.Count)]?.Parse();
+                postion = playerRole.SpawnPoints[UnityEngine.Random.Range(0, playerRole.SpawnPoints.Count - 1)]?.Parse();
             else
                 postion = null;
 

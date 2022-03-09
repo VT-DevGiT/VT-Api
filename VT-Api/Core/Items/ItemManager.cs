@@ -1,22 +1,40 @@
-﻿using Synapse.Api;
-using Synapse.Api.Items;
+﻿using Synapse.Api.Items;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using VT_Api.Reflexion;
-using VT_Api.Extension;
+
 using synItemManager = Synapse.Api.Items.ItemManager;
+using synEvents = Synapse.Api.Events.EventHandler;
+using Synapse.Api.Events.SynapseEventArguments;
 
 namespace VT_Api.Core.Items
 {
     public class ItemManager
     {
+
+        #region Properties & Variable
         public const string KeySynapseItemData = "VtScript";
 
         private readonly List<VtCustomItemInfo> customItems = new List<VtCustomItemInfo>();
+        #endregion
 
+        #region Constructor & Destructor
         internal ItemManager() { }
 
+        internal void Init()
+        {
+            synEvents.Get.Player.PlayerDropItemEvent += OnDrop;
+            synEvents.Get.Player.PlayerItemUseEvent += OnUse;
+            synEvents.Get.Player.PlayerPickUpItemEvent += OnPickUp;
+            synEvents.Get.Player.PlayerChangeItemEvent += OnChangeItem;
+            synEvents.Get.Player.PlayerShootEvent += OnShoot;
+            synEvents.Get.Player.PlayerReloadEvent += OnReload;
+            synEvents.Get.Player.PlayerDamageEvent += OnDamage;
+        }
+        #endregion
+
+        #region Methods
 
         /// <returns><see langword="null"/> if id is not register in the API</returns>
         public IItem GetNewScript(int ID)
@@ -36,6 +54,12 @@ namespace VT_Api.Core.Items
             return script;
         }
 
+        /// <returns><see langword="null"/> if the item ave no script</returns>
+        public IItem GetScript(SynapseItem item) 
+            => item.ItemData[KeySynapseItemData] as IItem;
+        public bool TryGetScript(SynapseItem item, out IItem script) 
+            => (script = GetScript(item)) != null;
+
         public void RegisterCustomItem(IItem item)
         {
             if (item.Info == null || item.Info == default)
@@ -50,19 +74,56 @@ namespace VT_Api.Core.Items
             customItems.Add(new VtCustomItemInfo(item, id, baseItem, name));
             synItemManager.Get.RegisterCustomItem(new CustomItemInformation() { BasedItemType = baseItem, ID = id, Name = name });
         }
+        #endregion
 
-        internal void Init()    
+        #region Events
+        private void OnDrop(PlayerDropItemEventArgs ev)
         {
-            // TODO EVENT
-/*          Server.Get.Events.Player.PlayerDropItemEvent += OnDrop;
-            Server.Get.Events.Player.PlayerItemUseEvent += OnUse;
-            Server.Get.Events.Player.PlayerPickUpItemEvent += OnPickUp;
-            Server.Get.Events.Player.PlayerChangeItemEvent += OnChangeItem;
-            Server.Get.Events.Player.PlayerShootEvent += OnShoot;
-            Server.Get.Events.Player.PlayerReloadEvent += OnReload;
-            Server.Get.Events.Player.PlayerDamageEvent += OnDamage;*/
+            if (TryGetScript(ev.Item, out var script))
+                ev.Allow = script.AllowDrop(ev.Throw);
+
+
         }
 
+        private void OnDamage(PlayerDamageEventArgs ev)
+        {
+            
+            if (ev.Killer?.ItemInHand != null && TryGetScript(ev.Killer.ItemInHand, out var script) && script is IWeapon weapon)
+                ev.Allow = weapon.AllowAttack(ev.Victim, ev.Damage, ev.DamageType);
+            //TODO
+            
+            /*if (ev.Victim.ItemInHand != null && TryGetScript(ev.Victim.ItemInHand, out var item))
+                ev.Allow = item.*/
+            
+        }
+
+        private void OnReload(PlayerReloadEventArgs ev)
+        {
+            throw new NotImplementedException();
+        }
+
+        private void OnShoot(PlayerShootEventArgs ev)
+        {
+            throw new NotImplementedException();
+        }
+
+        private void OnChangeItem(PlayerChangeItemEventArgs ev)
+        {
+            throw new NotImplementedException();
+        }
+
+        private void OnPickUp(PlayerPickUpItemEventArgs ev)
+        {
+            throw new NotImplementedException();
+        }
+
+        private void OnUse(PlayerItemInteractEventArgs ev)
+        {
+            throw new NotImplementedException();
+        }
+        #endregion
+
+        #region Structur
         private struct VtCustomItemInfo
         {
             public VtCustomItemInfo(Type script, int id, ItemType baseItem, string name)
@@ -81,6 +142,6 @@ namespace VT_Api.Core.Items
 
             public VtItemInformation Info;
         }
-
+        #endregion
     }
 }

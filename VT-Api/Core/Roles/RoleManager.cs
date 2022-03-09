@@ -14,12 +14,12 @@ namespace VT_Api.Core.Roles
     public class RoleManager
     {
 
-        public Dictionary<Player, int> OldPlayerRole = new Dictionary<Player, int>();
+        public Dictionary<Player, int> OldPlayerRole { get; } = new Dictionary<Player, int>();
 
-        public static int[] VanilaScpID = { (int)RoleType.Scp049,   (int)RoleType.Scp0492, (int)RoleType.Scp079,
-                                            (int)RoleType.Scp096,   (int)RoleType.Scp106,  (int)RoleType.Scp173,
-                                            (int)RoleType.Scp93953, (int)RoleType.Scp93989 };
-
+        public static int[] VanilaScpID { get; } = { (int)RoleType.Scp049,   (int)RoleType.Scp0492, (int)RoleType.Scp079,
+                                                     (int)RoleType.Scp096,   (int)RoleType.Scp106,  (int)RoleType.Scp173,
+                                                     (int)RoleType.Scp93953, (int)RoleType.Scp93989 };
+        
         public static RoleManager Get => VtController.Get.Role;
 
 
