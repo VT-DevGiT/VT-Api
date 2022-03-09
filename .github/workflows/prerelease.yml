@@ -47,4 +47,4 @@ jobs:
         prerelease: true
         title: "Development Build"
         files: |
-          VT-Api.dll
+          .\VT-Api\bin\PreRelease\VT-Api.dll
