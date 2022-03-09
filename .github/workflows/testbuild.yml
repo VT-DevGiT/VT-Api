@@ -3,9 +3,21 @@ name: TestBuild
 on:
   pull_request:
     branches: [ main, devlopement ]
-    
+    paths-ignore:
+      - '.github/**'
+      - 'Exemple-Plugin/**'
+      - '.gitignore'
+      - 'LICENSE'
+      - 'README.md'
+        
   push:
     branches: [ main ]
+    paths-ignore:
+        - '.github/**'
+        - 'Exemple-Plugin/**'
+        - '.gitignore'
+        - 'LICENSE'
+        - 'README.md'
 
 env:
   # Path to the solution file relative to the root of the project.
