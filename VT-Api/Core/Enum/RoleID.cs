@@ -1,5 +1,8 @@
 ﻿namespace VT_Api.Core.Enum
 {
+    /// <summary>
+    /// all known ids of the <seealso href="https://docs.synapsesl.xyz/development/custom-roles">CustomRoles</seealso> (<seealso cref="Synapse.Api.Roles.Role"/>)
+    /// </summary>
     public enum RoleID
     {
         None = -1,
@@ -84,6 +87,9 @@
         GardienAsimov = 152,
         AlphaOneAgent = 153,
         Staff = 199,
+        /// <summary>
+        /// Test Class is only use for dev test or Exemple of code
+        /// </summary>
         TestClass = 200,
         Class201 = 201,
     }

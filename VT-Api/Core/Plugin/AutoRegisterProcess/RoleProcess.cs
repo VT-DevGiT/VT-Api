@@ -3,6 +3,7 @@ using Synapse.Api.Plugin;
 using Synapse.Api.Roles;
 using System;
 using System.Reflection;
+using VT_Api.Extension;
 
 namespace VT_Api.Core.Plugin.AutoRegisterProcess
 {
@@ -10,27 +11,27 @@ namespace VT_Api.Core.Plugin.AutoRegisterProcess
     {
         public void Process(PluginLoadContext context)
         {
-            if (!(context.PluginType is IVtPlugin vtPlugin) || !vtPlugin.AutoRegister) return;
+            if (!(context.Plugin is IVtPlugin vtPlugin && vtPlugin.AutoRegister)) return;
 
             foreach (var roleType in context.Classes)
             {
-                try
-                {
-                    if (!(typeof(IRole).IsAssignableFrom(roleType) || 
-                        roleType.GetCustomAttribute<AutoRegisterManager.Ignore>() != null))
+
+                if (!typeof(IRole).IsAssignableFrom(roleType) || roleType.GetCustomAttribute<AutoRegisterManager.Ignore>() != null)
                         continue;
 
-                    var classObject = (IRole)Activator.CreateInstance(roleType);
+                try
+                {
+                    var customRole = Activator.CreateInstance(roleType) as IRole;
+                    var info = new RoleInformation(customRole.GetRoleName(), customRole.GetRoleID(), roleType);
 
-                    var info = new RoleInformation(classObject.GetRoleName(), classObject.GetRoleID(), roleType);
-
-                    RoleManager.Get.RegisterCustomRole(info);
-
+                    Synapse.Api.Roles.RoleManager.Get.RegisterCustomRole(info);
                 }
                 catch (Exception e)
                 {
-                    Logger.Get.Error($"Error auto register role {roleType.Name} from {context.Information.Name}\n{e}");
+                    Synapse.Api.Logger.Get.Error($"Error auto register role {roleType.Name} from {context.Plugin.Information.Name}\n{e}");
                 }
+
+                //VtController.Get.Role.AwaitingFinalization.Add(roleType);
             }
         }
     }

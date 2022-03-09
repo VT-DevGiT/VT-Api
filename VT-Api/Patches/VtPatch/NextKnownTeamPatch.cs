@@ -2,19 +2,16 @@
 using Respawning;
 using Synapse;
 using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using static Respawning.RespawnManager;
 
 namespace VT_Api.Patches.VtPatch
 {
-    [HarmonyPatch(typeof(RespawnManager), nameof(RespawnManager.Update))]
+    //[HarmonyPatch(typeof(RespawnManager), nameof(RespawnManager.Update))]
     class NextKnownTeamPatch
     {
-        [HarmonyPrefix]
-        private static bool SelectNextKnownTeam(RespawnManager __instance) //todo
+        //[HarmonyPrefix]
+        private static bool SelectNextKnownTeam(RespawnManager __instance)
         {
             if (true) return true;
 
@@ -30,6 +27,7 @@ namespace VT_Api.Patches.VtPatch
                 {
                     if (!Server.Get.Players.Where(p => p.RoleType == RoleType.Spectator && !p.OverWatch).Any())
                     {
+                        __instance.NextKnownTeam = SpawnableTeamType.None;
                         __instance.RestartSequence();
                         return false;
                     }

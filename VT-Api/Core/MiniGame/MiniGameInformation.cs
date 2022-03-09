@@ -11,6 +11,13 @@ namespace VT_Api.Core.MiniGame
             MiniGameScript = script;
         }
 
+        public MiniGameInformation(IMiniGame script)
+        {
+            ID = script.GetMiniGameID();
+            Name = script.GetMiniGameName();
+            MiniGameScript = script.GetType();
+        }
+
         public int ID { get; internal set; }
         public string Name { get; internal set; }
         public Type MiniGameScript { get; internal set; }

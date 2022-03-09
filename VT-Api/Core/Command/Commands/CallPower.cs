@@ -12,16 +12,15 @@ namespace VT_Api.Core.Command.Commands
        Name = "CallPower",
        Aliases = new[] { "power" },
        Description = "Call the power of your role",
-       Usage = "no argument if you want to call your main power, if not add the number of the power",
+       Usage = "no argument if you want to call your main power, if not add the id of the power",
        Permission = "",
        Platforms = new[] { Platform.RemoteAdmin, Platform.ServerConsole },
-       Arguments = new[] { "(power)" }
+       Arguments = new[] { "(powerId)" }
        )]
     public class CallPower : ISynapseCommand
     {
         public CommandResult Execute(CommandContext context)
         {
-            //todo add translation for result !
             var result = new CommandResult();
 
             try

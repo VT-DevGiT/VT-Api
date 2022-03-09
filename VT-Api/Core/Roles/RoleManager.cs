@@ -1,6 +1,8 @@
 ﻿using Synapse;
 using Synapse.Api;
 using Synapse.Api.Events.SynapseEventArguments;
+using Synapse.Api.Roles;
+using System;
 using System.Collections.Generic;
 using UnityEngine;
 using VT_Api.Core.Enum;
@@ -11,9 +13,15 @@ namespace VT_Api.Core.Roles
 {
     public class RoleManager
     {
-        public Dictionary<Player, int> OldPlayerRole = new Dictionary<Player, int>();
 
+        public Dictionary<Player, int> OldPlayerRole { get; } = new Dictionary<Player, int>();
+
+        public static int[] VanilaScpID { get; } = { (int)RoleType.Scp049,   (int)RoleType.Scp0492, (int)RoleType.Scp079,
+                                                     (int)RoleType.Scp096,   (int)RoleType.Scp106,  (int)RoleType.Scp173,
+                                                     (int)RoleType.Scp93953, (int)RoleType.Scp93989 };
+        
         public static RoleManager Get => VtController.Get.Role;
+
 
         internal RoleManager() { }
 
@@ -49,7 +57,7 @@ namespace VT_Api.Core.Roles
                 if (ev.Player.RealTeam == Team.SCP && key >= KeyCode.Alpha0 && key <= KeyCode.Alpha9)
                 {
                     if (key == KeyCode.Alpha0)
-                        key = KeyCode.Alpha9 + 1; 
+                        key = KeyCode.Alpha9 + 1;
 
                     if (!role.CallPower((byte)(key - KeyCode.Alpha0 + 1), out var message))
                         message = "<color=red>" + message + "</color>";
@@ -71,8 +79,10 @@ namespace VT_Api.Core.Roles
 
         private void OnSetClass(PlayerSetClassEventArgs ev)
         {
-            if(ev.Player.CustomRole is IVtRole role && !role.Spawned)
+            if (ev.Player.CustomRole is IVtRole role && !role.Spawned)
+            {
                 role.InitAll(ev);
+            }
         }
 
         private void OnPlayerDeath(PlayerDeathEventArgs ev)

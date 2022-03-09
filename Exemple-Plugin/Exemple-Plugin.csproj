@@ -80,13 +80,13 @@
     <Compile Include="SpyPlayerScript.cs" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="packages.config" />
+  </ItemGroup>
+  <ItemGroup>
     <ProjectReference Include="..\VT-Api\VT-Api.csproj">
       <Project>{7d0e0f78-d633-4e4d-ac56-145529b207e2}</Project>
       <Name>VT-Api</Name>
     </ProjectReference>
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="packages.config" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

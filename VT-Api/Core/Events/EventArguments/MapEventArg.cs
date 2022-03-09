@@ -41,7 +41,7 @@ namespace VT_Api.Core.Events.EventArguments
     public class LockerInteractEventArgs : Synapse.Api.Events.EventHandler.ISynapseEventArgs
     {
         public Player Player { get; internal set; }
-        public Locker Locker { get; internal set; }
+        public Synapse.Api.Locker Locker { get; internal set; }
         public bool Allow { get; set; }
     }
 

@@ -1,25 +1,37 @@
-﻿using Synapse.Api;
+﻿using Mirror;
+using Synapse.Api;
 using Synapse.Api.Enum;
 using Synapse.Api.Items;
 using Synapse.Config;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
+using System.Reflection.Emit;
 using UnityEngine;
 using VT_Api.Config;
 using VT_Api.Core;
 using VT_Api.Core.Enum;
+using VT_Api.Core.Items;
 using VT_Api.Core.Roles;
-using VT_Api.Reflexion;
+
 using Server = Synapse.Server;
+using SynItemManager = Synapse.Api.Items.ItemManager;
 using SynLogger = Synapse.Api.Logger;
 using SynRoleManager = Synapse.Api.Roles.RoleManager;
 using UERandom = UnityEngine.Random;
+using VtItemManager = VT_Api.Core.Items.ItemManager;
 
 namespace VT_Api.Extension
 {
     public static class VtExtensions
     {
+        internal static void Debug(this SynLogger logger, object message)
+        {
+            if (VtVersion.Debug)
+                logger.Send($"VtApi-Debug: {message}", ConsoleColor.DarkYellow);
+        }
+
         public static void PlayAmbientSound(this Map _, int id)
             => VtController.Get.MapAction.PlayAmbientSound(id);
 
@@ -38,14 +50,24 @@ namespace VT_Api.Extension
         public static int GetVoltage(this Map map)
             => VtController.Get.MapAction.GetVoltage();
 
-        public static Player GetPlayercoprs(this Map _, Player player, float rayon)
-            => VtController.Get.MapAction.GetPlayercoprs(player, rayon);
-
-
-        internal static void Debug(this SynLogger logger, object message)
+        public static List<Player> GetDeadPlayersInRangeOfPlayer(this Player player, float range)
         {
-            if (VtVersion.Debug) 
-                logger.Send($"VtApi-Debug: {message}", ConsoleColor.DarkYellow);
+            var players = MapActionManager.Get.GetRagdollOwners(player, range);
+
+            players.RemoveAll(p => p.Team == Team.RIP && !p.OverWatch);
+            
+            if (players.Any())
+                return players;
+            return new List<Player>();
+        }
+
+        public static Player GetDeadPlayerInRangeOfPlayer(this Player player, float range)
+        {
+            var players = MapActionManager.Get.GetRagdollOwners(player, range);
+
+            players.RemoveAll(p => p.Team == Team.RIP && !p.OverWatch);
+
+            return players.FirstOrDefault();
         }
 
         public static List<Player> GetPlayer(this RoleID[] roleID)
@@ -87,6 +109,12 @@ namespace VT_Api.Extension
             room.LightController.WarheadLightOverride = false;
         }
 
+        public static void FakeRole(this Player player, RoleType role)
+            => FakeRole(player, role, Server.Get.Players);
+
+        public static void FakeRole(this Player player, RoleType role, List<Player> players)
+            => NetworkLiar.Get.SendRole(player, role, players);
+
         public static bool IsTargetVisible(this Player player, GameObject obj)
             => IsTargetVisible(player.gameObject.GetComponent<UnityEngine.Camera>(), obj);
 
@@ -108,12 +136,15 @@ namespace VT_Api.Extension
         public static bool IsDefined(this SynapseItem item)
             => item != null && item != SynapseItem.None && item.ItemType != ItemType.None;
 
-        public static void Extract(this SerializedPlayerRole playerRole, Player player, out MapPoint postion, out Vector2? rotation, out List<SynapseItem> items, out Dictionary<AmmoType, ushort> ammos)
+        public static void Extract(this SerializedPlayerRole playerRole, Player player, out MapPoint postion, out Vector2 rotation, out List<SynapseItem> items, out Dictionary<AmmoType, ushort> ammos)
         {
-            postion = playerRole.SpawnPoints?[UnityEngine.Random.Range(0, playerRole.SpawnPoints.Count)].Parse();
+            if (playerRole.SpawnPoints != null && playerRole.SpawnPoints.Any())
+                postion = playerRole.SpawnPoints[UnityEngine.Random.Range(0, playerRole.SpawnPoints.Count - 1)]?.Parse();
+            else
+                postion = null;
 
-            rotation = playerRole.Rotation;
-          
+            rotation = playerRole.Rotation ?? new Vector2(0, 0);
+
             if (playerRole.Inventory != null && playerRole.Inventory.IsDefined()) 
                 playerRole.Inventory.Extract(player, out items, out ammos);
             else
@@ -121,17 +152,18 @@ namespace VT_Api.Extension
                 items = null;
                 ammos = null;
             }
+
         }
 
         public static void Extract(this SerializedPlayerInventory playerInventory, Player player, out List<SynapseItem> items, out Dictionary<AmmoType, ushort> ammos)
         {
-            if (playerInventory.Items != null)
+            if (playerInventory.Items != null && playerInventory.Items.Any())
             {
                 items = new List<SynapseItem>();
-                
+
                 foreach (var item in playerInventory.Items)
                 {
-                    if (item.Extract(player, out var synapseItem))
+                    if (item != null && item.Extract(player, out var synapseItem))
                         items.Add(synapseItem);
                 }
             }
@@ -139,7 +171,6 @@ namespace VT_Api.Extension
             {
                 items = null;
             }
-
 
             if (playerInventory.Ammo != null)
                 playerInventory.Ammo.Extract(out ammos);
@@ -159,9 +190,11 @@ namespace VT_Api.Extension
         public static bool Extract(this SerializedPlayerItem serializedItem, Player player, out SynapseItem item)
         {
             item = serializedItem.Parse();
-            if (serializedItem.UsePreferences && item.ItemCategory == ItemCategory.Firearm)
-                item.WeaponAttachments = player.GetPreference(ItemManager.Get.GetBaseType(serializedItem.ID));
 
+            if (serializedItem.UsePreferences && item.ItemCategory == ItemCategory.Firearm)
+            {
+                item.WeaponAttachments = player.GetPreference(SynItemManager.Get.GetBaseType(serializedItem.ID));
+            }
             return UERandom.Range(1f, 100f) <= serializedItem.Chance;
         }
 
@@ -230,6 +263,18 @@ namespace VT_Api.Extension
 
         public static void SetDisplayInfoRole(this Player player, string roleName)
         {
+            /*
+             * TODO Rework This :
+             * 
+             * Badge "pas touche"
+             * 
+             * Nickname
+             * Role (Unit)
+             * CustomInfo
+             * 
+             * PowerStatus
+             */
+
             player.RemoveDisplayInfo(PlayerInfoArea.Role);
 
             if (player.Team == Team.MTF)
@@ -250,5 +295,15 @@ namespace VT_Api.Extension
                  return (int)((RoleType)roleID).GetTeam();
             else return SynRoleManager.Get.GetCustomRole((int)roleID).GetTeamID();
         }
+
+        public static bool TryGetScript(this SynapseItem item, out IItem script)
+        {
+            item.ItemData.TryGetValue(VtItemManager.KeySynapseItemData, out var value);
+            script = value as IItem;
+            return script != null;
+        }
+
+        public static IItem GetScript(this SynapseItem item)
+            => (IItem)item.ItemData[VtItemManager.KeySynapseItemData];
     }
 }

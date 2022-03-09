@@ -18,15 +18,14 @@ namespace VT_Api.Core.Items
 
         #endregion
 
-        #region Methods
-
-        protected override void Event()
+        #region Constructors & Destructor
+        public AbstractWeapon() : base()
         {
-            base.Event();
-            Server.Get.Events.Player.PlayerShootEvent += OnShoot;
-            Server.Get.Events.Player.PlayerReloadEvent += OnReload;
-            Server.Get.Events.Player.PlayerDamageEvent += OnDamage;
+
         }
+        #endregion
+
+        #region Methods
 
         protected virtual void Reload(PlayerReloadEventArgs ev)
         {
@@ -44,27 +43,5 @@ namespace VT_Api.Core.Items
             ev.Damage = DamageAmmont;
         }
         #endregion
-
-        #region Event
-
-        private void OnReload(PlayerReloadEventArgs ev)
-        {
-            if (ev.Item.ID == ID)
-                this.Reload(ev);
-        }
-
-        private void OnShoot(PlayerShootEventArgs ev)
-        {
-            if (ev.Weapon?.ID == ID)
-                this.Shoot(ev);
-        }
-
-        private void OnDamage(PlayerDamageEventArgs ev)
-        {
-            if (ev.Killer?.ItemInHand?.ID == ID)
-                this.Damage(ev);
-        }
-        #endregion
     }
-
 }

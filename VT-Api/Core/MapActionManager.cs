@@ -1,4 +1,6 @@
-﻿using Synapse;
+﻿using Respawning;
+using Respawning.NamingRules;
+using Synapse;
 using Synapse.Api;
 using System;
 using System.Collections.Generic;
@@ -6,7 +8,10 @@ using System.Linq;
 using UnityEngine;
 using VT_Api.Extension;
 using VT_Api.Reflexion;
+
 using UERandom = UnityEngine.Random;
+using Logger = Synapse.Api.Logger;
+using SynRagdoll = Synapse.Api.Ragdoll;
 
 namespace VT_Api.Core
 {
@@ -106,23 +111,52 @@ namespace VT_Api.Core
         }
 
 
-
-        public Player GetPlayercoprs(Player player, float rayon)
+        public List<SynRagdoll> GetRagdolls(Vector3 pos, float radius)
         {
-            var ragdolls = Map.Get.Ragdolls.Where(r => Vector3.Distance(r.GameObject.transform.position, player.Position) < rayon).ToList();
-            
+            var ragdolls = Map.Get.Ragdolls.Where(r => Vector3.Distance(r.GameObject.transform.position, pos) < radius).ToList();
+
+            if (ragdolls.Count == 0)
+                return new List<SynRagdoll>();
+            return ragdolls;
+        }
+
+        public SynRagdoll GetRagdoll(Vector3 pos, float radius)
+        {
+            var ragdolls = Map.Get.Ragdolls.Where(r => Vector3.Distance(r.GameObject.transform.position, pos) < radius).ToList();
             ragdolls.Sort(
-                (Synapse.Api.Ragdoll x, Synapse.Api.Ragdoll y) 
-                => Vector3.Distance(x.GameObject.transform.position, player.Position).CompareTo(Vector3.Distance(y.GameObject.transform.position, player.Position)));
-            
+                (SynRagdoll x, SynRagdoll y)
+                => Vector3.Distance(x.GameObject.transform.position, pos).CompareTo(Vector3.Distance(y.GameObject.transform.position, pos)));
+
             if (ragdolls.Count == 0)
                 return null;
-            
-            Player owner = ragdolls.First().Owner;
-            
-            if (owner != null && owner.RoleID == (int)RoleType.Spectator)
-                return owner;
-            else return null;
+
+            return ragdolls.First();
+        }
+
+        public List<Player> GetRagdollOwners(Player player, float radius)
+        {
+            var ragdolls = GetRagdolls(player.Position, radius);
+            List<Player> players = new List<Player>();
+
+            foreach(var ragdoll in ragdolls)
+            {
+                if (ragdoll.Owner != null)
+                    players.Add(ragdoll.Owner);
+            }
+            return players;
+        }
+
+        public Player GetRagdollOwner(Player player, float radius)
+        {
+            var ragdolls = GetRagdolls(player.Position, radius);
+            if (ragdolls.Count == 0)
+                return null;
+
+            ragdolls.Sort(
+                (SynRagdoll x, SynRagdoll y) 
+                => Vector3.Distance(x.GameObject.transform.position, player.Position).CompareTo(Vector3.Distance(y.GameObject.transform.position, player.Position)));
+
+            return ragdolls.FirstOrDefault(r => r.Owner != null)?.Owner;
         }
 
         public int GetVoltage()
@@ -154,6 +188,87 @@ namespace VT_Api.Core
         {
             foreach (Room room in Map.Get.Rooms)
                 room.ResetRoomLightColor();
+        }
+
+        public void MtfRespawn(bool isCI, List<Player> players, bool useTicket = true) // TODO
+        {
+            SpawnableTeamType Team = isCI ? SpawnableTeamType.ChaosInsurgency : SpawnableTeamType.NineTailedFox;
+            Logger.Get.Debug("MtfRespawn 1");
+            players.RemoveAll(p => p.OverWatch);
+            Logger.Get.Debug("MtfRespawn 2");
+            if (!players.Any()) return;
+            Logger.Get.Debug("MtfRespawn 3");
+            Queue<RoleType> queueToFill = new Queue<RoleType>();
+            SpawnableTeamHandlerBase spawnableTeamHandlerBase = RespawnWaveGenerator.SpawnableTeams[Team];
+            spawnableTeamHandlerBase.GenerateQueue(queueToFill, players.Count);
+            Logger.Get.Debug("MtfRespawn 4");
+            if (useTicket)
+            {
+                Logger.Get.Debug("MtfRespawn 4.1");
+                if (Round.Get.PrioritySpawn)
+                    players = players.OrderBy(p => p.DeathTime).ToList();
+                else
+                    players.ShuffleList();
+                Logger.Get.Debug("MtfRespawn 4.2");
+
+                int tickets = RespawnTickets.Singleton.GetAvailableTickets(Team);
+                if (tickets == 0)
+                {
+                    tickets = 5;
+                    RespawnTickets.Singleton.GrantTickets(SpawnableTeamType.ChaosInsurgency, 5, true);
+                }
+
+                Logger.Get.Debug("MtfRespawn 4.3");
+                int num = Mathf.Min(tickets, spawnableTeamHandlerBase.MaxWaveSize);
+                while (players.Count > num)
+                    players.RemoveAt(players.Count - 1);
+
+                Logger.Get.Debug("MtfRespawn 4.4");
+            }
+            players.ShuffleList();
+            Logger.Get.Debug("MtfRespawn 5");
+            string unityName = "";
+            bool setUnite = UnitNamingRules.TryGetNamingRule(Team, out UnitNamingRule rule);
+            Logger.Get.Debug("MtfRespawn 6");
+
+            if (setUnite)
+            {
+                rule.GenerateNew(Team, out unityName);
+                rule.PlayEntranceAnnouncement(unityName);
+            }
+            Logger.Get.Debug("MtfRespawn 7");
+
+            foreach (var player in players)
+            {
+                try
+                {
+                    Logger.Get.Debug($"MtfRespawn {player.name}");
+
+                    if (player == null)
+                    {
+                        Logger.Get.Error("Couldn't spawn a player - target's is null.");
+                        continue;
+                    }
+
+                    player.RoleID = (int)queueToFill.Dequeue();
+
+                    if (setUnite)
+                    {
+                        player.ClassManager.NetworkCurSpawnableTeamType = (byte)Team;
+                        player.UnitName = unityName;
+                    }
+                }
+                catch (Exception e)
+                {
+                    Logger.Get.Error($"Player {player.name} couldn't be spawned. Err msg: {e.Message}");
+                }
+            }
+            Logger.Get.Debug("MtfRespawn 8");
+
+            RespawnEffectsController.ExecuteAllEffects(RespawnEffectsController.EffectType.UponRespawn, Team);
+            RespawnManager.Singleton.RestartSequence();
+            Logger.Get.Debug("MtfRespawn 9");
+
         }
     }
 }

@@ -29,7 +29,7 @@ namespace VT_Api.Config
             Y = vector.y;
         }
 
-        public SerializedVector2(float x, float y, float z)
+        public SerializedVector2(float x, float y)
         {
             X = x;
             Y = y;
