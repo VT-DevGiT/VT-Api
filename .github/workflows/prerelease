@@ -20,7 +20,7 @@ env:
   BUILD_CONFIGURATION: PreRelease
 
 jobs:
-  build:
+  prerelease:
     runs-on: windows-latest
 
     steps:
