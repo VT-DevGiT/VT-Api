@@ -8,7 +8,8 @@ using UnityEngine;
 
 namespace VT_Api.Core.Behaviour
 {
-    public class Display : MonoBehaviour
+    //TODO: finish this
+    private class Display : MonoBehaviour
     {
         Player player;
 
