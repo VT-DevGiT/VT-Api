@@ -22,7 +22,7 @@ public class VtController
     public static VtController Get { get; private set; }
 
     internal AutoRegisterManager AutoRegister { get => Singleton<AutoRegisterManager>.Instance; } // nothing  public (yet)
-    public MiniGameManager MinGames { get => Singleton<MiniGameManager>.Instance; }
+    internal MiniGameManager MinGames { get => Singleton<MiniGameManager>.Instance; } // not finish
     public RoleManager Role { get => Singleton<RoleManager>.Instance; }
     public TeamManager Team { get => Singleton<TeamManager>.Instance; }
     public EventHandler Events { get => Singleton<EventHandler>.Instance; }
@@ -46,6 +46,9 @@ public class VtController
     public static void InitApi()
     {
         if (_enabled) return;
+
+        if (VtVersion.Debug == true)
+            Harmony.DEBUG = true;
 
         _enabled = true;
 

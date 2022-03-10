@@ -3,10 +3,11 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using VT_Api.Reflexion;
+using VT_Api.Extension;
+using Synapse.Api.Events.SynapseEventArguments;
 
 using synItemManager = Synapse.Api.Items.ItemManager;
 using synEvents = Synapse.Api.Events.EventHandler;
-using Synapse.Api.Events.SynapseEventArguments;
 
 namespace VT_Api.Core.Items
 {
@@ -54,11 +55,21 @@ namespace VT_Api.Core.Items
             return script;
         }
 
-        /// <returns><see langword="null"/> if the item ave no script</returns>
+        /// <returns><see langword="null"/> if the item ave no script or if <paramref name="item"/> is <see langword="null"/> else return the <see cref="IItem"/></returns>
         public IItem GetScript(SynapseItem item) 
-            => item.ItemData[KeySynapseItemData] as IItem;
+            => item?.ItemData[KeySynapseItemData] as IItem;
+
+        /// <returns><see langword="null"/> if the item ave no script as a <see cref="IWeapon"> or if <paramref name="item"/> is <see langword="null"/> else return the <see cref="IWeapon"/></returns>
+        public IWeapon GetWeaponScript(SynapseItem item)
+            => item?.ItemData[KeySynapseItemData] as IWeapon;
+
+        /// <returns><see langword="false"/> if item ave no script or if <paramref name="item"/> is <see langword="null"/> else return <see langword="true"/></returns>
         public bool TryGetScript(SynapseItem item, out IItem script) 
             => (script = GetScript(item)) != null;
+
+        /// <returns><see langword="false"/> if item ave no script as a <see cref="IWeapon"> or if <paramref name="item"/> is <see langword="null"/> else return <see langword="true"/></returns>
+        public bool TryGetWeaponScript(SynapseItem item, out IWeapon script)
+            => (script = GetWeaponScript(item)) != null;
 
         public void RegisterCustomItem(IItem item)
         {
@@ -80,46 +91,63 @@ namespace VT_Api.Core.Items
         private void OnDrop(PlayerDropItemEventArgs ev)
         {
             if (TryGetScript(ev.Item, out var script))
-                ev.Allow = script.AllowDrop(ev.Throw);
-
-
+            {
+                var @throw = ev.Throw; 
+                ev.Allow = script.AllowDrop(ref @throw);
+                ev.Throw = @throw;
+            }
         }
 
         private void OnDamage(PlayerDamageEventArgs ev)
         {
+            var damage = ev.Damage;
             
-            if (ev.Killer?.ItemInHand != null && TryGetScript(ev.Killer.ItemInHand, out var script) && script is IWeapon weapon)
-                ev.Allow = weapon.AllowAttack(ev.Victim, ev.Damage, ev.DamageType);
-            //TODO
-            
-            /*if (ev.Victim.ItemInHand != null && TryGetScript(ev.Victim.ItemInHand, out var item))
-                ev.Allow = item.*/
-            
+            if (TryGetScript(ev.Killer?.ItemInHand, out var script) && script is IWeapon weapon)
+                ev.Allow = weapon.AllowAttack(ev.Victim, ref damage, ev.DamageType);
+
+            if (TryGetScript(ev.Victim?.ItemInHand, out var item))
+                ev.Allow &= item.AllowDamage(ref damage, ev.DamageType);
+
+            ev.Damage = damage;
         }
 
         private void OnReload(PlayerReloadEventArgs ev)
         {
-            throw new NotImplementedException();
+            if (TryGetScript(ev.Item, out var script) && script is IWeapon weapon)
+                ev.Allow = weapon.AllowRealod();
+
         }
 
         private void OnShoot(PlayerShootEventArgs ev)
         {
-            throw new NotImplementedException();
+            if (TryGetScript(ev.Weapon, out var script) && script is IWeapon weapon)
+            {
+                if (ev.Target != null)
+                    ev.Allow = weapon.AllowShoot(ev.TargetPosition, ev.Target);
+                else
+                    ev.Allow = weapon.AllowShoot(ev.TargetPosition);
+            }
         }
 
         private void OnChangeItem(PlayerChangeItemEventArgs ev)
         {
-            throw new NotImplementedException();
+            if (ev.NewItem.IsDefined() && TryGetScript(ev.NewItem, out var newItem))
+                ev.Allow = newItem.AllowChange(true);
+            if (ev.OldItem.IsDefined() && TryGetScript(ev.OldItem, out var oldItem))
+                ev.Allow &= oldItem.AllowChange(false);
+
         }
 
         private void OnPickUp(PlayerPickUpItemEventArgs ev)
         {
-            throw new NotImplementedException();
+            if (TryGetScript(ev.Item, out var item))
+                ev.Allow = item.AllowPickUp();
         }
 
         private void OnUse(PlayerItemInteractEventArgs ev)
         {
-            throw new NotImplementedException();
+            if (TryGetScript(ev.CurrentItem, out var item))
+                ev.Allow = item.AllowUse(ev.State);
         }
         #endregion
 

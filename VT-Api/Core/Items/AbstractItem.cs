@@ -1,4 +1,6 @@
 ﻿using Synapse;
+using Synapse.Api;
+using Synapse.Api.Enum;
 using Synapse.Api.Events.SynapseEventArguments;
 using Synapse.Api.Items;
 using System;
@@ -21,6 +23,8 @@ namespace VT_Api.Core.Items
         public virtual string MessagePickUp { get; set; } = null;
         public virtual string MessageChangeTo { get; set; } = null;
         public VtItemInformation Info { get; set; }
+
+        public Player Holder => Item.ItemHolder;
 
         private SynapseItem item;
         public SynapseItem Item { get => item; 
@@ -61,10 +65,15 @@ namespace VT_Api.Core.Items
             }
         }
 
-        public bool AllowDrop(bool Throw)
-        {
-            throw new NotImplementedException();
-        }
+        public virtual bool AllowDrop(ref bool Throw) => true;
+
+        public virtual bool AllowDamage(ref float damage, DamageType damageType) => true;
+
+        public virtual bool AllowChange(bool newItem) => true;
+
+        public virtual bool AllowPickUp() => true;
+
+        public virtual bool AllowUse(ItemInteractState state) => true;
         #endregion
     }
 }

@@ -19,6 +19,8 @@ namespace VT_Api.Core.Behaviour
 
             if (player == null)
                 throw new Exception("Behaviour \"Display\" is not on a player !");
+        
+            
         }
  
 

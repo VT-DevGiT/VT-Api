@@ -52,6 +52,7 @@
     <Compile Include="Config\VtApiConfiguration.cs" />
     <Compile Include="Config\VtApiTranslation.cs" />
     <Compile Include="Core\Behaviour\Display.cs" />
+    <Compile Include="Core\Events\EventArguments\ServerEventArgs.cs" />
     <Compile Include="Core\ISengleton.cs" />
     <Compile Include="Core\Items\IWeapon.cs" />
     <Compile Include="Core\MapActionManager.cs" />
@@ -68,10 +69,10 @@
     <Compile Include="Core\Enum\LayerID.cs" />
     <Compile Include="Core\Enum\RoleID.cs" />
     <Compile Include="Core\Enum\TeamID.cs" />
-    <Compile Include="Core\Events\EventArguments\ItemEventArg.cs" />
-    <Compile Include="Core\Events\EventArguments\MapEventArg.cs" />
-    <Compile Include="Core\Events\EventArguments\PlayerEventArg.cs" />
-    <Compile Include="Core\Events\EventArguments\ScpEventArg.cs" />
+    <Compile Include="Core\Events\EventArguments\ItemEventArgs.cs" />
+    <Compile Include="Core\Events\EventArguments\MapEventArgs.cs" />
+    <Compile Include="Core\Events\EventArguments\PlayerEventArgs.cs" />
+    <Compile Include="Core\Events\EventArguments\ScpEventArgs.cs" />
     <Compile Include="Core\Events\EventHandler.cs" />
     <Compile Include="Core\Events\ItemEvents.cs" />
     <Compile Include="Core\Events\MapEvents.cs" />
@@ -133,6 +134,7 @@
     <Compile Include="Patches\VtEvent\ScpPatches\Scp106\Scp106UsePortalPatch.cs" />
     <Compile Include="Patches\VtPatch\SynapseItemPatch.cs" />
     <Compile Include="Patches\VtPatch\NextKnownTeamPatch.cs" />
+    <Compile Include="Patches\VtPatch\SynapseLoadPatch.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="VtController.cs" />
     <Compile Include="Core\VtExtensions.cs" />

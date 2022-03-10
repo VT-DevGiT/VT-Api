@@ -7,7 +7,7 @@ using VT_Api.Exceptions;
 
 namespace VT_Api.Core.MiniGame
 {
-    public class MiniGameManager
+    internal class MiniGameManager
     {
         #region Properties & Variable
         public static MiniGameManager Get => VtController.Get.MinGames;

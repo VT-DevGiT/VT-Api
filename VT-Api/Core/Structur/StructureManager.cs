@@ -8,7 +8,7 @@ using UnityEngine;
 
 namespace VT_Api.Core.Structur
 {
-    public class StructureManager
+    internal class StructureManager
     {
         // TODO : do som stuff here 
 

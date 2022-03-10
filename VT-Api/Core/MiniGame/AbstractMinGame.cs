@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace VT_Api.Core.MiniGame
 {
-    public abstract class AbstractMinGame : IMiniGame
+    internal abstract class AbstractMinGame : IMiniGame // TODO : this !
     {
         public AbstractMinGame() { }
 
