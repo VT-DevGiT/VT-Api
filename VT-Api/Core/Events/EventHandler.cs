@@ -1,5 +1,6 @@
-﻿using System.Linq;
-using UnityEngine;
+﻿using Synapse.Api.Items;
+using System.Linq;
+using VT_Api.Extension;
 
 using SyanpseEventHandler = Synapse.Api.Events.EventHandler;
 
@@ -53,19 +54,26 @@ namespace VT_Api.Core.Events
 
         //Add SheildManager
 
-        //Fix Som vanila Bugs
+        //Fix vanila Bugs
         private void OnRaOverwatchFix(Synapse.Api.Events.SynapseEventArguments.RemoteAdminCommandEventArgs ev)
         {
             var args = ev.Command.Split(' ');
-            if (args[0].ToUpper() != "OVERWATCH" || args.Count() <= 1) return;
+            if (args.Count() <= 1 || args[0].ToUpper() != "OVERWATCH") return;
             var ids = args[1].Split('.');
             foreach (var id in ids)
             {
                 if (string.IsNullOrEmpty(id))
                     continue;
                 var player = Synapse.Server.Get.GetPlayer(int.Parse(id));
-                if (player != null)
-                    player.ItemInHand = null;
+                if (player != null && player.ItemInHand.IsDefined())
+                {
+                    player.ItemInHand = SynapseItem.None;
+                    MEC.Timing.CallDelayed(0.1f, () => 
+                    {
+                        if (player != null)
+                            player.OverWatch = true;
+                    });
+                }
             }
         }
 
