@@ -1,16 +1,14 @@
 ﻿using HarmonyLib;
 using InventorySystem;
 using InventorySystem.Configs;
-using InventorySystem.Items;
 using InventorySystem.Items.Armor;
 using NorthwoodLib.Pools;
+using Synapse.Api;
+using Synapse.Api.Enum;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using UnityEngine;
-using VT_Api.Extension;
 
 namespace VT_Api.Patches.VtEvent.ItemPatches
 {
@@ -25,54 +23,15 @@ namespace VT_Api.Patches.VtEvent.ItemPatches
             {
                 //SynapseController.Server.Logger.Debug("ItemLimitPatch");
 
-                HashSet<ushort> itemDrop = HashSetPool<ushort>.Shared.Rent();
-                Dictionary<ItemCategory, int> catergoryCount = new Dictionary<ItemCategory, int>();
-                Dictionary<ItemType, ushort> ammosDrop = new Dictionary<ItemType, ushort>();
+                var player = inv.GetPlayer();
 
                 //Item
-                foreach (KeyValuePair<ushort, ItemBase> item in inv.UserInventory.Items)
-                {
-                    if (item.Value.Category != ItemCategory.Armor)
-                    {
-                        int num = Mathf.Abs(InventoryLimits.GetCategoryLimit(armor, item.Value.Category));
-                        int value = (!catergoryCount.TryGetValue(item.Value.Category, out value)) ? 1 : (value + 1);
-                        if (value > num)
-                        {
-                            itemDrop.Add(item.Key);
-                        }
-
-                        catergoryCount[item.Value.Category] = value;
-                    }
-                }
-
-                //Ammo
-                foreach (KeyValuePair<ItemType, ushort> ammo in inv.UserInventory.ReserveAmmo)
-                {
-                    ushort ammoLimit = InventoryLimits.GetAmmoLimit(armor, ammo.Key);
-                    if (ammo.Value > ammoLimit)
-                    {
-                        ammosDrop.Add(ammo.Key, (ushort)(ammo.Value - ammoLimit));
-                    }
-                }
-
                 if (removeItems)
-                {
-                    foreach (ushort item in itemDrop)
-                    {
-                        // Event Here [Player, SynapseItem, LimitOfThisCatergory]
-                        inv.ServerDropItem(item);
-                    }
-                }
+                    RemovItems(inv, armor, player);
 
-                if (!removeAmmo)
-                    return false;
-                
+                if (removeAmmo)
+                    RemovAmmos(inv, armor, player);
 
-                foreach (KeyValuePair<ItemType, ushort> ammo in ammosDrop)
-                {
-                    // Event Here [Player, Ammo, LimitOfThisType]
-                    inv.ServerDropAmmo(ammo.Key, ammo.Value);
-                }
                 return false;
             }
             catch (Exception e)
@@ -80,6 +39,60 @@ namespace VT_Api.Patches.VtEvent.ItemPatches
                 Synapse.Api.Logger.Get.Error($"Vt-Event: RemoveExceedingItem failed!!\n{e}\nStackTrace:\n{e.StackTrace}");
                 return true;
             }
+        }
+
+        private static void RemovItems(Inventory inv, BodyArmor armor, Player player)
+        {
+             var catergoryMax = new Dictionary<ItemCategory, int>();
+            var catergoryCount = new Dictionary<ItemCategory, int>();
+            var itemsDrop = HashSetPool<ushort>.Shared.Rent();
+
+            foreach (var item in inv.UserInventory.Items)
+            {
+                var catergory = item.Value.Category;
+                if (catergory == ItemCategory.Armor) continue;
+
+                int num;
+                if (!catergoryMax.ContainsKey(catergory))
+                    num = catergoryMax[catergory] = Mathf.Abs(InventoryLimits.GetCategoryLimit(armor, catergory));
+                else
+                    num = catergoryMax[catergory];
+                int value = (!catergoryCount.TryGetValue(catergory, out value)) ? 1 : (value + 1);
+                if (value > num)
+                {
+                    itemsDrop.Add(item.Key);
+                }
+
+                catergoryCount[item.Value.Category] = value;
+            }
+
+            var items = itemsDrop.Select((i) => Synapse.Api.Map.Get.Items[i]).ToList();
+            VtController.Get.Events.Item.InvokeCheckLimitItemEvent(player, catergoryMax, ref items);
+            itemsDrop = items.Select((i) => i.Serial).ToHashSet();
+
+            foreach (ushort item in itemsDrop)
+                inv.ServerDropItem(item);
+        }
+
+        private static void RemovAmmos(Inventory inv, BodyArmor armor, Player player)
+        {
+            var ammosDrop = new Dictionary<AmmoType, ushort>();
+            var ammosLimit = new Dictionary<AmmoType, ushort>();
+
+            foreach (var ammo in inv.UserInventory.ReserveAmmo)
+            {
+                ushort ammoLimit = InventoryLimits.GetAmmoLimit(armor, ammo.Key);
+                ammosLimit.Add((AmmoType)ammo.Key, ammoLimit);
+                if (ammo.Value > ammoLimit)
+                {
+                    ammosDrop.Add((AmmoType)ammo.Key, (ushort)(ammo.Value - ammoLimit));
+                }
+            }
+
+            VtController.Get.Events.Item.InvokeCheckLimitAmmoEvent(player, ammosLimit, ref ammosDrop);
+
+            foreach (var ammo in ammosDrop)
+                inv.ServerDropAmmo((ItemType)ammo.Key, ammo.Value);
         }
     }
 }

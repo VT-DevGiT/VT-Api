@@ -1,7 +1,10 @@
 ﻿using InventorySystem.Items.ThrowableProjectiles;
+using Synapse.Api;
 using Synapse.Api.Enum;
 using Synapse.Api.Items;
 using System;
+using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using VT_Api.Core.Events.EventArguments;
 
 namespace VT_Api.Core.Events
@@ -14,9 +17,36 @@ namespace VT_Api.Core.Events
         public event Synapse.Api.Events.EventHandler.OnSynapseEvent<ChangeIntoFragEventArgs> ChangeIntoFragEvent;
         public event Synapse.Api.Events.EventHandler.OnSynapseEvent<ExplosionGrenadeEventArgs> ExplosionGrenadeEvent;
         public event Synapse.Api.Events.EventHandler.OnSynapseEvent<CollisionEventArgs> CollisionEvent;
+        public event Synapse.Api.Events.EventHandler.OnSynapseEvent<CheckLimitItemEventArgs> CheckLimitItemEvent;
         #endregion
 
         #region Invoke
+        internal void InvokeCheckLimitItemEvent(Player player, Dictionary<ItemCategory, int> catergoryMax, ref List<SynapseItem> removItems)
+        {
+            var ev = new CheckLimitItemEventArgs
+            {
+                Player = player,
+                CatergoryMax = new ReadOnlyDictionary<ItemCategory, int>(catergoryMax),
+                RemovItem = removItems
+            };
+
+            CheckLimitItemEvent.Invoke(ev);
+
+            removItems = ev.RemovItem;
+        }
+
+        internal void InvokeCheckLimitAmmoEvent(Player player, Dictionary<AmmoType, ushort> catergoryMax, ref Dictionary<AmmoType, ushort> removAmmo)
+        {
+            var ev = new CheckLimitAmmoEventArgs
+            {
+                Player = player,
+                CatergoryMax = new ReadOnlyDictionary<AmmoType, ushort>(catergoryMax),
+                RemovAmmo = removAmmo
+            };
+
+            removAmmo = ev.RemovAmmo;
+        }
+
         internal void InvokeChangeIntoFragEvent(SynapseItem item, TimeGrenade grenade, GrenadeType type, ref bool allow)
         {
             var ev = new ChangeIntoFragEventArgs

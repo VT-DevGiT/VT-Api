@@ -37,8 +37,8 @@ public class VtController
 
     #region Constructor & Destructor
     private VtController()
-    { 
-        
+    {
+
     }
     #endregion
 
