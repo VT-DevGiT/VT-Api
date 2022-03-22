@@ -2,7 +2,7 @@
 
 namespace VT_Api.Core.MiniGame
 {
-    public class MiniGameInformation
+    internal class MiniGameInformation
     {
         public MiniGameInformation(string name, int id, Type script)
         {

@@ -1,4 +1,5 @@
 ﻿using Synapse;
+using Synapse.Api;
 using Synapse.Api.Enum;
 using Synapse.Api.Events.SynapseEventArguments;
 using System;
@@ -6,10 +7,11 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using UnityEngine;
 
 namespace VT_Api.Core.Items
 {
-    public abstract class AbstractWeapon : AbstractItem
+    public abstract class AbstractWeapon : AbstractItem, IWeapon
     {
         #region Attributes & Properties
         public abstract ushort Ammos { get; }
@@ -26,21 +28,25 @@ namespace VT_Api.Core.Items
         #endregion
 
         #region Methods
-
-        protected virtual void Reload(PlayerReloadEventArgs ev)
+        public virtual bool AllowRealod()
         {
-            if (ev.Item.Durabillity < Ammos && ev.Allow)
+            if (Item.Durabillity < Ammos)
             {
-                ushort ammo = Math.Min(ev.Player.AmmoBox[AmmoType], Ammos);
-                ev.Player.AmmoBox[AmmoType] -= ammo;
-                ev.Item.Durabillity += ammo;
+                ushort ammo = Math.Min(Holder.AmmoBox[AmmoType], Ammos);
+                Holder.AmmoBox[AmmoType] -= ammo;
+                Item.Durabillity += ammo;
             }
+            return false;
         }
-        protected virtual void Shoot(PlayerShootEventArgs ev) { }
 
-        protected virtual void Damage(PlayerDamageEventArgs ev)
+        public virtual bool AllowShoot(Vector3 targetPosition) => true;
+
+        public virtual bool AllowShoot(Vector3 targetPosition, Player target) => true;
+
+        public virtual bool AllowAttack(Player victim, ref float damage, DamageType type)
         {
-            ev.Damage = DamageAmmont;
+            damage = DamageAmmont;
+            return true;
         }
         #endregion
     }

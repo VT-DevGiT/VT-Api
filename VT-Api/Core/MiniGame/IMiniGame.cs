@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace VT_Api.Core.MiniGame
 {
-    public interface IMiniGame
+    internal interface IMiniGame
     {
         void Start();
         int GetMiniGameID();
