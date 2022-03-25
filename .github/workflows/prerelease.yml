@@ -7,7 +7,7 @@ on:
         - 'Exemple-Plugin/**'
         - '.gitignore'
         - 'LICENSE'
-        - 'README.md'
+        - '*.md'
     branches: [ main ]
 
 env:
