@@ -32,6 +32,27 @@ namespace VT_Api.Core.Roles
             Synapse.Api.Events.EventHandler.Get.Player.PlayerKeyPressEvent += OnPressKey;
         }
 
+        public bool IsVanilla(int roleID)
+            => roleID > (int)RoleID.None && roleID <= SynRoleManager.HighestRole;
+        
+
+        public int GetHierachy(int roleID)
+        {
+            if (IsVanilla(roleID))
+                return ((RoleType)roleID).GetHierachy();
+            var hierarchy = SynRoleManager.Get.GetCustomRole((int)roleID) as IHierarchy;
+            return hierarchy?.PowerHierachy ?? (int)Hierarchy.Default;
+        }
+
+        public int GetHierachy(RoleType role) => role switch
+        {
+            RoleType.NtfCaptain     => (int)Hierarchy.Captain,
+            RoleType.NtfSpecialist  => (int)Hierarchy.Specialist,
+            RoleType.NtfSergeant    => (int)Hierarchy.Sergeant,
+            RoleType.NtfPrivate     => (int)Hierarchy.Private,
+            _                       => (int)Hierarchy.Default,
+        };
+
         public int OldRoleID(Player player)
         {
             if (OldPlayerRole.ContainsKey(player))

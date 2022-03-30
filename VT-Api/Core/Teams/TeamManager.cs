@@ -8,8 +8,10 @@ using System.Linq;
 using System.Reflection;
 using VT_Api.Core.Enum;
 using SynManager = Synapse.Api.Teams.TeamManager;
+using SynRoleManger = Synapse.Api.Roles.RoleManager;
 using rnd = UnityEngine.Random;
 using VT_Api.Reflexion;
+using VT_Api.Core.Roles;
 
 namespace VT_Api.Core.Teams
 {
@@ -30,6 +32,14 @@ namespace VT_Api.Core.Teams
         {
             Synapse.Api.Events.EventHandler.Get.Round.TeamRespawnEvent += OnRespawn;
         }
+
+        public int GetTeam(int roleID)
+        {
+            if (RoleManager.Get.IsVanilla(roleID))
+                return (int)((RoleType)roleID).GetTeam();
+            else return SynRoleManger.Get.GetCustomRole((int)roleID).GetTeamID();
+        }
+
         public string GenerateNtfUnitName(byte maxNubmer = 20)
         {
             var combi = UnitNamingRule.UsedCombinations;

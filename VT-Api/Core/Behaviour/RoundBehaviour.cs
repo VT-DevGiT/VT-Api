@@ -6,14 +6,21 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using UnityEngine;
 
 namespace VT_Api.Core.Behaviour
 {
-    public abstract class RoundBehaviour : NetworkBehaviour
+    public abstract class RoundBehaviour : MonoBehaviour
     {
-        public RoundBehaviour(bool killAtRoundStart = true)
+        public RoundBehaviour()
         {
-            if (killAtRoundStart) Server.Get.Events.Round.RoundRestartEvent += Kill;
+            Server.Get.Events.Round.RoundRestartEvent += Kill;
+        }
+
+        public RoundBehaviour(bool killAtRoundStart)
+        {
+            if (killAtRoundStart) 
+                Server.Get.Events.Round.RoundRestartEvent += Kill;
         }
 
         public virtual void Kill()
@@ -24,7 +31,7 @@ namespace VT_Api.Core.Behaviour
             }
             catch (Exception e)
             {
-                Logger.Get.Error($"Vt-Event: RoundBehaviour kill faild!!\n{e}\nStackTrace:\n{e.StackTrace}");
+                Synapse.Api.Logger.Get.Error($"Vt-Event: RoundBehaviour kill faild!!\n{e}\nStackTrace:\n{e.StackTrace}");
             }
         }
     }

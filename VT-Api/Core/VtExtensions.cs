@@ -14,7 +14,7 @@ using VT_Api.Core;
 using VT_Api.Core.Enum;
 using VT_Api.Core.Items;
 using VT_Api.Core.Roles;
-
+using VT_Api.Core.Teams;
 using Server = Synapse.Server;
 using SynItemManager = Synapse.Api.Items.ItemManager;
 using SynLogger = Synapse.Api.Logger;
@@ -275,6 +275,18 @@ namespace VT_Api.Extension
              * PowerStatus
              */
 
+            // to
+
+            /*
+             * 
+             * NickName
+             * CustomInfo
+             * 
+             * 
+             * 
+             * 
+             */
+
             player.RemoveDisplayInfo(PlayerInfoArea.Role);
 
             if (player.Team == Team.MTF)
@@ -288,19 +300,32 @@ namespace VT_Api.Extension
             }
         }
 
-
         public static int GetTeam(this RoleID roleID)
-        {
-            if (roleID > RoleID.None && roleID <= (RoleID)SynRoleManager.HighestRole)
-                 return (int)((RoleType)roleID).GetTeam();
-            else return SynRoleManager.Get.GetCustomRole((int)roleID).GetTeamID();
-        }
+            => TeamManager.Get.GetTeam((int)roleID);
+
+        public static int GetHierachy(this RoleType role)
+            => RoleManager.Get.GetHierachy(role);
+
+        public static int GetHierachy(this RoleID roleID)
+            => RoleManager.Get.GetHierachy((int)roleID);
+
+        public static bool IsVanilla(this RoleID roleID)
+            => roleID > RoleID.None && roleID <= (RoleID)SynRoleManager.HighestRole;
 
         public static bool TryGetScript(this SynapseItem item, out IItem script)
         {
             item.ItemData.TryGetValue(VtItemManager.KeySynapseItemData, out var value);
             script = value as IItem;
             return script != null;
+        }
+
+        public static Dictionary<AmmoType, ushort> GetAmmos(this Player.PlayerAmmoBox ammoBox)
+        {
+            var Ammos = new Dictionary<AmmoType, ushort>();
+            var array = (AmmoType[])System.Enum.GetValues(typeof(AmmoType));
+            foreach (AmmoType ammoType in array)
+                Ammos.Add(ammoType, ammoBox[ammoType]);
+            return Ammos;
         }
 
         public static IItem GetScript(this SynapseItem item)
