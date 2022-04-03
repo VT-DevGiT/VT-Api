@@ -20,31 +20,23 @@ namespace VT_Api.Core
             var observer = NetworkWriterPool.GetWriter();
 
             // Get behavior and index of it
-            var behaviorOwner = player.Hub.networkIdentity;
-            var behaviourIndex = Array.FindIndex(behaviorOwner.NetworkBehaviours, 0, behaviorOwner.NetworkBehaviours.Length, b => b.GetType() == typeof(CharacterClassManager));
-            if (behaviourIndex != -1)
-                throw new NullReferenceException("FakeRole faild ! Player ave no CharacterClassManager !");
-
-            var behaviour = behaviorOwner.NetworkBehaviours[behaviourIndex];
+            GetBehaviour<CharacterClassManager>(player.Hub.networkIdentity, out var behaviourIndex, out var behaviour);
 
             // Writ
             owner.WriteByte((byte)behaviourIndex);
 
             var positionRef = owner.Position;
             owner.WriteInt32(0);
-            var position32 = owner.Position;
+            var positionData = owner.Position;
 
             behaviour.SerializeObjectsDelta(owner);
 
-            // Write custom syncvar
+            // Write var
             owner.WriteUInt64(bytecodes);
             owner.WriteSByte((sbyte)info);
 
             // Write syncdata position data
-            int positionEnd = owner.Position;
-            owner.Position = positionRef;
-            owner.WriteInt32(positionEnd - position32);
-            owner.Position = positionEnd;
+            WritePostion(owner, positionRef, positionData);
 
             // Copy owner to observer
             if (behaviour.syncMode != SyncMode.Observers)
@@ -54,7 +46,50 @@ namespace VT_Api.Core
             }
 
             //send
-            foreach (var client in players)
+            SendAndRecycle(owner, observer, players, player);
+        }
+
+        public void SendDisplayInfo(Player player, string info, List<Player> players)
+        {
+            const byte bytecodes = 2;
+
+            var owner = NetworkWriterPool.GetWriter();
+            var observer = NetworkWriterPool.GetWriter();
+            
+            // Get behavior and index of it
+            GetBehaviour<NicknameSync>(player.Hub.networkIdentity, out var behaviourIndex, out var behaviour);
+
+            // Writ
+            owner.WriteByte((byte)behaviourIndex);
+
+            var positionRef = owner.Position;
+            owner.WriteInt32(0);
+            var positionData = owner.Position;
+
+            behaviour.SerializeObjectsDelta(owner);
+
+            // Write var
+            owner.WriteUInt64(bytecodes);
+            owner.WriteString(info);
+
+            // Write syncdata position data
+            WritePostion(owner, positionRef, positionData);
+
+            // Copy owner to observer
+            if (behaviour.syncMode != SyncMode.Observers)
+            {
+                var arraySegment = owner.ToArraySegment();
+                observer.WriteBytes(arraySegment.Array, positionRef, owner.Position - positionRef);
+            }
+
+            //send
+            SendAndRecycle(owner, observer, players, player); 
+        }
+
+        public void SendAndRecycle(PooledNetworkWriter owner, PooledNetworkWriter observer, List<Player> receivers, Player player)
+        {
+            //send
+            foreach (var client in receivers)
                 client.Hub.networkIdentity.connectionToClient.Send(new UpdateVarsMessage() { netId = player.Hub.networkIdentity.netId, payload = owner.ToArraySegment() });
 
             //Free
@@ -62,55 +97,23 @@ namespace VT_Api.Core
             NetworkWriterPool.Recycle(observer);
         }
 
-        public void SendRole(Player player, string info, List<Player> players)
+        public void GetBehaviour<T>(NetworkIdentity networkIdentity, out int behaviourIndex, out NetworkBehaviour behaviour)
         {
-
-            const byte bytecodes = 2;
-
-            var owner = NetworkWriterPool.GetWriter();
-            var observer = NetworkWriterPool.GetWriter();
-
             // Get behavior and index of it
-            var behaviorOwner = player.Hub.networkIdentity;
-            var behaviourIndex = Array.FindIndex(behaviorOwner.NetworkBehaviours, 0, behaviorOwner.NetworkBehaviours.Length, b => b.GetType() == typeof(NicknameSync));
+            var behaviourOwner = networkIdentity;
+            behaviourIndex = Array.FindIndex(behaviourOwner.NetworkBehaviours, 0, behaviourOwner.NetworkBehaviours.Length, b => b.GetType() == typeof(T));
             if (behaviourIndex != -1)
-                throw new NullReferenceException("FakeRole faild ! Player ave no CharacterClassManager !");
+                throw new NullReferenceException($"Get behaviour faild ! Player ave no {nameof(T)} !");
 
-            var behaviour = behaviorOwner.NetworkBehaviours[behaviourIndex];
+            behaviour = behaviourOwner.NetworkBehaviours[behaviourIndex];
+        }
 
-            // Writ
-            owner.WriteByte((byte)behaviourIndex);
-
-            var positionRef = owner.Position;
-            owner.WriteInt32(0);
-            var position32 = owner.Position;
-
-            behaviour.SerializeObjectsDelta(owner);
-
-            // Write custom syncvar
-            owner.WriteUInt64(bytecodes);
-            owner.WriteString(info);
-
-            // Write syncdata position data
+        public void WritePostion(PooledNetworkWriter owner, int positionRef, int positionData)
+        {
             int positionEnd = owner.Position;
             owner.Position = positionRef;
-            owner.WriteInt32(positionEnd - position32);
+            owner.WriteInt32(positionEnd - positionData);
             owner.Position = positionEnd;
-
-            // Copy owner to observer
-            if (behaviour.syncMode != SyncMode.Observers)
-            {
-                var arraySegment = owner.ToArraySegment();
-                observer.WriteBytes(arraySegment.Array, positionRef, owner.Position - positionRef);
-            }
-
-            //send
-            foreach (var client in players)
-                client.Hub.networkIdentity.connectionToClient.Send(new UpdateVarsMessage() { netId = player.Hub.networkIdentity.netId, payload = owner.ToArraySegment() });
-
-            //Free
-            NetworkWriterPool.Recycle(owner);
-            NetworkWriterPool.Recycle(observer);
         }
     }
 }

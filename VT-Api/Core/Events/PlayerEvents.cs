@@ -13,9 +13,22 @@ namespace VT_Api.Core.Events
         public event Synapse.Api.Events.EventHandler.OnSynapseEvent<PlayerDamagePostEventArgs> PlayerDamagePostEvent;
         public event Synapse.Api.Events.EventHandler.OnSynapseEvent<PlayerDestroyEventArgs> PlayerUnloadEvent;
         public event Synapse.Api.Events.EventHandler.OnSynapseEvent<PlayerSpeakIntercomEventEventArgs> PlayerSpeakIntercomEvent;
+        public event Synapse.Api.Events.EventHandler.OnSynapseEvent<PlayerSetClassAdvEventArgs> PlayerSetClassAdvEvent;
         #endregion
 
         #region Invoke
+
+        internal void InvokePlayerSetClassAdvEvent(Player player, RoleType role)
+        {
+            var ev = new PlayerSetClassAdvEventArgs
+            {
+                Role = role,
+                Player = player
+            };
+
+            PlayerSetClassAdvEvent.Invoke(ev);
+        }
+
         internal void InvokePlayerSpeakIntercomEvent(Player player, ref bool allow)
         {
             var ev = new PlayerSpeakIntercomEventEventArgs

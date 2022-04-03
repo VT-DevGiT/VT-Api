@@ -23,9 +23,7 @@ namespace VT_Api.Patches.VtEvent.MapPaches
                     return false;
                 if (disabler != null)
                 {
-                    bool flag = true;
-                    if (__instance.timeToDetonation <= 10.0 || __instance._isLocked)
-                        flag = false;
+                    bool flag = __instance.timeToDetonation > 10.0 && !__instance._isLocked;
 
                     VtController.Get.Events.Map.InvokeWarheadStopEvent(disabler.GetPlayer(), ref flag);
                     if (!flag)
