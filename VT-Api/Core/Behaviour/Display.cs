@@ -200,6 +200,9 @@ namespace VT_Api.Core.Behaviour
 
         public void Refresh(List<Player> players) // Yes is a copy past of Refresh but maby for futur update add diffenrent builder for each player
         {
+            if (Player.RankColor == "RAINBOW")
+                enabled = true;
+
             string display = string.Empty;
             display += BuildNickName();
             display += BuildBadge();
