@@ -147,7 +147,7 @@ namespace VT_Api.Core.Command
             var result = new GeneratedMainCommand
             {
                 OnCommand = command.Execute,
-                Name = cmdInf.Name,
+                Name = cmdInf.Name.ToLower(),
                 Aliases = cmdInf.Aliases ?? new string[] { },
                 Permission = cmdInf.Permission ?? "",
                 Usage = cmdInf.Usage,

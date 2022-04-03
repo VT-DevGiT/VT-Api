@@ -37,8 +37,8 @@ namespace VT_Api.Core.Command
             return new GeneratedSubCommand
             {
                 OnCommand = command.Execute,
-                Name = cmdInf.Name,
-                MainCommandName = cmdInf.MainCommandName,
+                Name = cmdInf.Name.ToLower(),
+                MainCommandName = cmdInf.MainCommandName.ToLower(),
                 Aliases = cmdInf.Aliases ?? new string[] { },
                 Permission = cmdInf.Permission ?? "",
                 Usage = cmdInf.Usage,
