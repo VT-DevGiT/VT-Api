@@ -42,12 +42,10 @@ namespace VT_Api.Core.Command
         
         public CommandResult Execute(CommandContext context)
         {
-            if (context.Arguments.Any() || string.IsNullOrEmpty(context.Arguments.Array[0]) || context.Arguments.Array[0] == "help")
+            if (!context.Arguments.Any() || string.IsNullOrEmpty(context.Arguments.Array[0]) || context.Arguments.Array[0] == "help")
                 return ShowHelp(context);
 
             var result = new CommandResult();
-            var subCommandName = context.Arguments.Array[0];
-            context.Arguments = context.Arguments.Segment(1);
 
             if (!Commands.TryGetValue(context.Platform, out var commands))
             {
@@ -56,7 +54,10 @@ namespace VT_Api.Core.Command
                 return result;
             }
 
+            var subCommandName = context.Arguments.Array[0];
+            context.Arguments = context.Arguments.Segment(1);
             var subCommand = commands.FirstOrDefault(c => c.Name == subCommandName);
+
             if (subCommand == null)
                 subCommand = commands.FirstOrDefault(c => c.Aliases.Contains(subCommandName));
             
