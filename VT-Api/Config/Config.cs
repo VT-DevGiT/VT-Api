@@ -23,12 +23,19 @@ namespace VT_Api.Config
             VtTranslation.AddTranslation(new VtApiTranslation
             {
                 NoPower = "Du hast Keine Macht",
-                NotANumber = "Das Argument muss eine Zahl sein. Beispiel : 1"
+                NotANumber = "Das Argument muss eine Zahl sein. Beispiel : 1",
+                RankOver = "GIB ANWEISUNGEN",
+                RankSame = "GLEICHER RANG",
+                RankUnder = "FOLGE ANWEISUNGEN"
             }, "GERMAN");
             VtTranslation.AddTranslation(new VtApiTranslation
             {
                 NoPower = "Tu n'as aucun pouvoir",
-                NotANumber = "L'argument doit être un nombre. Exemple 1"
+                NotANumber = "L'argument doit être un nombre. Exemple : 1",
+                RankOver = "VOUS POUVEZ LUI DONNER DES ORDRES",
+                RankSame = "MÊME NIVEAU D'ACCRÉDITATION",
+                RankUnder = "SUIVEZ SES ORDRES"
+
             }, "FRENCH");
 
             VtConfiguration = new VtApiConfiguration();

@@ -73,8 +73,13 @@ namespace VT_Api.Core.Command
                 return result;
 
             var subresult = subCommand.Execute(context);
-            
-            result.Message += "\n" + subresult.Message;
+
+            if (!string.IsNullOrEmpty(result.Message))
+                result.Message += "\n";
+            else
+                result.Message = "";
+
+            result.Message += subresult.Message;
             result.State = subresult.State;
             
             return result;

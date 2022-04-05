@@ -11,9 +11,8 @@
     <AssemblyName>VT-Api</AssemblyName>
     <TargetFrameworkVersion>v4.8</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
-    <LangVersion>8</LangVersion>
+    <LangVersion>9</LangVersion>
     <Deterministic>true</Deterministic>
-    <TargetFrameworkProfile />
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -42,16 +41,15 @@
     <Optimize>true</Optimize>
     <DebugType>pdbonly</DebugType>
     <PlatformTarget>AnyCPU</PlatformTarget>
-    <LangVersion>7.3</LangVersion>
+    <WarningLevel>4</WarningLevel>
     <ErrorReport>prompt</ErrorReport>
-    <NoWarn>
-    </NoWarn>
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="Config\Config.cs" />
     <Compile Include="Config\VtApiConfiguration.cs" />
     <Compile Include="Config\VtApiTranslation.cs" />
     <Compile Include="Core\Behaviour\Display.cs" />
+    <Compile Include="Core\Enum\Hierarchy.cs" />
     <Compile Include="Core\Events\EventArguments\ServerEventArgs.cs" />
     <Compile Include="Core\ISengleton.cs" />
     <Compile Include="Core\Items\IWeapon.cs" />
@@ -99,6 +97,7 @@
     <Compile Include="Core\Plugin\IVtPlugin.cs" />
     <Compile Include="Core\Plugin\VtAbstractPlugins.cs" />
     <Compile Include="Core\Roles\AbstractRole.cs" />
+    <Compile Include="Core\Roles\IHierarchy.cs" />
     <Compile Include="Core\Roles\IScpDeathAnnonce.cs" />
     <Compile Include="Core\Roles\IUtrRole.cs" />
     <Compile Include="Core\Roles\IVtRole.cs" />
@@ -130,6 +129,7 @@
     <Compile Include="Patches\VtEvent\MapPaches\WarHeadActivatingPatch.cs" />
     <Compile Include="Patches\VtEvent\PlayerPatches\DestroyHubPatch.cs" />
     <Compile Include="Patches\VtEvent\PlayerPatches\IntercomSpeakPatch.cs" />
+    <Compile Include="Patches\VtEvent\PlayerPatches\SetClassPatch.cs" />
     <Compile Include="Patches\VtEvent\PlayerPatches\SynapseDamagePatch.cs" />
     <Compile Include="Patches\VtEvent\ScpPatches\Scp106\Scp106UsePortalPatch.cs" />
     <Compile Include="Patches\VtPatch\SynapseItemPatch.cs" />

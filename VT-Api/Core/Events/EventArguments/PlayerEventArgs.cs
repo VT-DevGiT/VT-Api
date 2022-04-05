@@ -26,8 +26,15 @@ namespace VT_Api.Core.Events.EventArguments
 
     public class PlayerSpeakIntercomEventEventArgs : Synapse.Api.Events.EventHandler.ISynapseEventArgs
     {
-        public Player Player { get; set; }
+        public Player Player { get; internal set; }
         public bool Allow { get; set; }
+    }
+
+    public class PlayerSetClassAdvEventArgs : Synapse.Api.Events.EventHandler.ISynapseEventArgs
+    {
+        public Player Player { get; internal set; }
+
+        public RoleType Role { get; internal set; }
     }
 
     public class PlayerSetClassEventArgs : Synapse.Api.Events.EventHandler.ISynapseEventArgs

@@ -21,7 +21,7 @@ namespace VT_Api.Core.Behaviour
         #region Constructor & Destructor
         public RepeatingBehaviour(bool killAtRoundStart) : base(killAtRoundStart) { }
 
-        public RepeatingBehaviour() : base(true) { }
+        public RepeatingBehaviour() : base() { }
         #endregion
 
         #region Methods
