@@ -1,6 +1,7 @@
 ﻿using Synapse.Api.Items;
 using System.Linq;
 using VT_Api.Extension;
+using UnityEngine;
 
 using SyanpseEventHandler = Synapse.Api.Events.EventHandler;
 
@@ -68,7 +69,7 @@ namespace VT_Api.Core.Events
                 if (player != null && player.ItemInHand.IsDefined())
                 {
                     player.ItemInHand = SynapseItem.None;
-                    MEC.Timing.CallDelayed(0.1f, () => 
+                    MEC.Timing.CallDelayed(0.1f, () =>
                     {
                         if (player != null)
                             player.OverWatch = true;
@@ -84,7 +85,7 @@ namespace VT_Api.Core.Events
             {
                 case KeyCode.Alpha1:
 
-                    break;
+                break;
             }
         }
 #endif

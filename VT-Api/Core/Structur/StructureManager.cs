@@ -10,7 +10,13 @@ namespace VT_Api.Core.Structur
 {
     internal class StructureManager
     {
-        // TODO : do som stuff here 
+        internal StructureManager() { }
+
+        internal void init()
+        {
+
+        }
+        // TODO : do som stuff here
 
     }
 }
