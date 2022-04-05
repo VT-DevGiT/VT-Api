@@ -28,9 +28,6 @@ namespace VT_Api.Core.Plugin
         /// <summary>
         /// Ignore Only this class for the AutoRegister
         /// </summary>
-        public class Ignore : Attribute
-        {
-
-        }
+        public class Ignore : Attribute { }
     }
 }

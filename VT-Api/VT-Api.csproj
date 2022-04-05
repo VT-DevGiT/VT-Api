@@ -85,7 +85,7 @@
     <Compile Include="Core\MiniGame\IMiniGame.cs" />
     <Compile Include="Core\MiniGame\MiniGameInformation.cs" />
     <Compile Include="Core\NetworkLiar.cs" />
-    <Compile Include="Core\Plugin\AbstractUpdateHandler.cs" />
+    <Compile Include="Core\Plugin\Updater\AbstractUpdateHandler.cs" />
     <Compile Include="Core\Plugin\AutoRegisterManager.cs" />
     <Compile Include="Core\Items\AbstractItem.cs" />
     <Compile Include="Core\Items\ItemManager.cs" />
@@ -96,9 +96,11 @@
     <Compile Include="Core\Plugin\AutoRegisterProcess\MiniGameProcess.cs" />
     <Compile Include="Core\Plugin\AutoRegisterProcess\RoleProcess.cs" />
     <Compile Include="Core\Plugin\AutoRegisterProcess\TeamProcess.cs" />
-    <Compile Include="Core\Plugin\IUpdateHandler.cs" />
+    <Compile Include="Core\Plugin\Updater\IUpdateHandler.cs" />
     <Compile Include="Core\Plugin\IVtPlugin.cs" />
-    <Compile Include="Core\Plugin\Version.cs" />
+    <Compile Include="Core\Plugin\Updater\Release.cs" />
+    <Compile Include="Core\Plugin\Updater\ReleaseAsset.cs" />
+    <Compile Include="Core\Plugin\Updater\Version.cs" />
     <Compile Include="Core\Plugin\VtAbstractPlugins.cs" />
     <Compile Include="Core\Roles\AbstractRole.cs" />
     <Compile Include="Core\Roles\IHierarchy.cs" />
@@ -176,6 +178,7 @@
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Runtime" />
+    <Reference Include="System.Runtime.Serialization" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="Microsoft.CSharp" />
@@ -199,6 +202,7 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <None Include="app.config" />
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>

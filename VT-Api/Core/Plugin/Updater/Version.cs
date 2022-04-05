@@ -1,6 +1,6 @@
 ﻿using System.Text.RegularExpressions;
 
-namespace VT_Api.Core.Plugin
+namespace VT_Api.Core.Plugin.Updater
 {
     public struct Version
     {
