@@ -32,7 +32,7 @@ namespace VT_Api.Patches.VtEvent.PlayerPatches
                 }
                 else
                 {
-                    if (!(Intercom.host.Networkspeaker == __instance.gameObject))
+                    if (Intercom.host.Networkspeaker != __instance.gameObject)
                         return false;
 
                     Intercom.host.RequestTransmission(null);

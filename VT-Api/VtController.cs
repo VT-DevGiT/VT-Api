@@ -15,6 +15,7 @@ using VT_Api.Core.Teams;
 using VT_Api.Core.Items;
 
 using EventHandler = VT_Api.Core.Events.EventHandler;
+using VT_Api.Core.Behaviour;
 
 public class VtController
 {
@@ -26,11 +27,12 @@ public class VtController
     public RoleManager Role { get => Singleton<RoleManager>.Instance; }
     public TeamManager Team { get => Singleton<TeamManager>.Instance; }
     public EventHandler Events { get => Singleton<EventHandler>.Instance; }
-    public MapActionManager MapAction { get => Singleton<MapActionManager>.Instance; }
+    public MapAndRoundManger MapAction { get => Singleton<MapAndRoundManger>.Instance; }
     public NetworkLiar NetworkLiar { get => Singleton<NetworkLiar>.Instance; }
     public ItemManager Item { get => Singleton<ItemManager>.Instance; }
     internal CommandHandler Commands { get => Singleton<CommandHandler>.Instance; } // nothing  public (yet)
     public Config Configs { get => Singleton<Config>.Instance; }
+    internal ServerStopTrap StopTrap { get => SynapseController.Server.Host.gameObject.GetComponent<ServerStopTrap>(); }
 
     private static bool _enabled = false;
     #endregion
@@ -53,6 +55,8 @@ public class VtController
         _enabled = true;
 
         Get = new VtController();
+
+        SynapseController.Server.Host.gameObject.AddComponent<ServerStopTrap>();
 
         VtController.Get.LogMessage();
         VtController.Get.AplidePatch();

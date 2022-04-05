@@ -119,9 +119,34 @@ namespace VT_Api.Core.Command
                 string aliases = "{ " + string.Join(", ", command.Aliases) + " }";
 
                 if (string.IsNullOrWhiteSpace(command.Permission))
-                    result.Message = $"\n{command.Name}\n    - Description: {command.Description}\n    - Usage: {command.Usage}\n    - Platforms: {platforms}\n    - Aliases: {aliases}";
+                {
+                    if (command.Arguments.Any())
+                    {
+                        var arguments = "";
+                        foreach (var arg in command.Arguments)
+                        {
+                            arguments += $"\n    {arg}";
+                        }
+                        result.Message = $"\n{command.Name}\n    - Description: {command.Description}\n    - Usage: {command.Usage}\n    - Platforms: {platforms}\n    - Aliases: {aliases}\n    - Argument:{arguments}";
+                    }
+                    else
+                        result.Message = $"\n{command.Name}\n    - Description: {command.Description}\n    - Usage: {command.Usage}\n    - Platforms: {platforms}\n    - Aliases: {aliases}";
+
+                }
                 else
-                    result.Message = $"\n{command.Name}\n    - Permission: {command.Permission}\n    - Description: {command.Description}\n    - Usage: {command.Usage}\n    - Platforms: {platforms}\n    - Aliases: {aliases}";
+                {
+                    if (command.Arguments.Any())
+                    {
+                        var arguments = "";
+                        foreach (var arg in command.Arguments)
+                        {
+                            arguments += $"\n    {arg}";
+                        }
+                        result.Message = $"\n{command.Name}\n    - Description: {command.Description}\n    - Description: {command.Description}\n    - Usage: {command.Usage}\n    - Platforms: {platforms}\n    - Aliases: {aliases}\n    - Argument:{arguments}";
+                    }
+                    else
+                        result.Message = $"\n{command.Name}\n    - Permission: {command.Permission}\n    - Description: {command.Description}\n    - Usage: {command.Usage}\n    - Platforms: {platforms}\n    - Aliases: {aliases}";
+                }
 
                 result.State = CommandResultState.Ok;
                 return result;

@@ -11,7 +11,7 @@ namespace VT_Api.Core.Plugin.AutoRegisterProcess
     {
         public void Process(PluginLoadContext context)
         {
-            if (!(context.Plugin is IVtPlugin vtPlugin && vtPlugin.AutoRegister)) return;
+            if (context.Plugin is not IVtPlugin vtPlugin || !vtPlugin.AutoRegister) return;
 
             foreach (var roleType in context.Classes)
             {

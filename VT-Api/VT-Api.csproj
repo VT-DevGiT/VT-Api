@@ -49,11 +49,12 @@
     <Compile Include="Config\VtApiConfiguration.cs" />
     <Compile Include="Config\VtApiTranslation.cs" />
     <Compile Include="Core\Behaviour\Display.cs" />
+    <Compile Include="Core\Behaviour\ServerStopTrap.cs" />
     <Compile Include="Core\Enum\Hierarchy.cs" />
     <Compile Include="Core\Events\EventArguments\ServerEventArgs.cs" />
     <Compile Include="Core\ISengleton.cs" />
     <Compile Include="Core\Items\IWeapon.cs" />
-    <Compile Include="Core\MapActionManager.cs" />
+    <Compile Include="Core\MapAndRoundManger.cs" />
     <Compile Include="Core\Behaviour\RepeatingBehaviour.cs" />
     <Compile Include="Core\Behaviour\RoundBehaviour.cs" />
     <Compile Include="Core\Command\CommandHandler.cs" />
@@ -84,6 +85,7 @@
     <Compile Include="Core\MiniGame\IMiniGame.cs" />
     <Compile Include="Core\MiniGame\MiniGameInformation.cs" />
     <Compile Include="Core\NetworkLiar.cs" />
+    <Compile Include="Core\Plugin\AbstractUpdateHandler.cs" />
     <Compile Include="Core\Plugin\AutoRegisterManager.cs" />
     <Compile Include="Core\Items\AbstractItem.cs" />
     <Compile Include="Core\Items\ItemManager.cs" />
@@ -94,7 +96,9 @@
     <Compile Include="Core\Plugin\AutoRegisterProcess\MiniGameProcess.cs" />
     <Compile Include="Core\Plugin\AutoRegisterProcess\RoleProcess.cs" />
     <Compile Include="Core\Plugin\AutoRegisterProcess\TeamProcess.cs" />
+    <Compile Include="Core\Plugin\IUpdateHandler.cs" />
     <Compile Include="Core\Plugin\IVtPlugin.cs" />
+    <Compile Include="Core\Plugin\Version.cs" />
     <Compile Include="Core\Plugin\VtAbstractPlugins.cs" />
     <Compile Include="Core\Roles\AbstractRole.cs" />
     <Compile Include="Core\Roles\IHierarchy.cs" />
@@ -114,6 +118,7 @@
     <Compile Include="Exceptions\VtCommandsExpetions.cs" />
     <Compile Include="Exceptions\VtInitExceptions.cs" />
     <Compile Include="Exceptions\VtMiniGameExceptions.cs" />
+    <Compile Include="Exceptions\VtUnknownVersionException.cs" />
     <Compile Include="Patches\VtEvent\ItemPatches\ChangeIntoGrenadePatch.cs" />
     <Compile Include="Patches\VtEvent\ItemPatches\CollisionItemPatch.cs" />
     <Compile Include="Patches\VtEvent\ItemPatches\ExplosionGrenadePatches.cs" />

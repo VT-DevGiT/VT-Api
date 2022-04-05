@@ -39,7 +39,7 @@ namespace VT_Api.Extension
             => VtController.Get.MapAction.StartAirBombardement();
 
         public static void StopAirBombardement()
-            => MapActionManager.Get.isAirBombCurrently = false;
+            => MapAndRoundManger.Get.isAirBombCurrently = false;
 
         public static void ResetRoomsLightColor(this Map _)
             => VtController.Get.MapAction.ResetRoomsLightColor();
@@ -52,7 +52,7 @@ namespace VT_Api.Extension
 
         public static List<Player> GetDeadPlayersInRangeOfPlayer(this Player player, float range)
         {
-            var players = MapActionManager.Get.GetRagdollOwners(player, range);
+            var players = MapAndRoundManger.Get.GetRagdollOwners(player, range);
 
             players.RemoveAll(p => p.Team == Team.RIP && !p.OverWatch);
             
@@ -63,7 +63,7 @@ namespace VT_Api.Extension
 
         public static Player GetDeadPlayerInRangeOfPlayer(this Player player, float range)
         {
-            var players = MapActionManager.Get.GetRagdollOwners(player, range);
+            var players = MapAndRoundManger.Get.GetRagdollOwners(player, range);
 
             players.RemoveAll(p => p.Team == Team.RIP && !p.OverWatch);
 

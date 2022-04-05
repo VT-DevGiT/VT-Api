@@ -40,7 +40,7 @@ namespace VT_Api.Patches.VtEvent.MapPaches
                         return false;
                 }
 
-                if (!(ipb is AmmoPickup ammoPickup)) // change this in C#9 
+                if (ipb is not AmmoPickup ammoPickup) // change this in C#9 
                     return false;
             
                 var change = 0;
@@ -122,7 +122,7 @@ namespace VT_Api.Patches.VtEvent.MapPaches
                         newItem = SynapseItem.None;
                     }
 
-                    if (!(ipb is FirearmPickup oldFirearmPickup))
+                    if (ipb is not FirearmPickup oldFirearmPickup)
                         throw new InvalidOperationException("FirearmItemProcessor can't be used for non-firearm items, such as " + newItemBase?.ItemTypeId ?? "Unknow");
 
 

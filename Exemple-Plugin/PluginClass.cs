@@ -1,15 +1,13 @@
-﻿using Synapse;
-using Synapse.Api.Plugin;
-using System;
+﻿using Synapse.Api.Plugin;
 using VT_Api.Core.Plugin;
 
 /* 
- *      Original Example by GrafDimenzio
+ *     Original Example by GrafDimenzio
  * 
  * https://github.com/SynapseSL/Example-Plugin
  * 
  * 
- * the plugin has been modified to use the VT-API
+ * The plugin has been modified to use the VT-API
  */
 
 namespace Exemple_Plugin
@@ -57,7 +55,7 @@ namespace Exemple_Plugin
         }
 
         //This Method can be use for plugins which should close connections or stop a task, it was call when the serveur shut down
-        public override void Unload(object sender, EventArgs e)
+        public override void Unload()
         {
 
         }
