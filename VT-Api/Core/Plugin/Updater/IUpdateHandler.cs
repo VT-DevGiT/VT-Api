@@ -1,9 +1,5 @@
 ﻿using Synapse.Api.Plugin;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using System.Net.Http;
 
 namespace VT_Api.Core.Plugin.Updater
 {
@@ -12,10 +8,12 @@ namespace VT_Api.Core.Plugin.Updater
     {
         string RegexExpressionVersion { get; }
 
+
+        void DeletetTempDirectory();
         Version GetPluginVersion();
-        Version GetGithubVersion(out Release release, bool ignorePrerealase = true);
+        Version GetGithubVersion(HttpClient client, out Release release, bool ignorePrerealase = true);
         bool NeedToUpdate(Version PluginVersion, Version GitVersion);
-        bool TryDownload(Release release, string name);
+        bool TryDownload(HttpClient client, Release release, string name, out string filePath);
         void Replace();
     }
 }
