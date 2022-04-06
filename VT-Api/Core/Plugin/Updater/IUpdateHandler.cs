@@ -14,6 +14,6 @@ namespace VT_Api.Core.Plugin.Updater
         Version GetGithubVersion(HttpClient client, out Release release, bool ignorePrerealase = true);
         bool NeedToUpdate(Version PluginVersion, Version GitVersion);
         bool TryDownload(HttpClient client, Release release, string name, out string filePath);
-        void Replace();
+        void Replace(string newPluginPath);
     }
 }

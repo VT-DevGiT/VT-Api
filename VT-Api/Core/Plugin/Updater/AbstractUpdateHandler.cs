@@ -8,13 +8,13 @@ using System.Net.Http;
 using System.Threading.Tasks;
 using Utf8Json;
 using VT_Api.Exceptions;
+using VT_Api.Reflexion;
 
 namespace VT_Api.Core.Plugin.Updater
 {
     public abstract class AbstractUpdateHandler<T> : IUpdateHandler<T>
         where T : IPlugin
     {
-
         #region Properties & Variable
         public const string Unknow = "Unknown";
         public const string GitHubPage = "https://api.github.com/repositories/{0}/releases/?per_page=20&page=1";
@@ -38,6 +38,49 @@ namespace VT_Api.Core.Plugin.Updater
             }
         }
 
+        private string _oldDllDirectory;
+        public string OldDllDirectory
+        {
+            get
+            {
+                if (!Directory.Exists(_oldDllDirectory))
+                {
+                    if (!Directory.Exists(_tempDirectory))
+                        Directory.CreateDirectory(_tempDirectory);
+                    
+                    Directory.CreateDirectory(_oldDllDirectory);
+                }
+
+                return _oldDllDirectory;
+            }
+            private set
+            {
+                _oldDllDirectory = value;
+            }
+        }
+
+
+        private string _DownloadDirectory;
+        public string DownloadDirectory
+        {
+            get
+            {
+                if (!Directory.Exists(_DownloadDirectory))
+                {
+                    if (!Directory.Exists(_tempDirectory))
+                        Directory.CreateDirectory(_tempDirectory);
+
+                    Directory.CreateDirectory(_DownloadDirectory);
+                }
+
+                return _DownloadDirectory;
+            }
+            private set
+            {
+                _DownloadDirectory = value;
+            }
+        }
+
         public abstract long GithubID { get; }
         public virtual string RegexExpressionVersion { get; } = DefaultsRegexVersion;
         #endregion
@@ -45,7 +88,9 @@ namespace VT_Api.Core.Plugin.Updater
         #region Constructor & Destructor
         public AbstractUpdateHandler()
         {
-            TempDirectory = Path.Combine(TempDirectory, "temp");
+            TempDirectory = Path.Combine(Server.Get.Files.SynapseDirectory, "temp");
+            DownloadDirectory = Path.Combine(_tempDirectory, "download");
+            OldDllDirectory = Path.Combine(_tempDirectory, "old");
         }
         #endregion
 
@@ -71,7 +116,7 @@ namespace VT_Api.Core.Plugin.Updater
             using var reponse = client.GetAsync(asset.BrowserDownloadUrl).ConfigureAwait(false).GetAwaiter().GetResult();
             using var stream = reponse.Content.ReadAsStreamAsync().ConfigureAwait(false).GetAwaiter().GetResult();
 
-            filePath = Path.Combine(TempDirectory, asset.Name);
+            filePath = Path.Combine(DownloadDirectory, asset.Name);
             using var fileStream = new FileStream(filePath, FileMode.Create, FileAccess.Write, FileShare.None);
             stream.CopyToAsync(fileStream).ConfigureAwait(false).GetAwaiter().GetResult();
 
@@ -84,9 +129,9 @@ namespace VT_Api.Core.Plugin.Updater
             if (info.Version == Unknow)
             {
                 if (info.Name == Unknow)
-                    throw new VtUnknownVersionException($"Vt-AutoUppdate : The plugin in the assembly {typeof(T).Assembly.GetName()} did not set its version", typeof(T).Assembly.FullName);
+                    throw new VtUnknownVersionException($"Vt-AutoUppdate : The plugin in the assembly {typeof(T).Assembly.GetName().Name} did not set its version", typeof(T).Assembly.FullName);
                 else
-                    throw new VtUnknownVersionException($"Vt-AutoUppdate : The plugin {info.Name} in the assembly {typeof(T).Assembly.GetName()} did not set its version", typeof(T).Assembly.FullName, info.Name);
+                    throw new VtUnknownVersionException($"Vt-AutoUppdate : The plugin {info.Name} in the assembly {typeof(T).Assembly.GetName().Name} did not set its version", typeof(T).Assembly.FullName, info.Name);
             }
             return new Version(info.Version, RegexExpressionVersion);
         }
@@ -126,9 +171,24 @@ namespace VT_Api.Core.Plugin.Updater
         public virtual bool NeedToUpdate(Version PluginVersion, Version GitVersion)
             => PluginVersion < GitVersion;
             
-        public virtual void Replace()
+        public virtual void Replace(string newPluginPath)
         {
+            var plugins = SynapseController.PluginLoader.GetFieldValueOrPerties<List<IPlugin>>("_plugins");
+            var plugin  = plugins.First(p => p.GetType() == typeof(T));
 
+            if (plugin == null)
+                throw new Exception($"Update Plugin of {typeof(T).Assembly.GetName().Name} but the instnace of the plugin is not found !");
+
+
+            var pluginName = typeof(T).Assembly.GetName().Name + ".dll";
+            var pluginPath = Path.Combine(plugin.PluginDirectory, pluginName);
+            var pluginNewPath = Path.Combine(OldDllDirectory, pluginName);
+
+            var newPluginName = Path.GetFileName(pluginPath);
+            var newPluginNewPath = Path.Combine(plugin.PluginDirectory, newPluginName);
+
+            File.Move(pluginPath, pluginNewPath);
+            File.Move(newPluginPath, newPluginNewPath);
         }
         #endregion
     }
