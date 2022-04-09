@@ -1,13 +1,13 @@
-﻿using Synapse.Api.Items;
+﻿using Synapse.Api.Events.SynapseEventArguments;
+using Synapse.Api.Items;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using VT_Api.Reflexion;
 using VT_Api.Extension;
-using Synapse.Api.Events.SynapseEventArguments;
+using VT_Api.Reflexion;
 
-using synItemManager = Synapse.Api.Items.ItemManager;
 using synEvents = Synapse.Api.Events.EventHandler;
+using synItemManager = Synapse.Api.Items.ItemManager;
 
 namespace VT_Api.Core.Items
 {
@@ -90,64 +90,69 @@ namespace VT_Api.Core.Items
         #region Events
         private void OnDrop(PlayerDropItemEventArgs ev)
         {
-            if (TryGetScript(ev.Item, out var script))
+            if (ev.Allow && TryGetScript(ev.Item, out var script))
             {
                 var @throw = ev.Throw; 
-                ev.Allow = script.AllowDrop(ref @throw);
+                ev.Allow = script.Drop(ref @throw);
                 ev.Throw = @throw;
             }
         }
 
         private void OnDamage(PlayerDamageEventArgs ev)
         {
+            if (!ev.Allow)
+                return;
+
             var damage = ev.Damage;
             
             if (TryGetScript(ev.Killer?.ItemInHand, out var script) && script is IWeapon weapon)
-                ev.Allow = weapon.AllowAttack(ev.Victim, ref damage, ev.DamageType);
+                ev.Allow = weapon.Attack(ev.Victim, ref damage, ev.DamageType);
 
             if (TryGetScript(ev.Victim?.ItemInHand, out var item))
-                ev.Allow &= item.AllowDamage(ref damage, ev.DamageType);
+                ev.Allow &= item.Damage(ref damage, ev.DamageType);
 
             ev.Damage = damage;
         }
 
         private void OnReload(PlayerReloadEventArgs ev)
         {
-            if (TryGetScript(ev.Item, out var script) && script is IWeapon weapon)
-                ev.Allow = weapon.AllowRealod();
+            if (ev.Allow && TryGetScript(ev.Item, out var script) && script is IWeapon weapon)
+                ev.Allow = weapon.Realod();
 
         }
 
         private void OnShoot(PlayerShootEventArgs ev)
         {
-            if (TryGetScript(ev.Weapon, out var script) && script is IWeapon weapon)
+            if (ev.Allow && TryGetScript(ev.Weapon, out var script) && script is IWeapon weapon)
             {
                 if (ev.Target != null)
-                    ev.Allow = weapon.AllowShoot(ev.TargetPosition, ev.Target);
+                    ev.Allow = weapon.Shoot(ev.TargetPosition, ev.Target);
                 else
-                    ev.Allow = weapon.AllowShoot(ev.TargetPosition);
+                    ev.Allow = weapon.Shoot(ev.TargetPosition);
             }
         }
 
         private void OnChangeItem(PlayerChangeItemEventArgs ev)
         {
+            if (!ev.Allow)
+                return;
             if (ev.NewItem.IsDefined() && TryGetScript(ev.NewItem, out var newItem))
-                ev.Allow = newItem.AllowChange(true);
+                ev.Allow = newItem.Change(true);
             if (ev.OldItem.IsDefined() && TryGetScript(ev.OldItem, out var oldItem))
-                ev.Allow &= oldItem.AllowChange(false);
+                ev.Allow &= oldItem.Change(false);
 
         }
 
         private void OnPickUp(PlayerPickUpItemEventArgs ev)
         {
-            if (TryGetScript(ev.Item, out var item))
-                ev.Allow = item.AllowPickUp();
+            if (ev.Allow && TryGetScript(ev.Item, out var item))
+                ev.Allow = item.PickUp(ev.Player);
         }
 
         private void OnUse(PlayerItemInteractEventArgs ev)
         {
-            if (TryGetScript(ev.CurrentItem, out var item))
-                ev.Allow = item.AllowUse(ev.State);
+            if (ev.Allow && TryGetScript(ev.CurrentItem, out var item))
+                ev.Allow = item.Use(ev.State);
         }
         #endregion
 

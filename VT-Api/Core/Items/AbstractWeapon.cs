@@ -28,7 +28,7 @@ namespace VT_Api.Core.Items
         #endregion
 
         #region Methods
-        public virtual bool AllowRealod()
+        public virtual bool Realod()
         {
             if (Item.Durabillity < Ammos)
             {
@@ -39,11 +39,11 @@ namespace VT_Api.Core.Items
             return false;
         }
 
-        public virtual bool AllowShoot(Vector3 targetPosition) => true;
+        public virtual bool Shoot(Vector3 targetPosition) => true;
 
-        public virtual bool AllowShoot(Vector3 targetPosition, Player target) => true;
+        public virtual bool Shoot(Vector3 targetPosition, Player target) => true;
 
-        public virtual bool AllowAttack(Player victim, ref float damage, DamageType type)
+        public virtual bool Attack(Player victim, ref float damage, DamageType type)
         {
             damage = DamageAmmont;
             return true;

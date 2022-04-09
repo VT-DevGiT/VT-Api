@@ -1,14 +1,8 @@
-﻿using Synapse;
-using Synapse.Api;
+﻿using Synapse.Api;
 using Synapse.Api.Enum;
 using Synapse.Api.Events.SynapseEventArguments;
 using Synapse.Api.Items;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Text.RegularExpressions;
-using System.Threading.Tasks;
 
 namespace VT_Api.Core.Items
 {
@@ -53,27 +47,23 @@ namespace VT_Api.Core.Items
                 ev.Player.GiveTextHint(message);
             }
         }
-        protected virtual void ChangedFromItem(PlayerChangeItemEventArgs ev) { }
-        protected virtual void Use(PlayerItemInteractEventArgs ev) { }
-        protected virtual void Drop(PlayerDropItemEventArgs ev) { }
-        protected virtual void PickUp(PlayerPickUpItemEventArgs ev)
+        public virtual bool Drop(ref bool Throw) => true;
+
+        public virtual bool Damage(ref float damage, DamageType damageType) => true;
+
+        public virtual bool Change(bool newItem) => true;
+
+        public virtual bool PickUp(Player player) 
         {
             if (!string.IsNullOrEmpty(MessagePickUp))
             {
                 string message = Regex.Replace(MessagePickUp, "%Name%", ScreenName, RegexOptions.IgnoreCase);
-                ev.Player.GiveTextHint(message);
+                player.GiveTextHint(message);
             }
+            return true;
         }
 
-        public virtual bool AllowDrop(ref bool Throw) => true;
-
-        public virtual bool AllowDamage(ref float damage, DamageType damageType) => true;
-
-        public virtual bool AllowChange(bool newItem) => true;
-
-        public virtual bool AllowPickUp() => true;
-
-        public virtual bool AllowUse(ItemInteractState state) => true;
+        public virtual bool Use(ItemInteractState state) => true;
         #endregion
     }
 }
