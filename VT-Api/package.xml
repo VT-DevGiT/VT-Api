@@ -2,10 +2,10 @@
 <package xmlns="http://schemas.microsoft.com/packaging/2010/07/nuspec.xsd">
 	<metadata>
 		<!-- Identifier that must be unique within the hosting gallery -->
-		<id>Contoso.Utility.UsefulStuff</id>
+		<id>VT-Dev.API</id>
 
 		<!-- Package version number that is used when resolving dependencies -->
-		<version>1.8.3</version>
+		<version>1.0.2</version>
 
 		<!-- Authors contain text that appears directly on the gallery -->
 		<authors>Warkis, Oka, Antoniofo</authors>

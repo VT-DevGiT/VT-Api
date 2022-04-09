@@ -99,5 +99,10 @@
         MiniGun = 200,
         BulletPlate = 201,
         turret = 202,
+        Destroyer = 250,
+        Positioner = 251,
+        Mover = 252,
+        Scaler = 253,
+        Selector = 254,
     }
 }
