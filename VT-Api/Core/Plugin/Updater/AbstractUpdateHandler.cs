@@ -12,8 +12,11 @@ using VT_Api.Reflexion;
 
 namespace VT_Api.Core.Plugin.Updater
 {
-    public abstract class AbstractUpdateHandler<T> : IUpdateHandler<T>
-        where T : IPlugin
+
+    /// <summary>
+    /// for plugin on github
+    /// </summary>
+    public abstract class AbstractUpdateHandler : IUpdateHandler
     {
         #region Properties & Variable
         public const string Unknow = "Unknown";
@@ -81,7 +84,6 @@ namespace VT_Api.Core.Plugin.Updater
             }
         }
 
-        public abstract long GithubID { get; }
         public virtual string RegexExpressionVersion { get; } = DefaultsRegexVersion;
         #endregion
 
@@ -123,7 +125,7 @@ namespace VT_Api.Core.Plugin.Updater
             return true;
         }
 
-        public virtual Version GetPluginVersion()
+        public virtual Version GetPluginVersion<T>()
         {
             var info = (PluginInformation)Attribute.GetCustomAttribute(typeof(T), typeof(PluginInformation));
             if (info.Version == Unknow)
@@ -136,15 +138,15 @@ namespace VT_Api.Core.Plugin.Updater
             return new Version(info.Version, RegexExpressionVersion);
         }
 
-        public virtual Version GetGithubVersion(HttpClient client, out Release release, bool ignorePrerealase = true)
+        public virtual Version GetGitVersion(HttpClient client, string link, out Release release, bool prerealase = false)
         {
-            var realases = GetRealases(client);
+            var realases = GetRealases(client, link);
 
             Version highestVersion = new Version(0,0,0);
             Release highestRelease = null;
             foreach (var realase in realases)
             {
-                if (ignorePrerealase && realase.PreRelease)
+                if (!prerealase && realase.PreRelease)
                     continue;
                 if (Version.TryParse(realase.TagName, out var version) && version > highestVersion)
                 {
@@ -156,12 +158,12 @@ namespace VT_Api.Core.Plugin.Updater
             return highestVersion;
         } 
 
-        private List<Release> GetRealases(HttpClient client)
+        private List<Release> GetRealases(HttpClient client, string link)
         {
             client.Timeout = TimeSpan.FromSeconds(500);
             client.DefaultRequestHeaders.Add("User-Agent", $"VT-API");
 
-            var url = string.Format(GitHubPage, GithubID);
+            var url = link;
             using var response = client.GetAsync(url).ConfigureAwait(false).GetAwaiter().GetResult();
             using var stream = response.Content.ReadAsStreamAsync().ConfigureAwait(false).GetAwaiter().GetResult();
             
@@ -171,21 +173,15 @@ namespace VT_Api.Core.Plugin.Updater
         public virtual bool NeedToUpdate(Version PluginVersion, Version GitVersion)
             => PluginVersion < GitVersion;
             
-        public virtual void Replace(string newPluginPath)
+        public virtual void Replace(string newPluginPath, string pluinName, string pluginDirectory)
         {
-            var plugins = SynapseController.PluginLoader.GetFieldValueOrPerties<List<IPlugin>>("_plugins");
-            var plugin  = plugins.First(p => p.GetType() == typeof(T));
 
-            if (plugin == null)
-                throw new Exception($"Update Plugin of {typeof(T).Assembly.GetName().Name} but the instnace of the plugin is not found !");
-
-
-            var pluginName = typeof(T).Assembly.GetName().Name + ".dll";
-            var pluginPath = Path.Combine(plugin.PluginDirectory, pluginName);
+            var pluginName = pluinName + ".dll";
+            var pluginPath = Path.Combine(pluginDirectory, pluginName);
             var pluginNewPath = Path.Combine(OldDllDirectory, pluginName);
 
             var newPluginName = Path.GetFileName(pluginPath);
-            var newPluginNewPath = Path.Combine(plugin.PluginDirectory, newPluginName);
+            var newPluginNewPath = Path.Combine(pluginDirectory, newPluginName);
 
             File.Move(pluginPath, pluginNewPath);
             File.Move(newPluginPath, newPluginNewPath);

@@ -18,7 +18,7 @@ public static class VtVersion
         SynapseVersion.VersionType.None;
 #endif
 
-    public const string SubVersion = "βeta";
+    public const string SubVersion = "";
 
     public const string BasedGameVersion = SynapseVersion.BasedGameVersion;
 

@@ -85,6 +85,8 @@
     <Compile Include="Core\MiniGame\IMiniGame.cs" />
     <Compile Include="Core\MiniGame\MiniGameInformation.cs" />
     <Compile Include="Core\NetworkLiar.cs" />
+    <Compile Include="Core\Plugin\AutoRegisterProcess\AutoUpdatePorecess.cs" />
+    <Compile Include="Core\Plugin\Updater\AbstractAutoUpdater.cs" />
     <Compile Include="Core\Plugin\Updater\AbstractUpdateHandler.cs" />
     <Compile Include="Core\Plugin\AutoRegisterManager.cs" />
     <Compile Include="Core\Items\AbstractItem.cs" />
@@ -96,6 +98,7 @@
     <Compile Include="Core\Plugin\AutoRegisterProcess\MiniGameProcess.cs" />
     <Compile Include="Core\Plugin\AutoRegisterProcess\RoleProcess.cs" />
     <Compile Include="Core\Plugin\AutoRegisterProcess\TeamProcess.cs" />
+    <Compile Include="Core\Plugin\Updater\IAutoUpdate.cs" />
     <Compile Include="Core\Plugin\Updater\IUpdateHandler.cs" />
     <Compile Include="Core\Plugin\IVtPlugin.cs" />
     <Compile Include="Core\Plugin\Updater\Release.cs" />
