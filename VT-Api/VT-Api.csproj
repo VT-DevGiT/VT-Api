@@ -9,10 +9,11 @@
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>VT_Api</RootNamespace>
     <AssemblyName>VT-Api</AssemblyName>
-    <TargetFrameworkVersion>v4.8</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.7.2</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <LangVersion>9</LangVersion>
     <Deterministic>true</Deterministic>
+    <TargetFrameworkProfile />
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -128,6 +129,7 @@
     <Compile Include="Patches\VtEvent\ItemPatches\CollisionItemPatch.cs" />
     <Compile Include="Patches\VtEvent\ItemPatches\ExplosionGrenadePatches.cs" />
     <Compile Include="Patches\VtEvent\ItemPatches\RemoveExceedingLimitsPatch.cs" />
+    <Compile Include="Patches\VtEvent\ItemPatches\ItemSearchCompletorLimitsPatch.cs" />
     <Compile Include="Patches\VtEvent\MapPaches\GeneratorActivated.cs" />
     <Compile Include="Patches\VtEvent\MapPaches\CassieAnnoncementPatch.cs" />
     <Compile Include="Patches\VtEvent\MapPaches\Scp914InteractPatch.cs" />
@@ -185,7 +187,7 @@
       <Version>2.2.1</Version>
     </PackageReference>
     <PackageReference Include="SynapseSL">
-      <Version>2.9.0</Version>
+      <Version>2.10.0</Version>
     </PackageReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

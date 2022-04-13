@@ -17,32 +17,51 @@ namespace VT_Api.Core.Events
         public event Synapse.Api.Events.EventHandler.OnSynapseEvent<ChangeIntoFragEventArgs> ChangeIntoFragEvent;
         public event Synapse.Api.Events.EventHandler.OnSynapseEvent<ExplosionGrenadeEventArgs> ExplosionGrenadeEvent;
         public event Synapse.Api.Events.EventHandler.OnSynapseEvent<CollisionEventArgs> CollisionEvent;
+        public event Synapse.Api.Events.EventHandler.OnSynapseEvent<RemoveLimitItemEventArgs> RemoveLimitItemEvent;
+        public event Synapse.Api.Events.EventHandler.OnSynapseEvent<RemoveAmmoEventArgs> RemoveLimitAmmoEvent;
         public event Synapse.Api.Events.EventHandler.OnSynapseEvent<CheckLimitItemEventArgs> CheckLimitItemEvent;
         #endregion
 
         #region Invoke
-        internal void InvokeCheckLimitItemEvent(Player player, Dictionary<ItemCategory, int> catergoryMax, ref List<SynapseItem> removItems)
+        internal void InvokeRemoveLimitItemEvent(Player player, Dictionary<ItemCategory, int> catergoryMax, ref List<SynapseItem> removItems)
         {
-            var ev = new CheckLimitItemEventArgs
+            var ev = new RemoveLimitItemEventArgs
             {
                 Player = player,
                 CatergoryMax = new ReadOnlyDictionary<ItemCategory, int>(catergoryMax),
                 RemovItem = removItems
             };
 
-            CheckLimitItemEvent.Invoke(ev);
+            RemoveLimitItemEvent.Invoke(ev);
 
             removItems = ev.RemovItem;
         }
 
-        internal void InvokeCheckLimitAmmoEvent(Player player, Dictionary<AmmoType, ushort> catergoryMax, ref Dictionary<AmmoType, ushort> removAmmo)
+        internal void InvokeCheckLimitItemEvent(Player player, SynapseItem item, int cantgoryMax, ref bool allow)
         {
-            var ev = new CheckLimitAmmoEventArgs
+            var ev = new CheckLimitItemEventArgs
+            {
+                Player = player,
+                CategoryMax = cantgoryMax,
+                ExedentingItem = item,
+                Allow = allow
+            };
+
+            CheckLimitItemEvent.Invoke(ev);
+
+            allow = ev.Allow;
+        }
+
+        internal void InvokeRemoveLimitAmmoEvent(Player player, Dictionary<AmmoType, ushort> catergoryMax, ref Dictionary<AmmoType, ushort> removAmmo)
+        {
+            var ev = new RemoveAmmoEventArgs
             {
                 Player = player,
                 CatergoryMax = new ReadOnlyDictionary<AmmoType, ushort>(catergoryMax),
                 RemovAmmo = removAmmo
             };
+
+            RemoveLimitAmmoEvent.Invoke(ev);
 
             removAmmo = ev.RemovAmmo;
         }

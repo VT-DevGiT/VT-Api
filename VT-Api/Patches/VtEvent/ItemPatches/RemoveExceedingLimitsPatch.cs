@@ -5,6 +5,7 @@ using InventorySystem.Items.Armor;
 using NorthwoodLib.Pools;
 using Synapse.Api;
 using Synapse.Api.Enum;
+using Synapse.Api.Items;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -66,8 +67,8 @@ namespace VT_Api.Patches.VtEvent.ItemPatches
                 catergoryCount[item.Value.Category] = value;
             }
 
-            var items = itemsDrop.Select((i) => Synapse.Api.Map.Get.Items[i]).ToList();
-            VtController.Get.Events.Item.InvokeCheckLimitItemEvent(player, catergoryMax, ref items);
+            var items = itemsDrop.Select((i) => SynapseItem.AllItems[i]).ToList();
+            VtController.Get.Events.Item.InvokeRemoveLimitItemEvent(player, catergoryMax, ref items);
             itemsDrop = items.Select((i) => i.Serial).ToHashSet();
 
             foreach (ushort item in itemsDrop)
@@ -89,7 +90,7 @@ namespace VT_Api.Patches.VtEvent.ItemPatches
                 }
             }
 
-            VtController.Get.Events.Item.InvokeCheckLimitAmmoEvent(player, ammosLimit, ref ammosDrop);
+            VtController.Get.Events.Item.InvokeRemoveLimitAmmoEvent(player, ammosLimit, ref ammosDrop);
 
             foreach (var ammo in ammosDrop)
                 inv.ServerDropAmmo((ItemType)ammo.Key, ammo.Value);
