@@ -32,7 +32,7 @@ namespace VT_Api.Core.Events
                 RemovItem = removItems
             };
 
-            RemoveLimitItemEvent.Invoke(ev);
+            RemoveLimitItemEvent?.Invoke(ev);
 
             removItems = ev.RemovItem;
         }
@@ -47,7 +47,7 @@ namespace VT_Api.Core.Events
                 Allow = allow
             };
 
-            CheckLimitItemEvent.Invoke(ev);
+            CheckLimitItemEvent?.Invoke(ev);
 
             allow = ev.Allow;
         }
@@ -61,7 +61,7 @@ namespace VT_Api.Core.Events
                 RemovAmmo = removAmmo
             };
 
-            RemoveLimitAmmoEvent.Invoke(ev);
+            RemoveLimitAmmoEvent?.Invoke(ev);
 
             removAmmo = ev.RemovAmmo;
         }

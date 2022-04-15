@@ -4,7 +4,9 @@ using System.Linq;
 using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
+using Synapse.Api;
 using Synapse.Command;
+using VT_Api.Extension;
 
 namespace VT_Api.Core.Command
 {
@@ -39,11 +41,14 @@ namespace VT_Api.Core.Command
                 }
             }
         }
-        
+
         public CommandResult Execute(CommandContext context)
         {
-            if (!context.Arguments.Any() || string.IsNullOrEmpty(context.Arguments.Array[0]) || context.Arguments.Array[0] == "help")
+            if (!context.Arguments.Any() || string.IsNullOrEmpty(context.Arguments.First()) || context.Arguments.First().ToLower() == "help")
+            {
+                context.Arguments = context.Arguments.Segment(1);
                 return ShowHelp(context);
+            }
 
             var result = new CommandResult();
 
@@ -54,8 +59,9 @@ namespace VT_Api.Core.Command
                 return result;
             }
 
-            var subCommandName = context.Arguments.Array[0];
+            var subCommandName = context.Arguments.First();
             context.Arguments = context.Arguments.Segment(1);
+
             var subCommand = commands.FirstOrDefault(c => c.Name == subCommandName);
 
             if (subCommand == null)
@@ -63,7 +69,7 @@ namespace VT_Api.Core.Command
             
             if (subCommand == null)
             {
-                result.Message = "Sub command not found, please use help to get all possible command.";
+                result.Message = "Sub-Command not found, please use help to get all possible command.";
                 result.State = CommandResultState.Error;
                 return result;
             }
@@ -120,50 +126,70 @@ namespace VT_Api.Core.Command
 
                 if (string.IsNullOrWhiteSpace(command.Permission))
                 {
+                    string alias = "{ " + string.Join(", ", command.Aliases) + " }";
+
                     if (command.Arguments.Any())
                     {
-                        var arguments = "";
-                        foreach (var arg in command.Arguments)
-                        {
-                            arguments += $"\n    {arg}";
-                        }
-                        result.Message = $"\n{command.Name}\n    - Description: {command.Description}\n    - Usage: {command.Usage}\n    - Platforms: {platforms}\n    - Aliases: {aliases}\n    - Argument:{arguments}";
+                        string arguments = "{ " + string.Join(", ", command.Arguments) + " }";
+
+                        result.Message = $"\n{command.Name}\n    - Description: {command.Description}\n    - Usage: {command.Usage}\n    - Aliases: {alias}\n    - Argument:{arguments}";
                     }
                     else
-                        result.Message = $"\n{command.Name}\n    - Description: {command.Description}\n    - Usage: {command.Usage}\n    - Platforms: {platforms}\n    - Aliases: {aliases}";
-
+                    {
+                        result.Message = $"\n{command.Name}\n    - Description: {command.Description}\n    - Usage: {command.Usage}\n    - Aliases: {alias}";
+                    }
                 }
                 else
                 {
+                    string alias = "{ " + string.Join(", ", command.Aliases) + " }";
+
                     if (command.Arguments.Any())
                     {
-                        var arguments = "";
-                        foreach (var arg in command.Arguments)
-                        {
-                            arguments += $"\n    {arg}";
-                        }
-                        result.Message = $"\n{command.Name}\n    - Description: {command.Description}\n    - Description: {command.Description}\n    - Usage: {command.Usage}\n    - Platforms: {platforms}\n    - Aliases: {aliases}\n    - Argument:{arguments}";
+                        string arguments = "{ " + string.Join(", ", command.Arguments) + " }";
+
+                        result.Message = $"\n{command.Name}\n    - Description: {command.Description}\n    - Usage: {command.Usage}\n    - Aliases: {alias}\n    - Argument:{arguments}";
                     }
                     else
-                        result.Message = $"\n{command.Name}\n    - Permission: {command.Permission}\n    - Description: {command.Description}\n    - Usage: {command.Usage}\n    - Platforms: {platforms}\n    - Aliases: {aliases}";
+                    {
+                        result.Message = $"\n{command.Name}\n    - Description: {command.Description}\n    - Usage: {command.Usage}\n    - Aliases: {alias}";
+                    }
                 }
 
                 result.State = CommandResultState.Ok;
                 return result;
             }
-
-            var msg = $"All Commands which you can execute for {context.Platform}:";
-
-            foreach (var command in commandlist)
+            else if (commandlist.Any())
             {
-                string alias = "{ " + string.Join(", ", command.Aliases) + " }";
+                var msg = $"All Commands which you can execute for {context.Platform}:";
 
-                msg += $"\n{command.Name}:\n    -Usage: {command.Usage}\n    -Description: {command.Description}\n    -Aliases: {alias}";
+                foreach (var command in commandlist)
+                {
+                    string alias = "{ " + string.Join(", ", command.Aliases) + " }";
+
+                    if (command.Arguments.Any())
+                    {
+                        string arguments = "{ " + string.Join(", ", command.Arguments) + " }";
+
+                        msg += $"\n{command.Name}\n    - Description: {command.Description}\n    - Usage: {command.Usage}\n    - Aliases: {alias}\n    - Argument:{arguments}";
+                    }
+                    else
+                    {
+                        msg += $"\n{command.Name}\n    - Description: {command.Description}\n    - Usage: {command.Usage}\n    - Aliases: {alias}";
+                    }
+                }
+
+                result.Message = msg;
+                result.State = CommandResultState.Ok;
+                return result;
             }
+            else
+            {
+                var msg = $"You cannot execute a command for {context.Platform}:";
 
-            result.Message = msg;
-            result.State = CommandResultState.Ok;
-            return result;
+                result.Message = msg;
+                result.State = CommandResultState.Ok;
+                return result;
+            }
         }
 
         public static GeneratedMainCommand FromSynapseCommand(IMainCommand command)

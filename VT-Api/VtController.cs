@@ -32,7 +32,6 @@ public class VtController
     public ItemManager Item { get => Singleton<ItemManager>.Instance; }
     internal CommandHandler Commands { get => Singleton<CommandHandler>.Instance; } // nothing  public (yet)
     public Config Configs { get => Singleton<Config>.Instance; }
-    internal ServerStopTrap StopTrap { get => SynapseController.Server.Host.gameObject.GetComponent<ServerStopTrap>(); }
 
     private static bool _enabled = false;
     #endregion
@@ -56,8 +55,6 @@ public class VtController
 
         Get = new VtController();
 
-        SynapseController.Server.Host.gameObject.AddComponent<ServerStopTrap>();
-
         VtController.Get.LogMessage();
         VtController.Get.AplidePatch();
         VtController.Get.InitAll();
@@ -67,7 +64,7 @@ public class VtController
 
     private void LogMessage()
     {
-        ServerConsole.AddLog("Vt-API Initialising!", System.ConsoleColor.Cyan);
+        ServerConsole.AddLog("Vt-API Initialising!", System.ConsoleColor.Yellow);
 
         if (VtVersion.Debug)
             Logger.Get.Warn("Debug Version of Vt-Api loaded! This Version should only be used for testing and not playing");
@@ -87,6 +84,8 @@ public class VtController
             Configs.Init();
             Team.Init();
             Role.Init();
+            Item.Init();
+
         }
         catch (Exception e)
         {

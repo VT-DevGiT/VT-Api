@@ -9,7 +9,6 @@ namespace VT_Api.Core.Behaviour
 {
     internal class ServerStopTrap : MonoBehaviour
     {
-        internal event Action ChangeIntoFragEvent;
-        void OnApplicationQuit() => ChangeIntoFragEvent.Invoke();
+        void OnApplicationQuit() => VtController.Get.Events.Server.InvokeServerStopEvent();
     }
 }

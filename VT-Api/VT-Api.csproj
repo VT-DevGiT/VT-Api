@@ -52,7 +52,7 @@
     <Compile Include="Core\Behaviour\Display.cs" />
     <Compile Include="Core\Behaviour\ServerStopTrap.cs" />
     <Compile Include="Core\Enum\Hierarchy.cs" />
-    <Compile Include="Core\Events\EventArguments\ServerEventArgs.cs" />
+    <Compile Include="Core\Events\ServerEvents.cs" />
     <Compile Include="Core\ISengleton.cs" />
     <Compile Include="Core\Items\IWeapon.cs" />
     <Compile Include="Core\MapAndRoundManger.cs" />
@@ -79,7 +79,6 @@
     <Compile Include="Core\Events\PlayerEvents.cs" />
     <Compile Include="Core\Events\RoundEvents.cs" />
     <Compile Include="Core\Events\ScpEvents.cs" />
-    <Compile Include="Core\Events\ServerEvents.cs" />
     <Compile Include="Core\Items\AbstractWeapon.cs" />
     <Compile Include="Core\Items\IItem.cs" />
     <Compile Include="Core\Items\VtItemInformation.cs" />
@@ -129,7 +128,7 @@
     <Compile Include="Patches\VtEvent\ItemPatches\CollisionItemPatch.cs" />
     <Compile Include="Patches\VtEvent\ItemPatches\ExplosionGrenadePatches.cs" />
     <Compile Include="Patches\VtEvent\ItemPatches\RemoveExceedingLimitsPatch.cs" />
-    <Compile Include="Patches\VtEvent\ItemPatches\ItemSearchCompletorLimitsPatch.cs" />
+    <Compile Include="Patches\VtEvent\ItemPatches\ItemSearchValidatePatch.cs" />
     <Compile Include="Patches\VtEvent\MapPaches\GeneratorActivated.cs" />
     <Compile Include="Patches\VtEvent\MapPaches\CassieAnnoncementPatch.cs" />
     <Compile Include="Patches\VtEvent\MapPaches\Scp914InteractPatch.cs" />

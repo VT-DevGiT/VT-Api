@@ -35,8 +35,8 @@ namespace VT_Api.Core.Plugin.AutoRegisterProcess
                 }
             }
             // main command processing
-            var listRegisteredMainCommand = ProcessMainCommand(context, listMainCommandType);
-            VtController.Get.Commands.MainCommands.AddRange(listRegisteredMainCommand);
+            ProcessMainCommand(context, listMainCommandType);
+            
             // add sub commands
             ProcessSubCommand(context, listSubCommandType);
             // added synapse command which remains
@@ -81,7 +81,7 @@ namespace VT_Api.Core.Plugin.AutoRegisterProcess
             }
         }
 
-        private List<GeneratedMainCommand> ProcessMainCommand(PluginLoadContext context, List<Type> listMainCommandType)
+        private void ProcessMainCommand(PluginLoadContext context, List<Type> listMainCommandType)
         {
             var result = new List<GeneratedMainCommand>();
             foreach (var commandType in listMainCommandType)
@@ -101,17 +101,13 @@ namespace VT_Api.Core.Plugin.AutoRegisterProcess
                         classObject = (IMainCommand)Activator.CreateInstance(commandType, args: new object[] { context.Plugin });
                     else                //There is no DI-Ctor
                         classObject = (IMainCommand)Activator.CreateInstance(commandType);
-                    GeneratedMainCommand command = GeneratedMainCommand.FromSynapseCommand(classObject);
-                    CommandCtrl.Get.RegisterCommand(classObject as ISynapseCommand, true);
-                    result.Add(command);
+                    CommandCtrl.Get.RegisterMainCommand(classObject, true);
                 }
                 catch (Exception e)
                 {
                     Synapse.Api.Logger.Get.Error($"Error loading command {commandType.Name} from {context.Information.Name}\n{e}");
                 }
             }
-            return result;
-
         }
 
         private void ProcessSynapseCommand(PluginLoadContext context, List<Type> listSynapseCommandType) // processor of synapse
@@ -134,7 +130,7 @@ namespace VT_Api.Core.Plugin.AutoRegisterProcess
                     else                //There is no DI-Ctor
                         classObject = Activator.CreateInstance(commandType);
 
-                    CommandCtrl.Get.RegisterCommand(classObject as ISynapseCommand, true);
+                    CommandCtrl.Get.RegisterSynapseCommand(classObject as ISynapseCommand, true);
                 }
                 catch (Exception e)
                 {
