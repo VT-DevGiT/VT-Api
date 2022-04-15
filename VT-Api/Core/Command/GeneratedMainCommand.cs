@@ -33,7 +33,7 @@ namespace VT_Api.Core.Command
             {
                 if (!Commands.TryGetValue(platform, out var commands))
                 {
-                    Synapse.Api.Logger.Get.Error($"Vt-Command : subcommand {subCommand.Name}, platform {platform} not suported for this command {Name}");
+                    Logger.Get.Error($"Vt-Command : subcommand {subCommand.Name}, platform {platform} not suported for this command {Name}");
                 }
                 else
                 {
@@ -44,7 +44,9 @@ namespace VT_Api.Core.Command
 
         public CommandResult Execute(CommandContext context)
         {
-            if (!context.Arguments.Any() || string.IsNullOrEmpty(context.Arguments.First()) || context.Arguments.First().ToLower() == "help")
+            if (!context.Arguments.Any()) return ShowHelp(context);
+
+            if (string.IsNullOrEmpty(context.Arguments.First()) || context.Arguments.First().ToLower() == "help")
             {
                 context.Arguments = context.Arguments.Segment(1);
                 return ShowHelp(context);
@@ -184,7 +186,7 @@ namespace VT_Api.Core.Command
             }
             else
             {
-                var msg = $"You cannot execute a command for {context.Platform}:";
+                var msg = $"You cannot execute a command from {context.Platform}";
 
                 result.Message = msg;
                 result.State = CommandResultState.Ok;
@@ -199,7 +201,7 @@ namespace VT_Api.Core.Command
             var result = new GeneratedMainCommand
             {
                 OnCommand = command.Execute,
-                Name = cmdInf.Name.ToLower(),
+                Name = cmdInf.Name,
                 Aliases = cmdInf.Aliases ?? new string[] { },
                 Permission = cmdInf.Permission ?? "",
                 Usage = cmdInf.Usage,

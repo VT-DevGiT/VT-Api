@@ -29,7 +29,7 @@ namespace VT_Api.Core.Command
         private bool _firstLoad = true;
 
         internal void RegisterSynapseCommand(ISynapseCommand iSynapseCommand, bool awaitPluginInitialisation)
-            => typeof(Synapse.Command.Handlers).CallMethod("RegisterCommand", iSynapseCommand, awaitPluginInitialisation);
+            => typeof(Handlers).CallMethod("RegisterCommand", iSynapseCommand, awaitPluginInitialisation);
 
         internal void RegisterMainCommand(IMainCommand iSynapseCommand, bool awaitPluginInitialisation)
         {
@@ -64,14 +64,6 @@ namespace VT_Api.Core.Command
             MainCommands.Add(command);
         }
 
-        internal void FinalizePluginsCommands()
-        {
-            foreach (var item in AwaitingFinalization)
-                RegisterGeneratedCommand(GeneratedMainCommand.FromSynapseCommand(item));
-
-            AwaitingFinalization.Clear();
-        }
-
         private void RegisterSubCommand()
         {
             if (_firstLoad)
@@ -80,7 +72,7 @@ namespace VT_Api.Core.Command
 
                 foreach (var command in SubCommands)
                 {
-                    var mainCommand = MainCommands.FirstOrDefault(main => main.Name == command.MainCommandName);
+                    var mainCommand = MainCommands.FirstOrDefault(main => main.Name.ToLower() == command.MainCommandName.ToLower());
                     if (mainCommand == null)
                     {
                         Logger.Get.Error($"Vt-Command : MainCommand {mainCommand.Name} not found for the SubCommand {command.MainCommandName}");
@@ -97,6 +89,14 @@ namespace VT_Api.Core.Command
             }
 
             Synapse.Api.Events.EventHandler.Get.Round.WaitingForPlayersEvent -= RegisterSubCommand;
+        }
+
+        internal void FinalizePluginsCommands()
+        {
+            foreach (var item in AwaitingFinalization)
+                RegisterGeneratedCommand(GeneratedMainCommand.FromSynapseCommand(item));
+
+            AwaitingFinalization.Clear();
         }
 
         private void RegisterVtCommands()

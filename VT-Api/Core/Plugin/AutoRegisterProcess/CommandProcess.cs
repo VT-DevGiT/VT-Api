@@ -6,8 +6,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using VT_Api.Core.Command;
-using VT_Api.Extension;
-using VT_Api.Reflexion;
+
 using CommandCtrl = VT_Api.Core.Command.CommandHandler;
 
 namespace VT_Api.Core.Plugin.AutoRegisterProcess
@@ -39,6 +38,7 @@ namespace VT_Api.Core.Plugin.AutoRegisterProcess
             
             // add sub commands
             ProcessSubCommand(context, listSubCommandType);
+
             // added synapse command which remains
             ProcessSynapseCommand(context,listSynapseCommandType);
         }
@@ -67,7 +67,7 @@ namespace VT_Api.Core.Plugin.AutoRegisterProcess
 
                     if (string.IsNullOrEmpty(command.MainCommandName))
                     {
-                        Synapse.Api.Logger.Get.Error($"Vt-Command : the SubCommand {command.Name} of the plugin {context.Plugin.Information.Name} dont defined the MainCommand !");
+                        Logger.Get.Error($"Vt-Command : the SubCommand {command.Name} of the plugin {context.Plugin.Information.Name} dont defined the MainCommand !");
                     }
                     else
                     { 
@@ -76,7 +76,7 @@ namespace VT_Api.Core.Plugin.AutoRegisterProcess
                 }
                 catch (Exception e)
                 {
-                    Synapse.Api.Logger.Get.Error($"Error loading command {commandType.Name} from {context.Information.Name}\n{e}");
+                    Logger.Get.Error($"Error loading command {commandType.Name} from {context.Information.Name}\n{e}");
                 }
             }
         }
@@ -105,7 +105,7 @@ namespace VT_Api.Core.Plugin.AutoRegisterProcess
                 }
                 catch (Exception e)
                 {
-                    Synapse.Api.Logger.Get.Error($"Error loading command {commandType.Name} from {context.Information.Name}\n{e}");
+                    Logger.Get.Error($"Error loading command {commandType.Name} from {context.Information.Name}\n{e}");
                 }
             }
         }
@@ -134,7 +134,7 @@ namespace VT_Api.Core.Plugin.AutoRegisterProcess
                 }
                 catch (Exception e)
                 {
-                   Synapse.Api.Logger.Get.Error($"Error loading command {commandType.Name} from {context.Information.Name}\n{e}");
+                    Logger.Get.Error($"Error loading command {commandType.Name} from {context.Information.Name}\n{e}");
                 }
             }
         }
