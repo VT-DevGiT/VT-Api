@@ -14,7 +14,7 @@ namespace VT_Api.Core.Items
     public abstract class AbstractWeapon : AbstractItem, IWeapon
     {
         #region Attributes & Properties
-        public abstract ushort Ammos { get; }
+        public abstract ushort MaxAmmos { get; }
         public abstract AmmoType AmmoType { get; }
         public abstract int DamageAmmont { get; }
 
@@ -30,9 +30,9 @@ namespace VT_Api.Core.Items
         #region Methods
         public virtual bool Realod()
         {
-            if (Item.Durabillity < Ammos)
+            if (Item.Durabillity < MaxAmmos)
             {
-                ushort ammo = Math.Min(Holder.AmmoBox[AmmoType], Ammos);
+                ushort ammo = Math.Min(Holder.AmmoBox[AmmoType], MaxAmmos);
                 Holder.AmmoBox[AmmoType] -= ammo;
                 Item.Durabillity += ammo;
             }

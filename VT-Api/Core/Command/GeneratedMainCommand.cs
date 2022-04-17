@@ -2,11 +2,8 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
-using System.Text;
-using System.Threading.Tasks;
 using Synapse.Api;
 using Synapse.Command;
-using VT_Api.Extension;
 
 namespace VT_Api.Core.Command
 {
@@ -64,10 +61,10 @@ namespace VT_Api.Core.Command
             var subCommandName = context.Arguments.First();
             context.Arguments = context.Arguments.Segment(1);
 
-            var subCommand = commands.FirstOrDefault(c => c.Name == subCommandName);
+            var subCommand = commands.FirstOrDefault(c => c.Name.ToLower() == subCommandName.ToLower());
 
             if (subCommand == null)
-                subCommand = commands.FirstOrDefault(c => c.Aliases.Contains(subCommandName));
+                subCommand = commands.FirstOrDefault(c => c.Aliases.Contains(subCommandName, StringComparison.OrdinalIgnoreCase));
             
             if (subCommand == null)
             {

@@ -3,7 +3,6 @@ using Synapse.Api.Plugin;
 using System;
 using System.Reflection;
 using VT_Api.Core.Items;
-using VT_Api.Extension;
 
 namespace VT_Api.Core.Plugin.AutoRegisterProcess
 {
@@ -18,8 +17,6 @@ namespace VT_Api.Core.Plugin.AutoRegisterProcess
                 if (!typeof(IItem).IsAssignableFrom(itemType) || itemType.GetCustomAttribute<AutoRegisterManager.Ignore>() != null)
                     continue;
                 
-                //var info = itemType.GetCustomAttribute<VtItemInformation>();
-
                 try
                 {
                     var info = itemType.GetCustomAttribute<VtItemInformation>();

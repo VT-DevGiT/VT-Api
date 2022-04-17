@@ -1,4 +1,5 @@
-﻿using Synapse.Api.Events.SynapseEventArguments;
+﻿using Synapse.Api;
+using Synapse.Api.Events.SynapseEventArguments;
 using Synapse.Api.Items;
 using System;
 using System.Collections.Generic;
@@ -18,6 +19,8 @@ namespace VT_Api.Core.Items
         public const string KeySynapseItemData = "VtScript";
 
         private readonly List<VtCustomItemInfo> customItems = new List<VtCustomItemInfo>();
+
+        public static ItemManager Get { get => VtController.Get.Item; }
         #endregion
 
         #region Constructor & Destructor
@@ -40,25 +43,34 @@ namespace VT_Api.Core.Items
         /// <returns><see langword="null"/> if id is not register in the API</returns>
         public IItem GetNewScript(int ID)
         {
-            var customItem = customItems.Find(i => i.Info.ID == ID);
+            var customItem = customItems.Find(i => i.ID == ID);
 
             if (customItem.Script == null)
                 return null;
 
             if (customItem.Script.GetConstructors().Any(x => x.GetParameters().Count() == 1 && x.GetParameters().First().ParameterType == typeof(VtItemInformation)))
-                return (IItem)Activator.CreateInstance(customItem.Script, new object[] { customItem.Info });
+                return (IItem)Activator.CreateInstance(customItem.Script, new object[] { new VtItemInformation(customItem.ID, customItem.BasedItemType, customItem.Name) });
+            else if (customItem.Script.GetConstructors().Any(x => x.GetParameters().Count() == 3 
+                    && x.GetParameters()[0].ParameterType == typeof(int)
+                    && x.GetParameters()[1].ParameterType == typeof(ItemType)
+                    && x.GetParameters()[2].ParameterType == typeof(string)))
+                return (IItem)Activator.CreateInstance(customItem.Script, new object[] { customItem.ID, customItem.BasedItemType, customItem.Name });
 
             var script = (IItem)Activator.CreateInstance(customItem.Script);
 
             if (script.Info == null)
-                script.SetField(nameof(script.Info), customItem.Info);
+                script.SetField(nameof(script.Info), new VtItemInformation(customItem.ID, customItem.BasedItemType, customItem.Name));
             return script;
         }
 
         /// <returns><see langword="null"/> if the item ave no script or if <paramref name="item"/> is <see langword="null"/> else return the <see cref="IItem"/></returns>
-        public IItem GetScript(SynapseItem item) 
-            => item?.ItemData[KeySynapseItemData] as IItem;
-
+        public IItem GetScript(SynapseItem item)
+        {
+            if (!item.ItemData.TryGetValue(KeySynapseItemData, out var script))
+                return null;
+            return script as IItem;
+        }
+        
         /// <returns><see langword="null"/> if the item ave no script as a <see cref="IWeapon"> or if <paramref name="item"/> is <see langword="null"/> else return the <see cref="IWeapon"/></returns>
         public IWeapon GetWeaponScript(SynapseItem item)
             => item?.ItemData[KeySynapseItemData] as IWeapon;
@@ -75,6 +87,7 @@ namespace VT_Api.Core.Items
         {
             if (item.Info == null || item.Info == default)
                 throw new NullReferenceException($"try to register : {item.GetType().Name}\n\tProperty \"info\" not set !");
+
             customItems.Add(new VtCustomItemInfo(item));
             synItemManager.Get.RegisterCustomItem(item.Info);
 
@@ -105,10 +118,10 @@ namespace VT_Api.Core.Items
 
             var damage = ev.Damage;
             
-            if (TryGetScript(ev.Killer?.ItemInHand, out var script) && script is IWeapon weapon)
+            if (ev.Killer?.ItemInHand != null && TryGetScript(ev.Killer.ItemInHand, out var script) && script is IWeapon weapon)
                 ev.Allow = weapon.Attack(ev.Victim, ref damage, ev.DamageType);
 
-            if (TryGetScript(ev.Victim?.ItemInHand, out var item))
+            if (ev.Victim?.ItemInHand != null && TryGetScript(ev.Victim.ItemInHand, out var item))
                 ev.Allow &= item.Damage(ref damage, ev.DamageType);
 
             ev.Damage = damage;
@@ -162,18 +175,26 @@ namespace VT_Api.Core.Items
             public VtCustomItemInfo(Type script, int id, ItemType baseItem, string name)
             {
                 Script = script;
-                Info = new VtItemInformation(id,baseItem, name);
+                ID = id;
+                Name = name;
+                BasedItemType = baseItem;
             }
 
             public VtCustomItemInfo(IItem script)
             {
                 Script = script.GetType();
-                Info = script.Info;
+                ID = script.Info.ID;         
+                Name = script.Info.Name;
+                BasedItemType = script.Info.BasedItemType;
             }
 
-            public Type Script;
+            public int ID;
 
-            public VtItemInformation Info;
+            public ItemType BasedItemType;
+
+            public string Name;
+
+            public Type Script;
         }
         #endregion
     }
