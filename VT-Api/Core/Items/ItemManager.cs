@@ -59,7 +59,8 @@ namespace VT_Api.Core.Items
             var script = (IItem)Activator.CreateInstance(customItem.Script);
 
             if (script.Info == null)
-                script.SetField(nameof(script.Info), new VtItemInformation(customItem.ID, customItem.BasedItemType, customItem.Name));
+                script.Info = new VtItemInformation(customItem.ID, customItem.BasedItemType, customItem.Name);
+            
             return script;
         }
 

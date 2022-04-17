@@ -64,6 +64,8 @@ namespace VT_Api.Core.Items
         }
 
         public virtual bool Use(ItemInteractState state) => true;
+
+        public virtual void Init() { }
         #endregion
     }
 }

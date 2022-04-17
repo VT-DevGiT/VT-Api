@@ -7,12 +7,13 @@ namespace VT_Api.Core.Items
 {
     public interface IItem
     {
-        VtItemInformation Info { get; }
+        VtItemInformation Info { get; set; }
         SynapseItem Item { get; set; }
         bool Drop(ref bool Throw);
         bool Damage(ref float damage, DamageType damageType);
         bool Change(bool newItem);
         bool PickUp(Player player);
         bool Use(ItemInteractState state);
+        void Init();
     }
 }

@@ -27,6 +27,7 @@ namespace VT_Api.Patches.VtPatch
                 {
                     script.Item = item;
                     item.ItemData.Add(Core.Items.ItemManager.KeySynapseItemData, script);
+                    script.Init();
                 }
             }
             catch (Exception e)
