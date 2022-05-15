@@ -1,14 +1,8 @@
-﻿using Synapse;
-using Synapse.Api;
+﻿using Synapse.Api;
 using Synapse.Api.Enum;
 using Synapse.Api.Events.SynapseEventArguments;
 using Synapse.Api.Items;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Text.RegularExpressions;
-using System.Threading.Tasks;
 
 namespace VT_Api.Core.Items
 {
@@ -45,35 +39,40 @@ namespace VT_Api.Core.Items
         #endregion
 
         #region Methods
-        protected virtual void ChangeToItem(PlayerChangeItemEventArgs ev)
+        public virtual bool Drop(ref bool Throw) => true;
+
+        public virtual bool Damage(ref float damage, DamageType damageType) => true;
+
+        /// <summary>
+        /// This method display (by default) the message <see cref="MessageChangeTo"/>
+        /// </summary>
+        /// <param name="isNewItem">true if the new item is this script</param>
+        public virtual bool Change(bool isNewItem)
         {
             if (!string.IsNullOrEmpty(MessageChangeTo))
             {
                 string message = Regex.Replace(MessageChangeTo, "%Name%", ScreenName, RegexOptions.IgnoreCase);
-                ev.Player.GiveTextHint(message);
+                Holder.GiveTextHint(message);
             }
+            return true;
         }
-        protected virtual void ChangedFromItem(PlayerChangeItemEventArgs ev) { }
-        protected virtual void Use(PlayerItemInteractEventArgs ev) { }
-        protected virtual void Drop(PlayerDropItemEventArgs ev) { }
-        protected virtual void PickUp(PlayerPickUpItemEventArgs ev)
+
+        /// <summary>
+        /// This method display (by default) the message <see cref="MessagePickUp"/>
+        /// </summary>
+        public virtual bool PickUp(Player player) 
         {
             if (!string.IsNullOrEmpty(MessagePickUp))
             {
                 string message = Regex.Replace(MessagePickUp, "%Name%", ScreenName, RegexOptions.IgnoreCase);
-                ev.Player.GiveTextHint(message);
+                player.GiveTextHint(message);
             }
+            return true;
         }
 
-        public virtual bool AllowDrop(ref bool Throw) => true;
+        public virtual bool Use(ItemInteractState state) => true;
 
-        public virtual bool AllowDamage(ref float damage, DamageType damageType) => true;
-
-        public virtual bool AllowChange(bool newItem) => true;
-
-        public virtual bool AllowPickUp() => true;
-
-        public virtual bool AllowUse(ItemInteractState state) => true;
+        public virtual void Init() { }
         #endregion
     }
 }

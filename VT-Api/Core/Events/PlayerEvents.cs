@@ -26,7 +26,7 @@ namespace VT_Api.Core.Events
                 Player = player
             };
 
-            PlayerSetClassAdvEvent.Invoke(ev);
+            PlayerSetClassAdvEvent?.Invoke(ev);
         }
 
         internal void InvokePlayerSpeakIntercomEvent(Player player, ref bool allow)

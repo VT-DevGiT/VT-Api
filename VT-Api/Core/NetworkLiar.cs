@@ -100,12 +100,24 @@ namespace VT_Api.Core
         public void GetBehaviour<T>(NetworkIdentity networkIdentity, out int behaviourIndex, out NetworkBehaviour behaviour)
         {
             // Get behavior and index of it
-            var behaviourOwner = networkIdentity;
-            behaviourIndex = Array.FindIndex(behaviourOwner.NetworkBehaviours, 0, behaviourOwner.NetworkBehaviours.Length, b => b.GetType() == typeof(T));
+            for (var i = 0; i < networkIdentity.NetworkBehaviours.Length; i++)
+            {
+                if (networkIdentity.NetworkBehaviours[i].GetType() == typeof(T))
+                {
+                    behaviourIndex = i;
+                    behaviour = networkIdentity.NetworkBehaviours[i];
+                    return;
+                }
+            }
+            throw new NullReferenceException($"Get behaviour faild ! Player ave no {typeof(T).Name} !");
+            //not working
+            /*
+            behaviourIndex = Array.FindIndex(networkIdentity.NetworkBehaviours, b => b.GetType() == typeof(T));
             if (behaviourIndex != -1)
-                throw new NullReferenceException($"Get behaviour faild ! Player ave no {nameof(T)} !");
+                throw new NullReferenceException($"Get behaviour faild ! Player ave no {typeof(T).Name} !");//todo fix this
 
-            behaviour = behaviourOwner.NetworkBehaviours[behaviourIndex];
+            behaviour = networkIdentity.NetworkBehaviours[behaviourIndex];
+            */
         }
 
         public void WritePostion(PooledNetworkWriter owner, int positionRef, int positionData)

@@ -1,4 +1,8 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
 
 namespace VT_Api.Core.Events
 {
@@ -7,13 +11,13 @@ namespace VT_Api.Core.Events
         internal ServerEvents() { }
 
         #region Events
-        public event Action SynapsePostLoad;
+        public event Action ServerStopEvent;
         #endregion
 
         #region Invoke
-        internal void SynapsePostLoadPostEvent()
+        internal void InvokeServerStopEvent()
         {
-            SynapsePostLoad?.Invoke();
+            ServerStopEvent?.Invoke();
         }
         #endregion
     }

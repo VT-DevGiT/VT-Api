@@ -37,12 +37,12 @@ namespace VT_Api.Core.Command
             return new GeneratedSubCommand
             {
                 OnCommand = command.Execute,
-                Name = cmdInf.Name,
-                MainCommandName = cmdInf.MainCommandName,
+                Name = cmdInf.Name.ToLower(),
+                MainCommandName = cmdInf.MainCommandName.ToLower(),
                 Aliases = cmdInf.Aliases ?? new string[] { },
                 Permission = cmdInf.Permission ?? "",
                 Usage = cmdInf.Usage,
-                Arguments = cmdInf.Arguments,
+                Arguments = cmdInf.Arguments ?? new string[] { },
                 Description = cmdInf.Description ?? "",
                 Platforms = cmdInf.Platforms ?? new[] { Platform.RemoteAdmin, Platform.ServerConsole }
             };

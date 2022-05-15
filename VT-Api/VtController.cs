@@ -15,6 +15,7 @@ using VT_Api.Core.Teams;
 using VT_Api.Core.Items;
 
 using EventHandler = VT_Api.Core.Events.EventHandler;
+using VT_Api.Core.Behaviour;
 
 public class VtController
 {
@@ -26,7 +27,7 @@ public class VtController
     public RoleManager Role { get => Singleton<RoleManager>.Instance; }
     public TeamManager Team { get => Singleton<TeamManager>.Instance; }
     public EventHandler Events { get => Singleton<EventHandler>.Instance; }
-    public MapActionManager MapAction { get => Singleton<MapActionManager>.Instance; }
+    public MapAndRoundManger MapAction { get => Singleton<MapAndRoundManger>.Instance; }
     public NetworkLiar NetworkLiar { get => Singleton<NetworkLiar>.Instance; }
     public ItemManager Item { get => Singleton<ItemManager>.Instance; }
     internal CommandHandler Commands { get => Singleton<CommandHandler>.Instance; } // nothing  public (yet)
@@ -37,8 +38,8 @@ public class VtController
 
     #region Constructor & Destructor
     private VtController()
-    { 
-        
+    {
+
     }
     #endregion
 
@@ -63,7 +64,7 @@ public class VtController
 
     private void LogMessage()
     {
-        ServerConsole.AddLog("Vt-API Initialising!", System.ConsoleColor.Cyan);
+        ServerConsole.AddLog("Vt-API Initialising!", System.ConsoleColor.Yellow);
 
         if (VtVersion.Debug)
             Logger.Get.Warn("Debug Version of Vt-Api loaded! This Version should only be used for testing and not playing");
@@ -83,6 +84,8 @@ public class VtController
             Configs.Init();
             Team.Init();
             Role.Init();
+            Item.Init();
+
         }
         catch (Exception e)
         {

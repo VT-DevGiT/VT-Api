@@ -10,8 +10,14 @@ namespace VT_Api.Core.Roles
     {
         //Todo ??? Maby ?
 
-        
+        internal SpawnManager() { }
 
-        // can you do this ? @Antonio @Oka 
+        internal void init()
+        {
+
+        }
+
+
+        // can you do this ? @Antonio @Oka
     }
 }

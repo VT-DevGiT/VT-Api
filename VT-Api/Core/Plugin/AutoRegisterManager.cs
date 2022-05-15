@@ -13,7 +13,7 @@ namespace VT_Api.Core.Plugin
         internal AutoRegisterManager() { }
 
 
-        readonly IContextProcessor[] AddedRegisterProcesses = { new CommandProcess(), new ItemProcess(), new MiniGameProcess(), new RoleProcess(), new TeamProcess() }; 
+        readonly IContextProcessor[] AddedRegisterProcesses = { new CommandProcess(), new ItemProcess(), new MiniGameProcess(), new RoleProcess(), new TeamProcess(), new DebugCheckProcess() }; 
 
         internal void Init()
         {
@@ -28,9 +28,6 @@ namespace VT_Api.Core.Plugin
         /// <summary>
         /// Ignore Only this class for the AutoRegister
         /// </summary>
-        public class Ignore : Attribute
-        {
-
-        }
+        public class Ignore : Attribute { }
     }
 }

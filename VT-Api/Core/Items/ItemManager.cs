@@ -1,13 +1,15 @@
-﻿using Synapse.Api.Items;
+﻿using InventorySystem.Configs;
+using Synapse.Api;
+using Synapse.Api.Events.SynapseEventArguments;
+using Synapse.Api.Items;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using VT_Api.Reflexion;
 using VT_Api.Extension;
-using Synapse.Api.Events.SynapseEventArguments;
+using VT_Api.Reflexion;
 
-using synItemManager = Synapse.Api.Items.ItemManager;
 using synEvents = Synapse.Api.Events.EventHandler;
+using synItemManager = Synapse.Api.Items.ItemManager;
 
 namespace VT_Api.Core.Items
 {
@@ -18,6 +20,11 @@ namespace VT_Api.Core.Items
         public const string KeySynapseItemData = "VtScript";
 
         private readonly List<VtCustomItemInfo> customItems = new List<VtCustomItemInfo>();
+
+        public static ItemManager Get { get => VtController.Get.Item; }
+
+        public Dictionary<ItemCategory, sbyte> ItemCategoryLimit { get; } = new Dictionary<ItemCategory, sbyte>();
+        
         #endregion
 
         #region Constructor & Destructor
@@ -40,25 +47,35 @@ namespace VT_Api.Core.Items
         /// <returns><see langword="null"/> if id is not register in the API</returns>
         public IItem GetNewScript(int ID)
         {
-            var customItem = customItems.Find(i => i.Info.ID == ID);
+            var customItem = customItems.Find(i => i.ID == ID);
 
             if (customItem.Script == null)
                 return null;
 
             if (customItem.Script.GetConstructors().Any(x => x.GetParameters().Count() == 1 && x.GetParameters().First().ParameterType == typeof(VtItemInformation)))
-                return (IItem)Activator.CreateInstance(customItem.Script, new object[] { customItem.Info });
+                return (IItem)Activator.CreateInstance(customItem.Script, new object[] { new VtItemInformation(customItem.ID, customItem.BasedItemType, customItem.Name) });
+            else if (customItem.Script.GetConstructors().Any(x => x.GetParameters().Count() == 3 
+                    && x.GetParameters()[0].ParameterType == typeof(int)
+                    && x.GetParameters()[1].ParameterType == typeof(ItemType)
+                    && x.GetParameters()[2].ParameterType == typeof(string)))
+                return (IItem)Activator.CreateInstance(customItem.Script, new object[] { customItem.ID, customItem.BasedItemType, customItem.Name });
 
             var script = (IItem)Activator.CreateInstance(customItem.Script);
 
             if (script.Info == null)
-                script.SetField(nameof(script.Info), customItem.Info);
+                script.Info = new VtItemInformation(customItem.ID, customItem.BasedItemType, customItem.Name);
+            
             return script;
         }
 
         /// <returns><see langword="null"/> if the item ave no script or if <paramref name="item"/> is <see langword="null"/> else return the <see cref="IItem"/></returns>
-        public IItem GetScript(SynapseItem item) 
-            => item?.ItemData[KeySynapseItemData] as IItem;
-
+        public IItem GetScript(SynapseItem item)
+        {
+            if (!item.ItemData.TryGetValue(KeySynapseItemData, out var script))
+                return null;
+            return script as IItem;
+        }
+        
         /// <returns><see langword="null"/> if the item ave no script as a <see cref="IWeapon"> or if <paramref name="item"/> is <see langword="null"/> else return the <see cref="IWeapon"/></returns>
         public IWeapon GetWeaponScript(SynapseItem item)
             => item?.ItemData[KeySynapseItemData] as IWeapon;
@@ -75,6 +92,7 @@ namespace VT_Api.Core.Items
         {
             if (item.Info == null || item.Info == default)
                 throw new NullReferenceException($"try to register : {item.GetType().Name}\n\tProperty \"info\" not set !");
+
             customItems.Add(new VtCustomItemInfo(item));
             synItemManager.Get.RegisterCustomItem(item.Info);
 
@@ -90,64 +108,69 @@ namespace VT_Api.Core.Items
         #region Events
         private void OnDrop(PlayerDropItemEventArgs ev)
         {
-            if (TryGetScript(ev.Item, out var script))
+            if (ev.Allow && TryGetScript(ev.Item, out var script))
             {
                 var @throw = ev.Throw; 
-                ev.Allow = script.AllowDrop(ref @throw);
+                ev.Allow = script.Drop(ref @throw);
                 ev.Throw = @throw;
             }
         }
 
         private void OnDamage(PlayerDamageEventArgs ev)
         {
+            if (!ev.Allow)
+                return;
+
             var damage = ev.Damage;
             
-            if (TryGetScript(ev.Killer?.ItemInHand, out var script) && script is IWeapon weapon)
-                ev.Allow = weapon.AllowAttack(ev.Victim, ref damage, ev.DamageType);
+            if (ev.Killer?.ItemInHand != null && TryGetScript(ev.Killer.ItemInHand, out var script) && script is IWeapon weapon)
+                ev.Allow = weapon.Attack(ev.Victim, ref damage, ev.DamageType);
 
-            if (TryGetScript(ev.Victim?.ItemInHand, out var item))
-                ev.Allow &= item.AllowDamage(ref damage, ev.DamageType);
+            if (ev.Victim?.ItemInHand != null && TryGetScript(ev.Victim.ItemInHand, out var item))
+                ev.Allow &= item.Damage(ref damage, ev.DamageType);
 
             ev.Damage = damage;
         }
 
         private void OnReload(PlayerReloadEventArgs ev)
         {
-            if (TryGetScript(ev.Item, out var script) && script is IWeapon weapon)
-                ev.Allow = weapon.AllowRealod();
+            if (ev.Allow && TryGetScript(ev.Item, out var script) && script is IWeapon weapon)
+                ev.Allow = weapon.Realod();
 
         }
 
         private void OnShoot(PlayerShootEventArgs ev)
         {
-            if (TryGetScript(ev.Weapon, out var script) && script is IWeapon weapon)
+            if (ev.Allow && TryGetScript(ev.Weapon, out var script) && script is IWeapon weapon)
             {
                 if (ev.Target != null)
-                    ev.Allow = weapon.AllowShoot(ev.TargetPosition, ev.Target);
+                    ev.Allow = weapon.Shoot(ev.TargetPosition, ev.Target);
                 else
-                    ev.Allow = weapon.AllowShoot(ev.TargetPosition);
+                    ev.Allow = weapon.Shoot(ev.TargetPosition);
             }
         }
 
         private void OnChangeItem(PlayerChangeItemEventArgs ev)
         {
+            if (!ev.Allow)
+                return;
             if (ev.NewItem.IsDefined() && TryGetScript(ev.NewItem, out var newItem))
-                ev.Allow = newItem.AllowChange(true);
+                ev.Allow = newItem.Change(true);
             if (ev.OldItem.IsDefined() && TryGetScript(ev.OldItem, out var oldItem))
-                ev.Allow &= oldItem.AllowChange(false);
+                ev.Allow &= oldItem.Change(false);
 
         }
 
         private void OnPickUp(PlayerPickUpItemEventArgs ev)
         {
-            if (TryGetScript(ev.Item, out var item))
-                ev.Allow = item.AllowPickUp();
+            if (ev.Allow && TryGetScript(ev.Item, out var item))
+                ev.Allow = item.PickUp(ev.Player);
         }
 
         private void OnUse(PlayerItemInteractEventArgs ev)
         {
-            if (TryGetScript(ev.CurrentItem, out var item))
-                ev.Allow = item.AllowUse(ev.State);
+            if (ev.Allow && TryGetScript(ev.CurrentItem, out var item))
+                ev.Allow = item.Use(ev.State);
         }
         #endregion
 
@@ -157,18 +180,26 @@ namespace VT_Api.Core.Items
             public VtCustomItemInfo(Type script, int id, ItemType baseItem, string name)
             {
                 Script = script;
-                Info = new VtItemInformation(id,baseItem, name);
+                ID = id;
+                Name = name;
+                BasedItemType = baseItem;
             }
 
             public VtCustomItemInfo(IItem script)
             {
                 Script = script.GetType();
-                Info = script.Info;
+                ID = script.Info.ID;         
+                Name = script.Info.Name;
+                BasedItemType = script.Info.BasedItemType;
             }
 
-            public Type Script;
+            public int ID;
 
-            public VtItemInformation Info;
+            public ItemType BasedItemType;
+
+            public string Name;
+
+            public Type Script;
         }
         #endregion
     }

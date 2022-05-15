@@ -54,8 +54,9 @@ namespace VT_Api.Core.Plugin
         #region Constructor & Destructor
         public VtAbstractPlugin()
         {
-            AppDomain.CurrentDomain.DomainUnload += Unload; // TODO fix it dont work :(
             VtController.InitApi();
+            VtController.Get.Events.Server.ServerStopEvent += Unload;
+
             Instance = (TPlugin)this;
         }
         #endregion
@@ -75,7 +76,7 @@ namespace VT_Api.Core.Plugin
                 SynapseConfig.Update();
         }
 
-        public virtual void Unload(object sender, EventArgs e)
+        public virtual void Unload()
         {
             Logger.Get.Info(Information.Name + " by " + Information.Author + " has unloaded!");
         }
@@ -121,9 +122,10 @@ namespace VT_Api.Core.Plugin
         #region Constructor & Destructor
         public VtAbstractPlugin()
         {
-            AppDomain.CurrentDomain.DomainUnload += Unload;
             VtController.InitApi();
-            if (!(this is TPlugin))
+            VtController.Get.Events.Server.ServerStopEvent += Unload;
+
+            if (this is not TPlugin)
                 throw new Exception($"{this.GetType().Name} is not the TPlugin ! Plis fix this. Check the doc.");
             Instance = (TPlugin)this;
         }
@@ -143,7 +145,7 @@ namespace VT_Api.Core.Plugin
                 SynapseConfig.Update();
         }
 
-        public virtual void Unload(object sender, EventArgs e)
+        public virtual void Unload()
         {
             Logger.Get.Info(Information.Name + " by " + Information.Author + " has unloaded!");
         }
@@ -187,9 +189,10 @@ namespace VT_Api.Core.Plugin
         #region Constructor & Destructor
         public VtAbstractPlugin()
         {
-            AppDomain.CurrentDomain.DomainUnload += Unload;
             VtController.InitApi();
-            if (!(this is TPlugin))
+            VtController.Get.Events.Server.ServerStopEvent += Unload;
+
+            if (this is not TPlugin)
                 throw new Exception($"{this.GetType().Name} is not the TPlugin ! Plis fix this. Check the doc.");
             Instance = (TPlugin)this;
         }
@@ -208,7 +211,7 @@ namespace VT_Api.Core.Plugin
 
         }
 
-        public virtual void Unload(object sender, EventArgs e)
+        public virtual void Unload()
         {
             Logger.Get.Info(Information.Name + " by " + Information.Author + " has unloaded!");
         }

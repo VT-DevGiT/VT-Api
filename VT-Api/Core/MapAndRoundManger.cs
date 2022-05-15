@@ -15,12 +15,12 @@ using SynRagdoll = Synapse.Api.Ragdoll;
 
 namespace VT_Api.Core
 {
-    public class MapActionManager
+    public class MapAndRoundManger
     {
         //Original of SanyaPlugin https://github.com/sanyae2439/SanyaPlugin_Exiled
         public bool isAirBombCurrently = false;
 
-        public static MapActionManager Get { get => VtController.Get.MapAction; }
+        public static MapAndRoundManger Get { get => VtController.Get.MapAction; }
 
         public Vector3[] AirbombPos
         {
@@ -170,13 +170,13 @@ namespace VT_Api.Core
         }
 
         public void StartAirBombardement(int waitforready = 10, int limit = 5)
-            => MEC.Timing.RunCoroutine(MapActionManager.Get.AirBomb(waitforready, limit));
+            => MEC.Timing.RunCoroutine(MapAndRoundManger.Get.AirBomb(waitforready, limit));
 
         public void PlayAmbientSound(int id)
             => Server.Get.Host.GetComponent<AmbientSoundPlayer>().RpcPlaySound(id);
 
         public void StopAirBombardement()
-            => MapActionManager.Get.isAirBombCurrently = false;
+            => MapAndRoundManger.Get.isAirBombCurrently = false;
 
         public void ChangeRoomsLightColor(Color color)
         {

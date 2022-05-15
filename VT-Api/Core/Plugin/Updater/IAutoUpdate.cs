@@ -4,7 +4,11 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace VT_Api.Core.Events.EventArguments
+namespace VT_Api.Core.Plugin.Updater
 {
+    public interface IAutoUpdate
+    {
+        bool Update();
 
+    }
 }

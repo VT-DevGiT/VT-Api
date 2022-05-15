@@ -1,5 +1,5 @@
-﻿using Synapse.Command;
-using System;
+﻿using Synapse.Api;
+using Synapse.Command;
 using System.Collections.Generic;
 using System.Linq;
 using VT_Api.Core.Command.Commands;
@@ -21,21 +21,59 @@ namespace VT_Api.Core.Command
         internal List<GeneratedMainCommand> MainCommands { get; } = new List<GeneratedMainCommand>();
         internal List<GeneratedSubCommand> SubCommands { get; } = new List<GeneratedSubCommand>();
 
+        private readonly List<IMainCommand> AwaitingFinalization = new List<IMainCommand>();
+
+
         private bool _firstLoad = true;
 
-        internal void RegisterCommand(ISynapseCommand iSynapseCommand, bool awaitPluginInitialisation)
-            => typeof(Synapse.Command.Handlers).CallMethod("RegisterCommand", iSynapseCommand, awaitPluginInitialisation);
+        internal void RegisterSynapseCommand(ISynapseCommand iSynapseCommand, bool awaitPluginInitialisation)
+            => typeof(Handlers).CallMethod("RegisterCommand", iSynapseCommand, awaitPluginInitialisation);
+
+        internal void RegisterMainCommand(IMainCommand iSynapseCommand, bool awaitPluginInitialisation)
+        {
+            if (awaitPluginInitialisation)
+            {
+                AwaitingFinalization.Add(iSynapseCommand);
+            }
+            else
+            {
+                RegisterGeneratedCommand(GeneratedMainCommand.FromSynapseCommand(iSynapseCommand));
+            }
+        }
+
+        internal void RegisterGeneratedCommand(GeneratedMainCommand command)
+        {
+            Platform[] platforms = command.Platforms;
+            for (int i = 0; i < platforms.Length; i++)
+            {
+                switch (platforms[i])
+                {
+                    case Platform.ClientConsole:
+                        SynapseController.CommandHandlers.ClientCommandHandler.RegisterCommand(command);
+                        break;
+                    case Platform.RemoteAdmin:
+                        SynapseController.CommandHandlers.RemoteAdminHandler.RegisterCommand(command);
+                        break;
+                    case Platform.ServerConsole:
+                        SynapseController.CommandHandlers.ServerConsoleHandler.RegisterCommand(command);
+                        break;
+                }
+            }
+            MainCommands.Add(command);
+        }
 
         private void RegisterSubCommand()
         {
             if (_firstLoad)
             {
+                FinalizePluginsCommands();
+
                 foreach (var command in SubCommands)
                 {
-                    var mainCommand = MainCommands.FirstOrDefault(main => main.Name == command.MainCommandName);
+                    var mainCommand = MainCommands.FirstOrDefault(main => main.Name.ToLower() == command.MainCommandName.ToLower());
                     if (mainCommand == null)
                     {
-                        Synapse.Api.Logger.Get.Error($"Vt-Command : MainCommand {mainCommand.Name} not found for the SubCommand {command.MainCommandName}");
+                        Logger.Get.Error($"Vt-Command : MainCommand {mainCommand.Name} not found for the SubCommand {command.MainCommandName}");
                     }
                     else
                     {
@@ -51,13 +89,20 @@ namespace VT_Api.Core.Command
             Synapse.Api.Events.EventHandler.Get.Round.WaitingForPlayersEvent -= RegisterSubCommand;
         }
 
+        internal void FinalizePluginsCommands()
+        {
+            foreach (var item in AwaitingFinalization)
+                RegisterGeneratedCommand(GeneratedMainCommand.FromSynapseCommand(item));
+
+            AwaitingFinalization.Clear();
+        }
+
         private void RegisterVtCommands()
         {
             if (!_firstLoad)
                 return;
 
-            RegisterCommand(new CallPower(), false);
-            
+            RegisterSynapseCommand(new CallPower(), false);
         }
     }
 }

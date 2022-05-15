@@ -1,4 +1,7 @@
-﻿using InventorySystem.Items.ThrowableProjectiles;
+﻿using System.Collections.Generic;
+using System.Collections.ObjectModel;
+using InventorySystem.Items.ThrowableProjectiles;
+using Synapse.Api;
 using Synapse.Api.Enum;
 using Synapse.Api.Items;
 
@@ -24,5 +27,27 @@ namespace VT_Api.Core.Events.EventArguments
         public SynapseItem Item { get; internal set; }
         public bool Allow { get; set; }
     }
-    
+
+    public class RemoveLimitItemEventArgs : Synapse.Api.Events.EventHandler.ISynapseEventArgs
+    {
+        public Player Player { get; internal set; }
+        public List<SynapseItem> RemovItem { get; internal set; }
+        public ReadOnlyDictionary<ItemCategory, int> CatergoryMax { get; internal set; }
+    }
+
+    public class RemoveAmmoEventArgs : Synapse.Api.Events.EventHandler.ISynapseEventArgs
+    {
+        public Player Player { get; internal set; }
+        public Dictionary<AmmoType, ushort> RemovAmmo { get; internal set; }
+        public ReadOnlyDictionary<AmmoType, ushort> CatergoryMax { get; internal set; }
+    }
+
+    public class CheckLimitItemEventArgs : Synapse.Api.Events.EventHandler.ISynapseEventArgs
+    {
+        public Player Player { get; internal set; }
+        public SynapseItem ExedentingItem { get; internal set; }
+        public int CategoryMax { get; internal set; }
+        public bool Allow { get; set; }
+    }
 }
+

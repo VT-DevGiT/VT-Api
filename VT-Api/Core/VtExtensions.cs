@@ -1,13 +1,10 @@
-﻿using Mirror;
-using Synapse.Api;
+﻿using Synapse.Api;
 using Synapse.Api.Enum;
 using Synapse.Api.Items;
 using Synapse.Config;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Reflection;
-using System.Reflection.Emit;
 using UnityEngine;
 using VT_Api.Config;
 using VT_Api.Core;
@@ -15,6 +12,7 @@ using VT_Api.Core.Enum;
 using VT_Api.Core.Items;
 using VT_Api.Core.Roles;
 using VT_Api.Core.Teams;
+
 using Server = Synapse.Server;
 using SynItemManager = Synapse.Api.Items.ItemManager;
 using SynLogger = Synapse.Api.Logger;
@@ -39,7 +37,7 @@ namespace VT_Api.Extension
             => VtController.Get.MapAction.StartAirBombardement();
 
         public static void StopAirBombardement()
-            => MapActionManager.Get.isAirBombCurrently = false;
+            => MapAndRoundManger.Get.isAirBombCurrently = false;
 
         public static void ResetRoomsLightColor(this Map _)
             => VtController.Get.MapAction.ResetRoomsLightColor();
@@ -52,7 +50,7 @@ namespace VT_Api.Extension
 
         public static List<Player> GetDeadPlayersInRangeOfPlayer(this Player player, float range)
         {
-            var players = MapActionManager.Get.GetRagdollOwners(player, range);
+            var players = MapAndRoundManger.Get.GetRagdollOwners(player, range);
 
             players.RemoveAll(p => p.Team == Team.RIP && !p.OverWatch);
             
@@ -63,7 +61,7 @@ namespace VT_Api.Extension
 
         public static Player GetDeadPlayerInRangeOfPlayer(this Player player, float range)
         {
-            var players = MapActionManager.Get.GetRagdollOwners(player, range);
+            var players = MapAndRoundManger.Get.GetRagdollOwners(player, range);
 
             players.RemoveAll(p => p.Team == Team.RIP && !p.OverWatch);
 
@@ -110,7 +108,11 @@ namespace VT_Api.Extension
         }
 
         public static void FakeRole(this Player player, RoleType role)
-            => FakeRole(player, role, Server.Get.Players);
+        {
+            var players = Server.Get.Players;
+            players.Remove(player);
+            FakeRole(player, role, players);
+        }
 
         public static void FakeRole(this Player player, RoleType role, List<Player> players)
             => NetworkLiar.Get.SendRole(player, role, players);

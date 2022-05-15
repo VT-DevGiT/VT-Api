@@ -4,9 +4,9 @@ public static class VtVersion
 {
     public const int Major = 1;
 
-    public const int Minor = 0;
+    public const int Minor = 1;
 
-    public const int Patch = 1;
+    public const int Patch = 0;
 
     public const SynapseVersion.VersionType Type =
 
@@ -18,7 +18,7 @@ public static class VtVersion
         SynapseVersion.VersionType.None;
 #endif
 
-    public const string SubVersion = "βeta";
+    public const string SubVersion = "";
 
     public const string BasedGameVersion = SynapseVersion.BasedGameVersion;
 

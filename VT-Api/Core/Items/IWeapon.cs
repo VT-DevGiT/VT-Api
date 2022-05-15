@@ -6,9 +6,9 @@ namespace VT_Api.Core.Items
 {
     public interface IWeapon : IItem
     {
-        bool AllowAttack(Player victim, ref float damage, DamageType type);
-        bool AllowRealod();
-        bool AllowShoot(Vector3 targetPosition);
-        bool AllowShoot(Vector3 targetPosition, Player target);
+        bool Attack(Player victim, ref float damage, DamageType type);
+        bool Realod();
+        bool Shoot(Vector3 targetPosition);
+        bool Shoot(Vector3 targetPosition, Player target);
     }
 }
