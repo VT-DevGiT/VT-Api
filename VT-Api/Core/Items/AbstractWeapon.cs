@@ -18,6 +18,7 @@ namespace VT_Api.Core.Items
         public abstract AmmoType AmmoType { get; }
         public abstract int DamageAmmont { get; }
 
+        public float Ammo { get => Item.Durabillity; set => Item.Durabillity = value; }
         #endregion
 
         #region Constructors & Destructor
@@ -30,11 +31,11 @@ namespace VT_Api.Core.Items
         #region Methods
         public virtual bool Realod()
         {
-            if (Item.Durabillity < MaxAmmos)
+            if (Ammo < MaxAmmos)
             {
                 ushort ammo = Math.Min(Holder.AmmoBox[AmmoType], MaxAmmos);
                 Holder.AmmoBox[AmmoType] -= ammo;
-                Item.Durabillity += ammo;
+                Ammo += ammo;
             }
             return false;
         }

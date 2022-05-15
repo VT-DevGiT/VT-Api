@@ -85,7 +85,8 @@
     <Compile Include="Core\MiniGame\IMiniGame.cs" />
     <Compile Include="Core\MiniGame\MiniGameInformation.cs" />
     <Compile Include="Core\NetworkLiar.cs" />
-    <Compile Include="Core\Plugin\AutoRegisterProcess\AutoUpdatePorecess.cs" />
+    <Compile Include="Core\Plugin\Process\AutoUpdatePorecess.cs" />
+    <Compile Include="Core\Plugin\Process\DebugCheckProcess.cs" />
     <Compile Include="Core\Plugin\Updater\AbstractAutoUpdater.cs" />
     <Compile Include="Core\Plugin\Updater\AbstractUpdateHandler.cs" />
     <Compile Include="Core\Plugin\AutoRegisterManager.cs" />
@@ -93,11 +94,11 @@
     <Compile Include="Core\Items\ItemManager.cs" />
     <Compile Include="Core\MiniGame\AbstractMinGame.cs" />
     <Compile Include="Core\MiniGame\MiniGameManager.cs" />
-    <Compile Include="Core\Plugin\AutoRegisterProcess\CommandProcess.cs" />
-    <Compile Include="Core\Plugin\AutoRegisterProcess\ItemProcess.cs" />
-    <Compile Include="Core\Plugin\AutoRegisterProcess\MiniGameProcess.cs" />
-    <Compile Include="Core\Plugin\AutoRegisterProcess\RoleProcess.cs" />
-    <Compile Include="Core\Plugin\AutoRegisterProcess\TeamProcess.cs" />
+    <Compile Include="Core\Plugin\Process\CommandProcess.cs" />
+    <Compile Include="Core\Plugin\Process\ItemProcess.cs" />
+    <Compile Include="Core\Plugin\Process\MiniGameProcess.cs" />
+    <Compile Include="Core\Plugin\Process\RoleProcess.cs" />
+    <Compile Include="Core\Plugin\Process\TeamProcess.cs" />
     <Compile Include="Core\Plugin\Updater\IAutoUpdate.cs" />
     <Compile Include="Core\Plugin\Updater\IUpdateHandler.cs" />
     <Compile Include="Core\Plugin\IVtPlugin.cs" />
@@ -126,7 +127,7 @@
     <Compile Include="Exceptions\VtUnknownVersionException.cs" />
     <Compile Include="Patches\VtEvent\ItemPatches\ChangeIntoGrenadePatch.cs" />
     <Compile Include="Patches\VtEvent\ItemPatches\CollisionItemPatch.cs" />
-    <Compile Include="Patches\VtEvent\ItemPatches\ExplosionGrenadePatches.cs" />
+    <Compile Include="Patches\VtEvent\ItemPatches\ExplosionGrenadePatchs.cs" />
     <Compile Include="Patches\VtEvent\ItemPatches\RemoveExceedingLimitsPatch.cs" />
     <Compile Include="Patches\VtEvent\ItemPatches\ItemSearchValidatePatch.cs" />
     <Compile Include="Patches\VtEvent\MapPaches\GeneratorActivated.cs" />
@@ -143,8 +144,9 @@
     <Compile Include="Patches\VtEvent\PlayerPatches\SetClassPatch.cs" />
     <Compile Include="Patches\VtEvent\PlayerPatches\SynapseDamagePatch.cs" />
     <Compile Include="Patches\VtEvent\ScpPatches\Scp106\Scp106UsePortalPatch.cs" />
+    <Compile Include="Patches\VtPatch\GetCategoryLimitPatchs.cs" />
     <Compile Include="Patches\VtPatch\SynapseItemPatch.cs" />
-	<Compile Include="Patches\VtPatch\NextKnownTeamPatch.cs" />
+    <Compile Include="Patches\VtPatch\NextKnownTeamPatch.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="VtController.cs" />
     <Compile Include="Core\VtExtensions.cs" />

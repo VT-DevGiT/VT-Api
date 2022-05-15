@@ -104,5 +104,6 @@
         Mover = 252,
         Scaler = 253,
         Selector = 254,
+        Rotationer = 255,
     }
 }

@@ -1,4 +1,5 @@
-﻿using Synapse.Api;
+﻿using InventorySystem.Configs;
+using Synapse.Api;
 using Synapse.Api.Events.SynapseEventArguments;
 using Synapse.Api.Items;
 using System;
@@ -21,6 +22,9 @@ namespace VT_Api.Core.Items
         private readonly List<VtCustomItemInfo> customItems = new List<VtCustomItemInfo>();
 
         public static ItemManager Get { get => VtController.Get.Item; }
+
+        public Dictionary<ItemCategory, sbyte> ItemCategoryLimit { get; } = new Dictionary<ItemCategory, sbyte>();
+        
         #endregion
 
         #region Constructor & Destructor

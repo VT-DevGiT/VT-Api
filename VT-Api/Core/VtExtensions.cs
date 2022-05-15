@@ -108,7 +108,11 @@ namespace VT_Api.Extension
         }
 
         public static void FakeRole(this Player player, RoleType role)
-            => FakeRole(player, role, Server.Get.Players);
+        {
+            var players = Server.Get.Players;
+            players.Remove(player);
+            FakeRole(player, role, players);
+        }
 
         public static void FakeRole(this Player player, RoleType role, List<Player> players)
             => NetworkLiar.Get.SendRole(player, role, players);

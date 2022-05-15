@@ -91,6 +91,9 @@
         /// Test Class is only use for dev test or Exemple of code
         /// </summary>
         TestClass = 200,
+        /// <summary>
+        /// Class201 is only use for dev test or Exemple of code
+        /// </summary>
         Class201 = 201,
     }
 }

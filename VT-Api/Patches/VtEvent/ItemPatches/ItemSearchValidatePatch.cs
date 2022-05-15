@@ -14,6 +14,7 @@ namespace VT_Api.Patches.VtEvent.ItemPatches
     [HarmonyPatch(typeof(ItemSearchCompletor), nameof(ItemSearchCompletor.ValidateAny))]
     class ItemSearchValidatePatch
     {
+        static internal List<ItemSearchCompletor> AlredyAllowed = new List<ItemSearchCompletor>();
 
         [HarmonyPrefix]
         private static bool ValidateAny(ItemSearchCompletor __instance, ref bool __result)
@@ -22,6 +23,7 @@ namespace VT_Api.Patches.VtEvent.ItemPatches
             {
                 if (!SubValidateAny())
                 {
+                    ItemSearchCompletorItemSave.Items.Remove(__instance);
                     __result = false;
                     return false;
                 }
@@ -38,33 +40,34 @@ namespace VT_Api.Patches.VtEvent.ItemPatches
                     HintEffectPresets.TrailingPulseAlpha(0.5f, 1f, 0.5f, 2f, 0f, 3)
                     }, 2f));
 
+                    ItemSearchCompletorItemSave.Items.Remove(__instance);
                     __result = false;
                     return false;
                 }
 
-                if (__instance._category != 0)
+                if (__instance._category != 0 && !AlredyAllowed.Contains(__instance))
                 {
-
                     int categoryLimit = Mathf.Abs(InventoryLimits.GetCategoryLimit(__instance._category, player.Hub));
                     bool allow = __instance.CategoryCount < categoryLimit;
 
                     VtController.Get.Events.Item.InvokeCheckLimitItemEvent(player, ItemSearchCompletorItemSave.Items[__instance], categoryLimit, ref allow);
+
                     if (!allow)
                     {
-
                         player.HintDisplay.Show(new TranslationHint(HintTranslations.MaxItemCategoryAlreadyReached, new HintParameter[2]
                         {
-                        new ItemCategoryHintParameter(__instance._category),
-                        new ByteHintParameter((byte)categoryLimit)
+                            new ItemCategoryHintParameter(__instance._category),
+                            new ByteHintParameter((byte)categoryLimit)
                         }, new HintEffect[1]
                         {
-                        HintEffectPresets.TrailingPulseAlpha(0.5f, 1f, 0.5f, 2f, 0f, 2)
-                        }, 2f)); 
-
+                            HintEffectPresets.TrailingPulseAlpha(0.5f, 1f, 0.5f, 2f, 0f, 2)
+                        }, 2f));
+                        
                         __result = false;
                         return false;
                     }
-
+                    else 
+                        AlredyAllowed.Add(__instance);
                 }
 
                 __result = true;
@@ -73,6 +76,7 @@ namespace VT_Api.Patches.VtEvent.ItemPatches
             catch (Exception e)
             {
                 Synapse.Api.Logger.Get.Error($"Vt-Event: ValidateAny faild !!\n{e}\nStackTrace:\n{e.StackTrace}");
+                ItemSearchCompletorItemSave.Items.Remove(__instance); 
                 return true;
             }
 
@@ -109,7 +113,7 @@ namespace VT_Api.Patches.VtEvent.ItemPatches
 
                     HintEffect[] effects = HintEffectPresets.FadeInAndOut(0.25f);
 
-                    HintParameter[] parameters = new HintParameter[2]
+                    HintParameter[] parameters = new HintParameter[2] 
                     {
                         new ItemCategoryHintParameter(__instance._category),
                         new ByteHintParameter((byte)categoryLimit)
@@ -119,11 +123,16 @@ namespace VT_Api.Patches.VtEvent.ItemPatches
                 }
 
                 ItemSearchCompletorItemSave.Items.Remove(__instance);
+                if (ItemSearchValidatePatch.AlredyAllowed.Contains(__instance))
+                    ItemSearchValidatePatch.AlredyAllowed.Remove(__instance); 
                 return false;
             }
             catch (Exception e)
             {
+                if (ItemSearchValidatePatch.AlredyAllowed.Contains(__instance))
+                    ItemSearchValidatePatch.AlredyAllowed.Remove(__instance);
                 Synapse.Api.Logger.Get.Error($"Vt-Event: ItemSearchLimitHint faild !!\n{e}\nStackTrace:\n{e.StackTrace}");
+                ItemSearchCompletorItemSave.Items.Remove(__instance); 
                 return true;
             }
         }
@@ -132,15 +141,15 @@ namespace VT_Api.Patches.VtEvent.ItemPatches
     [HarmonyPatch(typeof(ItemSearchCompletor), MethodType.Constructor, new Type[] { typeof(ReferenceHub), typeof(ItemPickupBase), typeof(ItemBase), typeof(double) })]
     class ItemSearchCompletorItemSave
     {
-        public static Dictionary<ItemSearchCompletor, SynapseItem> Items = new Dictionary<ItemSearchCompletor, SynapseItem>();
+        public static Dictionary<ItemSearchCompletor, SynapseItem> Items { get; } = new Dictionary<ItemSearchCompletor, SynapseItem>();
 
 
-        [HarmonyPostfix]
+        [HarmonyPostfix]//todo fix null item
         private static void AddItem(ItemSearchCompletor __instance, ReferenceHub hub, ItemPickupBase targetPickup, ItemBase targetItem, double maxDistanceSquared)
         {
             try
             {
-                Items.Add(__instance, targetItem.GetSynapseItem());
+                Items.Add(__instance, targetPickup.GetSynapseItem());
             }
             catch (Exception e)
             {

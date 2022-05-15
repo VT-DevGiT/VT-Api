@@ -92,13 +92,6 @@ namespace VT_Api.Core.Behaviour
         int r = 255, g = 0, b = 0;
         #endregion
 
-        #region Constructor & Destructor
-        public Display() : base()
-        {
-            VtController.Get.Events.Player.PlayerSetClassAdvEvent += OnSetClass;
-        }
-        #endregion
-
         #region Methods
         private void Start()
         {
@@ -140,16 +133,14 @@ namespace VT_Api.Core.Behaviour
                     r += delata;
                 }
 
-                Refresh(Server.Get.Players);
+                Refresh(Server.Get.Players.Where(p => p.RoleType != RoleType.Spectator).ToList());
             }
         }
 
         public string BuildNickName()
         {
             if ((Player.NicknameSync.Network_playerInfoToShow & PlayerInfoArea.Nickname) == PlayerInfoArea.Nickname)
-            {
                 return Player.name + "\n";
-            }
             return String.Empty;
         }
 
@@ -183,18 +174,14 @@ namespace VT_Api.Core.Behaviour
         public string BuildUnite()
         {
             if ((Player.NicknameSync.Network_playerInfoToShow & PlayerInfoArea.UnitName) == PlayerInfoArea.UnitName && !string.IsNullOrEmpty(Player.UnitName))
-            {
                return $" ({Player.UnitName})";
-            }
             return string.Empty;
         }
 
         public string BuildCustomInfo()
         {
             if (custiomInfoIsSet && (Player.NicknameSync.Network_playerInfoToShow & PlayerInfoArea.CustomInfo) == PlayerInfoArea.CustomInfo)
-            {
                 return $"\n{customInfo}";
-            }
             return string.Empty;
         }
 
@@ -234,16 +221,6 @@ namespace VT_Api.Core.Behaviour
             {
                 NetworkLiar.Get.SendDisplayInfo(Player, display, Server.Get.Players);
             }
-        }
-        #endregion
-
-        #region Events
-        private void OnSetClass(PlayerSetClassAdvEventArgs ev)
-        {
-            if (ev.Player == Player)
-                Refresh(Server.Get.Players);
-            else
-                Refresh(new List<Player>() { ev.Player });
         }
         #endregion
     }

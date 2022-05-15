@@ -39,20 +39,27 @@ namespace VT_Api.Core.Items
         #endregion
 
         #region Methods
-        protected virtual void ChangeToItem(PlayerChangeItemEventArgs ev)
-        {
-            if (!string.IsNullOrEmpty(MessageChangeTo))
-            {
-                string message = Regex.Replace(MessageChangeTo, "%Name%", ScreenName, RegexOptions.IgnoreCase);
-                ev.Player.GiveTextHint(message);
-            }
-        }
         public virtual bool Drop(ref bool Throw) => true;
 
         public virtual bool Damage(ref float damage, DamageType damageType) => true;
 
-        public virtual bool Change(bool newItem) => true;
+        /// <summary>
+        /// This method display (by default) the message <see cref="MessageChangeTo"/>
+        /// </summary>
+        /// <param name="isNewItem">true if the new item is this script</param>
+        public virtual bool Change(bool isNewItem)
+        {
+            if (!string.IsNullOrEmpty(MessageChangeTo))
+            {
+                string message = Regex.Replace(MessageChangeTo, "%Name%", ScreenName, RegexOptions.IgnoreCase);
+                Holder.GiveTextHint(message);
+            }
+            return true;
+        }
 
+        /// <summary>
+        /// This method display (by default) the message <see cref="MessagePickUp"/>
+        /// </summary>
         public virtual bool PickUp(Player player) 
         {
             if (!string.IsNullOrEmpty(MessagePickUp))
