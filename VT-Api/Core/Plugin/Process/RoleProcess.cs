@@ -16,7 +16,7 @@ namespace VT_Api.Core.Plugin.AutoRegisterProcess
             foreach (var roleType in context.Classes)
             {
 
-                if (!typeof(IRole).IsAssignableFrom(roleType) || roleType.GetCustomAttribute<AutoRegisterManager.Ignore>() != null)
+                if (!typeof(IRole).IsAssignableFrom(roleType) || roleType.GetCustomAttribute<AutoRegisterManager.Ignore>(false) != null)
                         continue;
 
                 try

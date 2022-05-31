@@ -13,7 +13,7 @@ namespace VT_Api.Core.Plugin.AutoRegisterProcess
             {
                 try
                 {
-                    if (!typeof(IAutoUpdate).IsAssignableFrom(autoUpdate) || autoUpdate.GetCustomAttribute<AutoRegisterManager.Ignore>() != null)
+                    if (!typeof(IAutoUpdate).IsAssignableFrom(autoUpdate) || autoUpdate.GetCustomAttribute<AutoRegisterManager.Ignore>(false) != null)
                         continue;
 
                     var autoUpdater = (IAutoUpdate)Activator.CreateInstance(autoUpdate);

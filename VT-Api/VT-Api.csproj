@@ -51,6 +51,7 @@
     <Compile Include="Config\VtApiTranslation.cs" />
     <Compile Include="Core\Behaviour\Display.cs" />
     <Compile Include="Core\Behaviour\ServerStopTrap.cs" />
+    <Compile Include="Core\Enum\AudioStatus.cs" />
     <Compile Include="Core\Enum\Hierarchy.cs" />
     <Compile Include="Core\Events\ServerEvents.cs" />
     <Compile Include="Core\ISengleton.cs" />
@@ -107,6 +108,7 @@
     <Compile Include="Core\Plugin\Updater\Version.cs" />
     <Compile Include="Core\Plugin\VtAbstractPlugins.cs" />
     <Compile Include="Core\Roles\AbstractRole.cs" />
+    <Compile Include="Core\Roles\ICustomPhysicalRole.cs" />
     <Compile Include="Core\Roles\IHierarchy.cs" />
     <Compile Include="Core\Roles\IScpDeathAnnonce.cs" />
     <Compile Include="Core\Roles\IUtrRole.cs" />
@@ -153,12 +155,16 @@
     <Compile Include="VtVersion.cs" />
   </ItemGroup>
   <ItemGroup>
+    <Folder Include="Core\Audio\" />
     <Folder Include="Core\DataBase\" />
     <Folder Include="Core\NPC\" />
-    <Folder Include="Core\SoundManager\" />
     <Folder Include="Patches\VtFix\" />
   </ItemGroup>
   <ItemGroup>
+    <Reference Include="DissonanceVoip-Publicized">
+      <HintPath>..\ref\DissonanceVoip-Publicized.dll</HintPath>
+      <Aliases>Dissonance</Aliases>
+    </Reference>
     <Reference Include="NorthwoodLib-Publicized">
       <HintPath>..\ref\NorthwoodLib-Publicized.dll</HintPath>
     </Reference>

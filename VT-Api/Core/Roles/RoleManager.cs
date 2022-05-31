@@ -4,6 +4,7 @@ using Synapse.Api.Events.SynapseEventArguments;
 using Synapse.Api.Roles;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 using VT_Api.Core.Enum;
 using VT_Api.Extension;
@@ -14,22 +15,30 @@ namespace VT_Api.Core.Roles
     public class RoleManager
     {
 
+        #region Properties & Variable
         public Dictionary<Player, int> OldPlayerRole { get; } = new Dictionary<Player, int>();
+
+        public List<ICustomPhysicalRole> CustomPhysicaleRoles { get; } = new List<ICustomPhysicalRole>();
 
         public static int[] VanilaScpID { get; } = { (int)RoleType.Scp049,   (int)RoleType.Scp0492, (int)RoleType.Scp079,
                                                      (int)RoleType.Scp096,   (int)RoleType.Scp106,  (int)RoleType.Scp173,
                                                      (int)RoleType.Scp93953, (int)RoleType.Scp93989 };
         
         public static RoleManager Get => VtController.Get.Role;
+        #endregion
 
-
+        #region Constructor & Destructor
         internal RoleManager() { }
+        #endregion
 
+        #region Methods
         internal void Init()
         {
             Synapse.Api.Events.EventHandler.Get.Player.PlayerSetClassEvent += OnSetClass;
             Synapse.Api.Events.EventHandler.Get.Player.PlayerDeathEvent += OnPlayerDeath;
             Synapse.Api.Events.EventHandler.Get.Player.PlayerKeyPressEvent += OnPressKey;
+            Synapse.Api.Events.EventHandler.Get.Server.UpdateEvent += OnUpdate;
+            Synapse.Api.Events.EventHandler.Get.Server.TransmitPlayerDataEvent += OnTransmitPlayerData;
         }
 
         public bool IsVanilla(int roleID)
@@ -69,7 +78,9 @@ namespace VT_Api.Core.Roles
             }
             return (int)TeamID.None;
         }
+        #endregion
 
+        #region Events
         private void OnPressKey(PlayerKeyPressEventArgs ev)
         {
             if (ev.Player.CustomRole is IVtRole role)
@@ -104,6 +115,17 @@ namespace VT_Api.Core.Roles
             {
                 role.InitAll(ev);
             }
+            if (ev.Player.CustomRole is ICustomPhysicalRole customPhyRole)
+            {
+                if (!CustomPhysicaleRoles.Contains(customPhyRole))
+                    CustomPhysicaleRoles.Add(customPhyRole);
+            }
+            else
+            {
+                customPhyRole = CustomPhysicaleRoles.FirstOrDefault(r => r?.Player == ev.Player);
+                if (customPhyRole != null)
+                    CustomPhysicaleRoles.Remove(customPhyRole);
+            }
         }
 
         private void OnPlayerDeath(PlayerDeathEventArgs ev)
@@ -118,6 +140,31 @@ namespace VT_Api.Core.Roles
                 var unityName = ev.Killer?.Team == Team.MTF ? ev.Killer.UnitName : "UNKNOWN";
                 Server.Get.Map.AnnounceScpDeath(scpName, ev.DamageType.GetScpRecontainmentType(ev.Killer), unityName);
             }
+
+            if (ev.Victim.CustomRole is IUtrRole utr)
+            {
+                CustomPhysicaleRoles.Remove(utr);
+            }
         }
+
+        private void OnUpdate()
+        {
+            foreach (var utr in CustomPhysicaleRoles)
+            {
+                utr.UpdateBody();
+            }
+        }
+
+        private void OnTransmitPlayerData(TransmitPlayerDataEventArgs ev)
+        {
+            if (ev.PlayerToShow == ev.Player)
+                return;
+            var utr = CustomPhysicaleRoles.FirstOrDefault(p => p.Player == ev.PlayerToShow);
+            if (utr == null)    
+                return;
+            if (ev.Player.RoleID != (int)RoleID.Staff)
+                ev.Invisible = false;
+        }
+        #endregion
     }
 }

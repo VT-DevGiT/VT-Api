@@ -16,7 +16,7 @@ namespace VT_Api.Core.Plugin.AutoRegisterProcess
 
             foreach (var teamType in context.Classes)
             {
-                if (!typeof(Synapse.Api.Teams.ISynapseTeam).IsAssignableFrom(teamType) || teamType.GetCustomAttribute<AutoRegisterManager.Ignore>() != null)
+                if (!typeof(Synapse.Api.Teams.ISynapseTeam).IsAssignableFrom(teamType) || teamType.GetCustomAttribute<AutoRegisterManager.Ignore>(false) != null)
                     continue;
 
                 try

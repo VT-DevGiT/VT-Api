@@ -49,6 +49,43 @@ namespace VT_Api.Core
             SendAndRecycle(owner, observer, players, player);
         }
 
+        public void SebdInfoToDisplay(Player player, PlayerInfoArea info, List<Player> players)
+        {
+            const byte bytecodes = 4;
+
+            var owner = NetworkWriterPool.GetWriter();
+            var observer = NetworkWriterPool.GetWriter();
+
+            // Get behavior and index of it
+            GetBehaviour<NicknameSync>(player.Hub.networkIdentity, out var behaviourIndex, out var behaviour);
+
+            // Writ
+            owner.WriteByte((byte)behaviourIndex);
+
+            var positionRef = owner.Position;
+            owner.WriteInt32(0);
+            var positionData = owner.Position;
+
+            behaviour.SerializeObjectsDelta(owner);
+
+            // Write var
+            owner.WriteUInt64(bytecodes);
+            owner.WriteByte((byte)info);
+
+            // Write syncdata position data
+            WritePostion(owner, positionRef, positionData);
+
+            // Copy owner to observer
+            if (behaviour.syncMode != SyncMode.Observers)
+            {
+                var arraySegment = owner.ToArraySegment();
+                observer.WriteBytes(arraySegment.Array, positionRef, owner.Position - positionRef);
+            }
+
+            //send
+            SendAndRecycle(owner, observer, players, player);
+        }
+
         public void SendDisplayInfo(Player player, string info, List<Player> players)
         {
             const byte bytecodes = 2;

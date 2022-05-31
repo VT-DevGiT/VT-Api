@@ -7,12 +7,16 @@ namespace VT_Api.Core.Plugin.Updater
     {
         [DataMember(Name = "id")] 
         public readonly int Id;
+        
         [DataMember(Name = "name")] 
         public readonly string Name;
+        
         [DataMember(Name = "size")] 
         public readonly int Size;
+        
         [DataMember(Name = "url")] 
         public readonly string Url;
+        
         [DataMember(Name = "browser_download_url")] 
         public readonly string BrowserDownloadUrl;
 

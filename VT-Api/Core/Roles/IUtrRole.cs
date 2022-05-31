@@ -1,13 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using Synapse.Api.Roles;
 
 namespace VT_Api.Core.Roles
 {
-    public interface IUtrRole
+    public interface IUtrRole : ICustomPhysicalRole
     {
-
+        
     }
 }

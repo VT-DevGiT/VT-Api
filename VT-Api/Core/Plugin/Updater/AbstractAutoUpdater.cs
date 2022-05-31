@@ -9,7 +9,7 @@ using VT_Api.Reflexion;
 
 namespace VT_Api.Core.Plugin.Updater
 {
-    internal abstract class AbstractAutoUpdater<T> : AbstractUpdateHandler, IAutoUpdate
+    public abstract class AbstractAutoUpdater<T> : AbstractUpdateHandler, IAutoUpdate
         where T : IPlugin
     {
         
