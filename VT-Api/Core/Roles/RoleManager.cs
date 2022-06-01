@@ -113,7 +113,14 @@ namespace VT_Api.Core.Roles
         {
             if (ev.Player.CustomRole is IVtRole role && !role.Spawned)
             {
-                role.InitAll(ev);
+                try
+                {
+                   role.InitAll(ev);
+                }
+                catch (Exception ex)
+                {
+                    Synapse.Api.Logger.Get.Error($"Fail to init the role {role.GetRoleName()} (ID : {role.GetRoleID()}) :\n{ex}");
+                }
             }
             if (ev.Player.CustomRole is ICustomPhysicalRole customPhyRole)
             {

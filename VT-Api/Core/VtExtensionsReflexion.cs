@@ -47,7 +47,7 @@ namespace VT_Api.Reflexion
             {
                 return (T)prop.GetValue(null);
             }
-            FieldInfo field = element.GetField(fieldName, BindingFlags.NonPublic | BindingFlags.Static);
+            var field = element.GetField(fieldName, BindingFlags.NonPublic | BindingFlags.Static);
             if (field != null)
             {
                 return (T)field.GetValue(null);
@@ -140,6 +140,27 @@ namespace VT_Api.Reflexion
             {
                 Synapse.Api.Logger.Get.Error("Vt-Reflexion: CallEvent failed!! \n eventsField null");
             }
+        }
+
+        public static T CopyPropertyAndFeild<T>(this T element, T elementToCopy)
+        {   
+            var props = typeof(T).GetProperties(BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance);
+            if (props.Length != 0)
+            {
+                foreach (var prop in props)
+                {
+                    prop.SetValue(element, prop.GetValue(elementToCopy));
+                }
+            }
+            var fields = typeof(T).GetFields(BindingFlags.NonPublic | BindingFlags.Static | BindingFlags.Instance);
+            if (fields.Length != 0)
+            {
+                foreach (var field in fields)
+                {
+                    field.SetValue(element, field.GetValue(elementToCopy));
+                }
+            }
+            return element;
         }
     }
 }

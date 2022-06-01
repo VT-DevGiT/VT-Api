@@ -6,6 +6,7 @@ using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using VT_Api.Core.Events.EventArguments;
+using VT_Api.Extension;
 
 namespace VT_Api.Core.Events
 {
@@ -54,6 +55,8 @@ namespace VT_Api.Core.Events
 
         internal void InvokeRemoveLimitAmmoEvent(Player player, Dictionary<AmmoType, ushort> catergoryMax, ref Dictionary<AmmoType, ushort> removAmmo)
         {
+            Logger.Get.Debug("Call");
+
             var ev = new RemoveAmmoEventArgs
             {
                 Player = player,
