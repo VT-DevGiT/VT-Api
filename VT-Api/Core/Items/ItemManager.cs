@@ -81,8 +81,16 @@ namespace VT_Api.Core.Items
             => item?.ItemData[KeySynapseItemData] as IWeapon;
 
         /// <returns><see langword="false"/> if item ave no script or if <paramref name="item"/> is <see langword="null"/> else return <see langword="true"/></returns>
-        public bool TryGetScript(SynapseItem item, out IItem script) 
-            => (script = GetScript(item)) != null;
+        public bool TryGetScript(SynapseItem item, out IItem script)
+        {
+            if (item?.ItemData == null || !item.ItemData.TryGetValue(KeySynapseItemData, out var data))
+            {
+                script = null;
+                return false;
+            }
+            script = data as IItem;
+            return true;
+        } 
 
         /// <returns><see langword="false"/> if item ave no script as a <see cref="IWeapon"> or if <paramref name="item"/> is <see langword="null"/> else return <see langword="true"/></returns>
         public bool TryGetWeaponScript(SynapseItem item, out IWeapon script)

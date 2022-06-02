@@ -27,7 +27,7 @@ namespace VT_Api.Config
                 RankOver = "GIB ANWEISUNGEN",
                 RankSame = "GLEICHER RANG",
                 RankUnder = "FOLGE ANWEISUNGEN",
-                DeathMessage = "<size=20%>Du wurdest gertöet von</size>\\n%PlayerName%\\n<size=20%>als</size%>\\n%RoleName%"
+                DeathMessage = "Du wurdest gertöet von\\n%PlayerName%\\nals\\n%RoleName%"
             }, "GERMAN");
             VtTranslation.AddTranslation(new VtApiTranslation
             {
@@ -36,7 +36,7 @@ namespace VT_Api.Config
                 RankOver = "VOUS POUVEZ LUI DONNER DES ORDRES",
                 RankSame = "MÊME NIVEAU D'ACCRÉDITATION",
                 RankUnder = "SUIVEZ SES ORDRES",
-                DeathMessage = "<size=20%>Vous avez été tué par:</size>\\n%PlayerName%\\n<size=20%>en tent que:</size%>\\n%RoleName%"
+                DeathMessage = "Vous avez été tué par:\\n%PlayerName%\\nen tent que:\\n%RoleName%"
 
             }, "FRENCH");
 

@@ -68,7 +68,7 @@ namespace VT_Api.Core
             }
         }
 
-        private IEnumerator<float> AirBomb(int waitforready, int limit)
+        private IEnumerator<float> AirBomb(int waitforready, int limit, Player player)
         {
             if (isAirBombCurrently)
                 yield break;
@@ -92,10 +92,11 @@ namespace VT_Api.Core
             int throwcount = 0;
             while (isAirBombCurrently)
             {
-                List<Vector3> randampos = AirbombPos.OrderBy(x => Guid.NewGuid()).ToList();
+                List<Vector3> randampos = AirbombPos.ToList();
+                randampos.ShuffleList();
                 foreach (var pos in randampos)
                 {
-                    Map.Get.SpawnGrenade(pos, Vector3.zero, 0.1f);
+                    Map.Get.SpawnGrenade(pos, Vector3.zero, 0.1f, player : player);
                     yield return MEC.Timing.WaitForSeconds(0.1f);
                 }
                 throwcount++;
@@ -170,8 +171,8 @@ namespace VT_Api.Core
             return (int)totalvoltagefloat;
         }
 
-        public void StartAirBombardement(int waitforready = 10, int limit = 5)
-            => MEC.Timing.RunCoroutine(MapAndRoundManger.Get.AirBomb(waitforready, limit));
+        public void StartAirBombardement(int waitforready = 10, int limit = 5, Player player = null)
+            => MEC.Timing.RunCoroutine(MapAndRoundManger.Get.AirBomb(waitforready, limit, player));
 
         public void PlayAmbientSound(int id)
             => Server.Get.Host.GetComponent<AmbientSoundPlayer>().RpcPlaySound(id);

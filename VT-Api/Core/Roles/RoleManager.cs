@@ -156,8 +156,8 @@ namespace VT_Api.Core.Roles
             if (ev.Killer?.CustomRole is IVtRole role)
             {
                 ev.Allow = false;
-                var message = VtController.Get.Configs.VtTranslation.ActiveTranslation.DeathMessage;
-                message = Regex.Replace(message, "%PlayerName%", ev.Killer.name, RegexOptions.IgnoreCase);
+                var message = VtController.Get.Configs.VtTranslation.ActiveTranslation.DeathMessage.Replace("\\n", "\n");
+                message = Regex.Replace(message, "%PlayerName%", ev.Killer.DisplayName, RegexOptions.IgnoreCase);
                 message = Regex.Replace(message, "%RoleName%", role.GetRoleName(), RegexOptions.IgnoreCase);
                 ev.Victim.Kill(message);
 

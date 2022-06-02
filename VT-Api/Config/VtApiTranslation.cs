@@ -15,6 +15,6 @@ namespace VT_Api.Config
         public string RankUnder { get; set; } = "FOLLOW ORDERS";
 
         [Description("The death message when you are kill by a custom class of the VT-API")]
-        public string DeathMessage { get; set; } = "<size=20%>You were killed by</size>\\n%PlayerName%\\n<size=20%>as</size%>\\n%RoleName%";
+        public string DeathMessage { get; set; } = "You were killed by\\n%PlayerName%\\nas\\n%RoleName%";
     }
 }
