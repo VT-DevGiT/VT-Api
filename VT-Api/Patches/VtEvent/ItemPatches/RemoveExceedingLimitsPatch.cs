@@ -21,7 +21,6 @@ namespace VT_Api.Patches.VtEvent.ItemPatches
         [HarmonyPrefix]
         private static bool ItemLimitPatch(Inventory inv, BodyArmor armor, bool removeItems = true, bool removeAmmo = true) // TODO fix this
         {
-            SynapseController.Server.Logger.Debug("ItemLimitPatch");
             try
             {
 
@@ -89,8 +88,6 @@ namespace VT_Api.Patches.VtEvent.ItemPatches
                     ammosDrop.Add((AmmoType)ammo.Key, (ushort)(ammo.Value - ammoLimit));
                 }
             }
-
-            Synapse.Api.Logger.Get.Debug("RemovAmmos");
 
             VtController.Get.Events.Item.InvokeRemoveLimitAmmoEvent(player, ammosLimit, ref ammosDrop);
 

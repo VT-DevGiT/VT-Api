@@ -149,7 +149,8 @@ namespace VT_Api.Reflexion
             {
                 foreach (var prop in props)
                 {
-                    prop.SetValue(element, prop.GetValue(elementToCopy));
+                    if (prop.SetMethod != null)
+                        prop.SetValue(element, prop.GetValue(elementToCopy));
                 }
             }
             var fields = typeof(T).GetFields(BindingFlags.NonPublic | BindingFlags.Static | BindingFlags.Instance);

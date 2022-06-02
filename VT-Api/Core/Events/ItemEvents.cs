@@ -55,8 +55,6 @@ namespace VT_Api.Core.Events
 
         internal void InvokeRemoveLimitAmmoEvent(Player player, Dictionary<AmmoType, ushort> catergoryMax, ref Dictionary<AmmoType, ushort> removAmmo)
         {
-            Logger.Get.Debug("Call");
-
             var ev = new RemoveAmmoEventArgs
             {
                 Player = player,

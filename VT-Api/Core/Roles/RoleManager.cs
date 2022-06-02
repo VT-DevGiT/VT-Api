@@ -1,10 +1,14 @@
-﻿using Synapse;
+﻿using Mirror;
+using PlayerStatsSystem;
+using Subtitles;
+using Synapse;
 using Synapse.Api;
 using Synapse.Api.Events.SynapseEventArguments;
 using Synapse.Api.Roles;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text.RegularExpressions;
 using UnityEngine;
 using VT_Api.Core.Enum;
 using VT_Api.Extension;
@@ -138,8 +142,9 @@ namespace VT_Api.Core.Roles
         private void OnPlayerDeath(PlayerDeathEventArgs ev)
         {
             if (OldPlayerRole.ContainsKey(ev.Victim))
-                 OldPlayerRole[ev.Victim] = ev.Victim.RoleID;
-            else OldPlayerRole.Add(ev.Victim, ev.Victim.RoleID);
+                OldPlayerRole[ev.Victim] = ev.Victim.RoleID;
+            else 
+                OldPlayerRole.Add(ev.Victim, ev.Victim.RoleID);
             
             if (ev.Victim.CustomRole is IScpDeathAnnonce scpDeathAnnonce)
             { 
@@ -148,9 +153,20 @@ namespace VT_Api.Core.Roles
                 Server.Get.Map.AnnounceScpDeath(scpName, ev.DamageType.GetScpRecontainmentType(ev.Killer), unityName);
             }
 
-            if (ev.Victim.CustomRole is IUtrRole utr)
+            if (ev.Killer?.CustomRole is IVtRole role)
             {
-                CustomPhysicaleRoles.Remove(utr);
+                ev.Allow = false;
+                var message = VtController.Get.Configs.VtTranslation.ActiveTranslation.DeathMessage;
+                message = Regex.Replace(message, "%PlayerName%", ev.Killer.name, RegexOptions.IgnoreCase);
+                message = Regex.Replace(message, "%RoleName%", role.GetRoleName(), RegexOptions.IgnoreCase);
+                ev.Victim.Kill(message);
+
+                /*
+                 * Smal : Vous avez été tuer par
+                 *              %PlayerName%
+                 *              en tant que 
+                 *               %RoleName%
+                 */
             }
         }
 

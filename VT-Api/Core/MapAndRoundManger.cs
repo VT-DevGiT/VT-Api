@@ -68,7 +68,7 @@ namespace VT_Api.Core
             }
         }
 
-        public IEnumerator<float> AirBomb(int waitforready, int limit)
+        private IEnumerator<float> AirBomb(int waitforready, int limit)
         {
             if (isAirBombCurrently)
                 yield break;
@@ -241,8 +241,6 @@ namespace VT_Api.Core
                 {
                     try
                     {
-                        Logger.Get.Debug($"MtfRespawn {player.name}");
-
                         if (player == null)
                         {
                             Logger.Get.Error("Couldn't spawn a player - target's is null.");

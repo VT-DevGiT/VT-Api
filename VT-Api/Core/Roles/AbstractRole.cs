@@ -34,16 +34,37 @@ namespace VT_Api.Core.Roles
         public sealed override int GetRoleID() => RoleId;
         public sealed override string GetRoleName() => RoleName;
         public sealed override int GetTeamID() => RoleTeam;
-        
-        public virtual bool CallPower(byte power, out string message)
-        {
-            message = VtController.Get.Configs.VtTranslation.ActiveTranslation.NoPower;
-            return false;
-        }
-        
+        [Obsolete] 
+        public sealed override List<Team> GetFriends() => new List<Team>();
+        [Obsolete]
+        public sealed override List<Team> GetEnemys() => new List<Team>();
+        [Obsolete] 
+        public sealed override int GetEscapeRole() => 0;
+        [Obsolete] 
+        public sealed override Team GetTeam() => Team.RIP;
+
         public bool Spawned { get; set; } = false;
 
-        private static bool _fristSpawn = true;
+        private static List<Type> _firstSpawnClass = new List<Type>();
+
+        private bool _fristSpawn
+        {
+            get 
+            {
+                return !_firstSpawnClass.Any(p => p == this.GetType());
+            }
+            set
+            {
+                if (!value && !_firstSpawnClass.Any(p => p == this.GetType()))
+                {
+                    _firstSpawnClass.Add(this.GetType());
+                }
+                else if (value && _firstSpawnClass.Any(p => p == this.GetType()))
+                {
+                    _firstSpawnClass.Remove(this.GetType());
+                }
+            }
+        }
         #endregion
 
         #region Constructors & Destructor
@@ -83,41 +104,31 @@ namespace VT_Api.Core.Roles
         [API]
         protected virtual void AditionalInit(PlayerSetClassEventArgs ev) { }
 
-
-        public sealed override void Spawn()
+        [API]
+        public virtual bool CallPower(byte power, out string message)
         {
-            Player.RoleType = RoleType;
-
-            if (!string.IsNullOrEmpty(SpawnMessage))
-            { 
-                string message = Regex.Replace(SpawnMessage, "%RoleName%", RoleName, RegexOptions.IgnoreCase);
-                Player.OpenReportWindow(message.Replace("\\n", "\n"));
-            }
-
-            SetDisplayInfo();
-        }
-
-        public virtual void SetDisplayInfo()
-        {
-            Player.SetDisplayInfoRole(RoleName);
+            message = VtController.Get.Configs.VtTranslation.ActiveTranslation.NoPower;
+            return false;
         }
 
         /// <summary>
-        /// Dont call it if you dont no what you are dowing
+        /// Is called when the player ave the corect roleType.
+        /// Call the base to apply the config.
         /// </summary>
-        public void InitAll(PlayerSetClassEventArgs ev)
+        [API]
+        public virtual void Spawning()
         {
-            Spawned = true;
-
-            if (_fristSpawn)
+            if (Config != null)
             {
-                InitEvent();
-                _fristSpawn = false;
-            }
-               
-            PlayerInit(ev);
+                if (Config.Health != null)
+                    Player.Health = (float)Config.Health;
+                Player.MaxHealth = Config.MaxHealth ?? Player.Health;
 
-            AditionalInit(ev);
+                if (Config.ArtificialHealth != null)
+                    Player.ArtificialHealth = (float)Config.ArtificialHealth;
+                if (Config.MaxArtificialHealth != null)
+                    Player.MaxArtificialHealth = (int)Config.MaxArtificialHealth;
+            }
         }
 
         /**
@@ -139,7 +150,45 @@ namespace VT_Api.Core.Roles
         * </code> </example> </para> </summary> 
         */
         [API]
-        protected virtual void InitEvent() { }
+        protected virtual void InitEvent() 
+        {
+        
+        }
+
+        public virtual void SetDisplayInfo()
+        {
+            Player.SetDisplayInfoRole(RoleName);
+        }
+
+        public sealed override void Spawn()
+        {
+            if (_fristSpawn)
+            {
+                InitEvent();
+                _fristSpawn = false;
+            }
+
+            Player.RoleType = RoleType;
+
+            if (!string.IsNullOrEmpty(SpawnMessage))
+            { 
+                string message = Regex.Replace(SpawnMessage, "%RoleName%", RoleName, RegexOptions.IgnoreCase);
+                Player.OpenReportWindow(message.Replace("\\n", "\n"));
+            }
+
+            SetDisplayInfo();
+            Spawning();
+        }
+
+        public void InitAll(PlayerSetClassEventArgs ev)
+        {
+            if (Spawned) return;
+            Spawned = true;
+
+            PlayerInit(ev);
+
+            AditionalInit(ev);
+        }
 
         private void PlayerInit(PlayerSetClassEventArgs ev)
         {
@@ -155,16 +204,6 @@ namespace VT_Api.Core.Roles
                 
                 if (postion != null)
                     ev.Position = postion.Position;
-
-                if (Config.Health != null)
-                    ev.Player.Health = (float)Config.Health;
-                ev.Player.MaxHealth = Config.MaxHealth ?? ev.Player.Health;
-
-                if (Config.ArtificialHealth != null)
-                    ev.Player.ArtificialHealth = (float)Config.ArtificialHealth;
-                if (Config.MaxArtificialHealth != null)
-                    ev.Player.MaxArtificialHealth = (int)Config.MaxArtificialHealth;
-
             }
             catch (Exception e)
             {
@@ -192,6 +231,8 @@ namespace VT_Api.Core.Roles
         [API]
         public override void DeSpawn()
         {
+            if (Player == null)
+                return;
             Player.DisplayInfo = null;
             Player.AddDisplayInfo(PlayerInfoArea.Role);
             Player.AddDisplayInfo(PlayerInfoArea.UnitName);
