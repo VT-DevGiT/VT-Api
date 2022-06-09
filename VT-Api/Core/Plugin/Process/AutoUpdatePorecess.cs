@@ -9,6 +9,9 @@ namespace VT_Api.Core.Plugin.AutoRegisterProcess
     {
         public void Process(PluginLoadContext context)
         {
+            if (!VtController.Get.Configs.VtConfiguration.AutoUpdate)
+                return;
+
             foreach (Type autoUpdate in context.Classes)
             {
                 try
@@ -18,7 +21,10 @@ namespace VT_Api.Core.Plugin.AutoRegisterProcess
 
                     var autoUpdater = (IAutoUpdate)Activator.CreateInstance(autoUpdate);
 
-                    autoUpdater.Update();
+                    var isUpdate = autoUpdater.Update();
+
+                    if (isUpdate)
+                        Synapse.Api.Logger.Get.Warn($"Plugin {context.Plugin.Information.Name} is now Update ! You need to restart the server for use the new version");
                 }
                 catch (Exception e)
                 {

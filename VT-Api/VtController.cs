@@ -58,8 +58,21 @@ public class VtController
         VtController.Get.LogMessage();
         VtController.Get.AplidePatch();
         VtController.Get.InitAll();
+        VtController.Get.CheckUpdate();
 
         Logger.Get.Info("Vt-API is now ready!");
+    }
+
+    private void CheckUpdate()
+    {
+        if (!Configs.VtConfiguration.AutoUpdate)
+            return;
+
+        var updater = new Updater();
+        var isUpdate = updater.Update();
+        
+        if (isUpdate)
+            Logger.Get.Warn("The VT-API is update on the last version !");
     }
 
     private void LogMessage()

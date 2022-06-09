@@ -118,10 +118,10 @@
     <Compile Include="Config\SerializedVector2.cs" />
     <Compile Include="Core\Roles\SpawnManager.cs" />
     <Compile Include="Core\Singleton.cs" />
-    <Compile Include="Core\Structur\StructureManager.cs" />
     <Compile Include="Core\Teams\AbstractTeam.cs" />
     <Compile Include="Core\Teams\RespawnTeamInfo.cs" />
     <Compile Include="Core\Teams\TeamManager.cs" />
+    <Compile Include="Core\Updater.cs" />
     <Compile Include="Core\VtExtensionsReflexion.cs" />
     <Compile Include="Exceptions\VtCommandsExpetions.cs" />
     <Compile Include="Exceptions\VtInitExceptions.cs" />
@@ -158,6 +158,7 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Core\Audio\" />
+    <Folder Include="Core\CustomObjects\" />
     <Folder Include="Core\DataBase\" />
     <Folder Include="Core\NPC\" />
     <Folder Include="Patches\VtFix\" />
