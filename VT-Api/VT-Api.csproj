@@ -144,6 +144,7 @@
     <Compile Include="Patches\VtEvent\PlayerPatches\DestroyHubPatch.cs" />
     <Compile Include="Patches\VtEvent\PlayerPatches\IntercomSpeakPatch.cs" />
     <Compile Include="Patches\VtEvent\PlayerPatches\SetClassPatch.cs" />
+    <Compile Include="Patches\VtEvent\PlayerPatches\SynapseDeathPatch.cs" />
     <Compile Include="Patches\VtEvent\PlayerPatches\SynapseDamagePatch.cs" />
     <Compile Include="Patches\VtEvent\ScpPatches\Scp106\Scp106UsePortalPatch.cs" />
     <Compile Include="Patches\VtPatch\CustomDeathReasonPatch.cs" />

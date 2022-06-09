@@ -30,6 +30,21 @@ namespace VT_Api.Core.Events
             PlayerSetClassAdvEvent?.Invoke(ev);
         }
 
+        internal void InvokePlayerDeathPostEvent(Player victim, Player killer, DamageType type, ref bool allow)
+        {
+            var ev = new PlayerDeathPostEventArgs
+            {
+                Allow = allow,
+                DamageType = type,
+                Killer = killer,
+                Victim = victim
+            };
+
+            PlayerDeathPostEvent?.Invoke(ev);
+
+            allow = ev.Allow;
+        }
+
         internal void InvokePlayerSpeakIntercomEvent(Player player, ref bool allow)
         {
             var ev = new PlayerSpeakIntercomEventEventArgs

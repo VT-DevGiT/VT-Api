@@ -10,6 +10,5 @@ namespace VT_Api.Core.Roles
         bool CallPower(byte power, out string message);
 
         bool Spawned { get; set; }
-
     }
 }

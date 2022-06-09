@@ -13,29 +13,25 @@ using VT_Api.Reflexion;
 
 namespace VT_Api.Patches.VtEvent.PlayerPatches
 {
-    [HarmonyPatch(typeof(PlayerEvents), "InvokePlayerDamageEvent")]
-    class SynapseDamagePatch
+    [HarmonyPatch(typeof(PlayerEvents), "InvokePlayerDeathEvent")]
+    class SynapseDeathPatch
     {
         [HarmonyPrefix]
-        private static bool DamageEventPatch(PlayerEvents __instance, Player victim, Player killer, ref float damage, DamageType type, out bool allow)
+        private static bool DeathEventPatch(PlayerEvents __instance, Player victim, Player killer, DamageType type, out bool allow)
         {
             try
             {
-                var ev = new PlayerDamageEventArgs
-                {
-                    Damage = damage,
-                };
+                var ev = new PlayerDeathEventArgs();
+                ev.Allow = true;
                 ev.SetProperty<Player>("Killer", killer);
                 ev.SetProperty<Player>("Victim", victim);
-                ev.SetProperty<float>("Damage", damage);
                 ev.SetProperty<DamageType>("DamageType", type);
 
-                __instance.CallEvent("PlayerDamageEvent", ev);
+                __instance.CallEvent("PlayerDeathEvent", ev);
 
-                damage = ev.Damage;
                 allow = ev.Allow;
 
-                VtController.Get.Events.Player.InvokePlayerDamagePostEvent(victim, killer, ref damage, type, ref allow);
+                VtController.Get.Events.Player.InvokePlayerDeathPostEvent(victim, killer, type, ref allow);
 
                 return false;
             }

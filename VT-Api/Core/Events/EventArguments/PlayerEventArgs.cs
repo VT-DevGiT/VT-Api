@@ -17,7 +17,6 @@ namespace VT_Api.Core.Events.EventArguments
     {
         public Player Killer { get; internal set; }
         public Player Victim { get; internal set; }
-        public float Damage { get; set; }
         public DamageType DamageType { get; internal set; }
         public bool Allow { get; set; }
     }

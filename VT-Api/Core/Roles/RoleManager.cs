@@ -13,6 +13,7 @@ using System.Linq;
 using System.Text.RegularExpressions;
 using UnityEngine;
 using VT_Api.Core.Enum;
+using VT_Api.Core.Events.EventArguments;
 using VT_Api.Core.Teams;
 using VT_Api.Extension;
 using SynRoleManager = Synapse.Api.Roles.RoleManager;
@@ -42,10 +43,11 @@ namespace VT_Api.Core.Roles
         internal void Init()
         {
             Synapse.Api.Events.EventHandler.Get.Player.PlayerSetClassEvent += OnSetClass;
-            Synapse.Api.Events.EventHandler.Get.Player.PlayerDeathEvent += OnPlayerDeath;
             Synapse.Api.Events.EventHandler.Get.Player.PlayerKeyPressEvent += OnPressKey;
             Synapse.Api.Events.EventHandler.Get.Server.UpdateEvent += OnUpdate;
             Synapse.Api.Events.EventHandler.Get.Server.TransmitPlayerDataEvent += OnTransmitPlayerData;
+            VtController.Get.Events.Player.PlayerDeathPostEvent += OnPlayerDeath;
+
         }
 
         public bool IsVanilla(int roleID)
@@ -142,8 +144,11 @@ namespace VT_Api.Core.Roles
             }
         }
 
-        private void OnPlayerDeath(PlayerDeathEventArgs ev)
+        private void OnPlayerDeath(PlayerDeathPostEventArgs ev)
         {
+            if (!ev.Allow)
+                return;
+
             if (OldPlayerRole.ContainsKey(ev.Victim))
                 OldPlayerRole[ev.Victim] = ev.Victim.RoleID;
             else 
