@@ -75,21 +75,21 @@ public class VtController
 
     private void InitAll()
     {
+        var i = 0;
         try
         {
-            AutoRegister.Init();
-            MinGames.Init();
-            Events.Init();
-            Commands.Init();
-            Configs.Init();
-            Team.Init();
-            Role.Init();
-            Item.Init();
-
+            AutoRegister.Init();    i++;
+            MinGames.Init();        i++;
+            Events.Init();          i++;
+            Commands.Init();        i++;
+            Configs.Init();         i++;
+            Team.Init();            i++;
+            Role.Init();            i++;
+            Item.Init();            i++;
         }
         catch (Exception e)
         {
-            throw new VtInitAllHandlerExceptions($"Vt-init: Error while Initialising the handlers!\n Please fix the Issue and restart your Server!\n{e}\nStackTrace:\n{e.StackTrace}", e);
+            throw new VtInitAllHandlerExceptions($"Vt-init: Error while Initialising the handlers #{i} !\n Please fix the Issue and restart your Server!\n{e}\nStackTrace:\n{e.StackTrace}", e);
         }
     }
 

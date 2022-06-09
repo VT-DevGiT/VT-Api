@@ -1,5 +1,7 @@
 ﻿using Mirror;
 using PlayerStatsSystem;
+using Respawning;
+using Respawning.NamingRules;
 using Subtitles;
 using Synapse;
 using Synapse.Api;
@@ -11,6 +13,7 @@ using System.Linq;
 using System.Text.RegularExpressions;
 using UnityEngine;
 using VT_Api.Core.Enum;
+using VT_Api.Core.Teams;
 using VT_Api.Extension;
 using SynRoleManager = Synapse.Api.Roles.RoleManager;
 
@@ -145,28 +148,21 @@ namespace VT_Api.Core.Roles
                 OldPlayerRole[ev.Victim] = ev.Victim.RoleID;
             else 
                 OldPlayerRole.Add(ev.Victim, ev.Victim.RoleID);
-            
+           
+            if (ev.Killer?.CustomRole is IVtRole role)
+            {
+                var message = VtController.Get.Configs.VtTranslation.ActiveTranslation.DefaultDeathMessage.Replace("\\n", "\n");
+                message = Regex.Replace(message, "%PlayerName%", ev.Killer.DisplayName, RegexOptions.IgnoreCase);
+                message = Regex.Replace(message, "%RoleName%", role.GetRoleName(), RegexOptions.IgnoreCase);
+
+                Patches.VtPatch.CustomDeathReasonPatch.CustomReason = message;
+            }
+
             if (ev.Victim.CustomRole is IScpDeathAnnonce scpDeathAnnonce)
-            { 
+            {
                 var scpName = scpDeathAnnonce.ScpName;
                 var unityName = ev.Killer?.Team == Team.MTF ? ev.Killer.UnitName : "UNKNOWN";
                 Server.Get.Map.AnnounceScpDeath(scpName, ev.DamageType.GetScpRecontainmentType(ev.Killer), unityName);
-            }
-
-            if (ev.Killer?.CustomRole is IVtRole role)
-            {
-                ev.Allow = false;
-                var message = VtController.Get.Configs.VtTranslation.ActiveTranslation.DeathMessage.Replace("\\n", "\n");
-                message = Regex.Replace(message, "%PlayerName%", ev.Killer.DisplayName, RegexOptions.IgnoreCase);
-                message = Regex.Replace(message, "%RoleName%", role.GetRoleName(), RegexOptions.IgnoreCase);
-                ev.Victim.Kill(message);
-
-                /*
-                 * Smal : Vous avez été tuer par
-                 *              %PlayerName%
-                 *              en tant que 
-                 *               %RoleName%
-                 */
             }
         }
 

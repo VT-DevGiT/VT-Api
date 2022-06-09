@@ -11,6 +11,7 @@ namespace VT_Api.Core.Events
 
         #region Events
         public event Synapse.Api.Events.EventHandler.OnSynapseEvent<PlayerDamagePostEventArgs> PlayerDamagePostEvent;
+        public event Synapse.Api.Events.EventHandler.OnSynapseEvent<PlayerDeathPostEventArgs> PlayerDeathPostEvent;
         public event Synapse.Api.Events.EventHandler.OnSynapseEvent<PlayerDestroyEventArgs> PlayerUnloadEvent;
         public event Synapse.Api.Events.EventHandler.OnSynapseEvent<PlayerSpeakIntercomEventEventArgs> PlayerSpeakIntercomEvent;
         public event Synapse.Api.Events.EventHandler.OnSynapseEvent<PlayerSetClassAdvEventArgs> PlayerSetClassAdvEvent;

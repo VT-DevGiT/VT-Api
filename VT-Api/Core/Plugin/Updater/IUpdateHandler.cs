@@ -8,9 +8,9 @@ namespace VT_Api.Core.Plugin.Updater
         string RegexExpressionVersion { get; }
 
         void DeletetTempDirectory();
-        Version GetPluginVersion<T>();
-        Version GetGitVersion(HttpClient client, string link, out Release release, bool ignorePrerealase = true);
-        bool NeedToUpdate(Version PluginVersion, Version GitVersion);
+        PluginVersion GetPluginVersion<T>();
+        PluginVersion GetGitVersion(HttpClient client, string link, out Release release, bool ignorePrerealase = true);
+        bool NeedToUpdate(PluginVersion PluginVersion, PluginVersion GitVersion);
         bool TryDownload(HttpClient client, Release release, string name, out string filePath);
         void Replace(string newPluginPath, string pluinName, string pluginDirectory);
     }

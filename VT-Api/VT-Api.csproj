@@ -103,9 +103,9 @@
     <Compile Include="Core\Plugin\Updater\IAutoUpdate.cs" />
     <Compile Include="Core\Plugin\Updater\IUpdateHandler.cs" />
     <Compile Include="Core\Plugin\IVtPlugin.cs" />
-    <Compile Include="Core\Plugin\Updater\Release.cs" />
-    <Compile Include="Core\Plugin\Updater\ReleaseAsset.cs" />
-    <Compile Include="Core\Plugin\Updater\Version.cs" />
+    <Compile Include="Core\Plugin\Updater\Models\Release.cs" />
+    <Compile Include="Core\Plugin\Updater\Models\ReleaseAsset.cs" />
+    <Compile Include="Core\Plugin\Updater\PluginVersion.cs" />
     <Compile Include="Core\Plugin\VtAbstractPlugins.cs" />
     <Compile Include="Core\Roles\AbstractRole.cs" />
     <Compile Include="Core\Roles\ICustomPhysicalRole.cs" />
@@ -146,6 +146,7 @@
     <Compile Include="Patches\VtEvent\PlayerPatches\SetClassPatch.cs" />
     <Compile Include="Patches\VtEvent\PlayerPatches\SynapseDamagePatch.cs" />
     <Compile Include="Patches\VtEvent\ScpPatches\Scp106\Scp106UsePortalPatch.cs" />
+    <Compile Include="Patches\VtPatch\CustomDeathReasonPatch.cs" />
     <Compile Include="Patches\VtPatch\GetCategoryLimitPatchs.cs" />
     <Compile Include="Patches\VtPatch\SynapseItemPatch.cs" />
     <Compile Include="Patches\VtPatch\NextKnownTeamPatch.cs" />

@@ -13,6 +13,15 @@ namespace VT_Api.Core.Events.EventArguments
         public DamageType DamageType { get; internal set; }
         public bool Allow { get; set; }
     }
+    public class PlayerDeathPostEventArgs : Synapse.Api.Events.EventHandler.ISynapseEventArgs
+    {
+        public Player Killer { get; internal set; }
+        public Player Victim { get; internal set; }
+        public float Damage { get; set; }
+        public DamageType DamageType { get; internal set; }
+        public bool Allow { get; set; }
+    }
+    
 
     public class PlayerDestroyEventArgs : Synapse.Api.Events.EventHandler.ISynapseEventArgs
     {

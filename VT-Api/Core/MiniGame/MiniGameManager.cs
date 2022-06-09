@@ -41,6 +41,7 @@ namespace VT_Api.Core.MiniGame
             Synapse.Api.Events.EventHandler.Get.Round.RoundEndEvent += OnEndRound;
             Synapse.Api.Events.EventHandler.Get.Round.RoundCheckEvent += OnCheckEnd;
         }
+
         public string GetMiniGameName(int id)
         {
             if (!IsIDRegistered(id)) 
