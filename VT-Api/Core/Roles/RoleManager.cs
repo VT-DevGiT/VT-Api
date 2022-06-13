@@ -46,7 +46,7 @@ namespace VT_Api.Core.Roles
             Synapse.Api.Events.EventHandler.Get.Player.PlayerKeyPressEvent += OnPressKey;
             Synapse.Api.Events.EventHandler.Get.Server.UpdateEvent += OnUpdate;
             Synapse.Api.Events.EventHandler.Get.Server.TransmitPlayerDataEvent += OnTransmitPlayerData;
-            VtController.Get.Events.Player.PlayerDeathPostEvent += OnPlayerDeath;
+            VtController.Get.Events.Player.PlayerKillEvent += OnPlayerDeath;
 
         }
 
@@ -144,11 +144,8 @@ namespace VT_Api.Core.Roles
             }
         }
 
-        private void OnPlayerDeath(PlayerDeathPostEventArgs ev)
+        private void OnPlayerDeath(PlayerKillEventArgs ev)
         {
-            if (!ev.Allow)
-                return;
-
             if (OldPlayerRole.ContainsKey(ev.Victim))
                 OldPlayerRole[ev.Victim] = ev.Victim.RoleID;
             else 
@@ -160,14 +157,15 @@ namespace VT_Api.Core.Roles
                 message = Regex.Replace(message, "%PlayerName%", ev.Killer.DisplayName, RegexOptions.IgnoreCase);
                 message = Regex.Replace(message, "%RoleName%", role.GetRoleName(), RegexOptions.IgnoreCase);
 
-                Patches.VtPatch.CustomDeathReasonPatch.CustomReason = message;
+                ev.DeathReason = message;
             }
 
             if (ev.Victim.CustomRole is IScpDeathAnnonce scpDeathAnnonce)
             {
                 var scpName = scpDeathAnnonce.ScpName;
                 var unityName = ev.Killer?.Team == Team.MTF ? ev.Killer.UnitName : "UNKNOWN";
-                Server.Get.Map.AnnounceScpDeath(scpName, ev.DamageType.GetScpRecontainmentType(ev.Killer), unityName);
+                var deathType = ev.DamageHandler.GetDamageType().GetScpRecontainmentType(ev.Killer);
+                Server.Get.Map.AnnounceScpDeath(scpName, deathType, unityName);
             }
         }
 

@@ -98,10 +98,6 @@ namespace VT_Api.Core.Command
 
         private void RegisterVtCommands()
         {
-            if (!_firstLoad)
-                return;
-            Logger.Get.Info("Register Command");
-
             RegisterSynapseCommand(new CallPower(), false);
         }
     }
