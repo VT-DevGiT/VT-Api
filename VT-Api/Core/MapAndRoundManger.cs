@@ -13,6 +13,8 @@ using UERandom = UnityEngine.Random;
 using Logger = Synapse.Api.Logger;
 using SynRagdoll = Synapse.Api.Ragdoll;
 using MEC;
+using InventorySystem.Items.Firearms;
+using Synapse.Api.Enum;
 
 namespace VT_Api.Core
 {
@@ -263,6 +265,30 @@ namespace VT_Api.Core
                 }
                 RespawnManager.Singleton.RestartSequence();
             });
+        }
+
+        public void PlayShoot(ShootSound sound, Vector3 position, byte shootSoundDistance = 25)
+        {
+            foreach (var player in Server.Get.Players)
+            {
+                var msg = new GunAudioMessage(player, 0, shootSoundDistance, player);
+                var to = position - player.Position;
+
+                if (player.RoleType != RoleType.Spectator && to.sqrMagnitude > 1760f)
+                {
+                    to.y = 0f;
+                    var num = Vector3.Angle(Vector3.forward, to);
+                    if (Vector3.Dot(to.normalized, Vector3.left) > 0f)
+                        num = 360f - num;
+
+                    msg.ShooterDirection = (byte)Mathf.RoundToInt(num / 1.44f);
+                    msg.ShooterRealDistance = (byte)Mathf.RoundToInt(Mathf.Min(to.magnitude, 255f));
+                }
+
+                msg.Weapon = (ItemType)sound;
+
+                player.Connection.Send(msg);
+            }
         }
     }
 }

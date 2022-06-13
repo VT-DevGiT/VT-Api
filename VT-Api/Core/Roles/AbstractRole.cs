@@ -118,17 +118,7 @@ namespace VT_Api.Core.Roles
         [API]
         public virtual void Spawning()
         {
-            if (Config != null)
-            {
-                if (Config.Health != null)
-                    Player.Health = (float)Config.Health;
-                Player.MaxHealth = Config.MaxHealth ?? Player.Health;
 
-                if (Config.ArtificialHealth != null)
-                    Player.ArtificialHealth = (float)Config.ArtificialHealth;
-                if (Config.MaxArtificialHealth != null)
-                    Player.MaxArtificialHealth = (int)Config.MaxArtificialHealth;
-            }
         }
 
         /**
@@ -177,6 +167,18 @@ namespace VT_Api.Core.Roles
             }
 
             SetDisplayInfo();
+            if (Config != null)
+            {
+                if (Config.Health != null)
+                    Player.Health = (float)Config.Health;
+                Player.MaxHealth = Config.MaxHealth ?? Player.Health;
+
+                if (Config.ArtificialHealth != null)
+                    Player.ArtificialHealth = (float)Config.ArtificialHealth;
+                if (Config.MaxArtificialHealth != null)
+                    Player.MaxArtificialHealth = (int)Config.MaxArtificialHealth;
+            }
+
             Spawning();
         }
 

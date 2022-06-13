@@ -27,8 +27,15 @@ namespace VT_Api.Core.Behaviour
         #region Methods
         public override void Kill()
         {
-            OnDisable();
-            base.Kill();
+            try
+            {
+                OnDisable();
+                base.Kill();
+            }
+            catch (Exception e)
+            {
+                Synapse.Api.Logger.Get.Error($"Vt-Event: RepeatingBehaviour kill faild!!\n{e}\nStackTrace:\n{e.StackTrace}");
+            }
         }
 
         /// <summary>
@@ -64,8 +71,11 @@ namespace VT_Api.Core.Behaviour
 
         private void ActionStop()
         {
-            _Started = false;
-            CancelInvoke("BehaviourAction");
+            if (_Started)
+            {
+                CancelInvoke("BehaviourAction");
+               _Started = false;
+            }
         }
         #endregion
     }

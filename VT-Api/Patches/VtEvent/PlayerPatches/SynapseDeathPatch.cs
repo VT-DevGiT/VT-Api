@@ -19,9 +19,10 @@ namespace VT_Api.Patches.VtEvent.PlayerPatches
         [HarmonyPrefix]
         private static bool DeathEventPatch(PlayerEvents __instance, Player victim, Player killer, DamageType type, out bool allow)
         {
+            var ev = new PlayerDeathEventArgs();
             try
             {
-                var ev = new PlayerDeathEventArgs();
+
                 ev.Allow = true;
                 ev.SetProperty<Player>("Killer", killer);
                 ev.SetProperty<Player>("Victim", victim);
@@ -30,7 +31,15 @@ namespace VT_Api.Patches.VtEvent.PlayerPatches
                 __instance.CallEvent("PlayerDeathEvent", ev);
 
                 allow = ev.Allow;
-
+            }
+            catch (Exception e)
+            {
+                allow = ev.Allow;
+                Logger.Get.Error($"Synapse-Event: PlayerDeath event failed!!\n{e}");
+                return false;
+            }
+            try
+            {
                 VtController.Get.Events.Player.InvokePlayerDeathPostEvent(victim, killer, type, ref allow);
 
                 return false;
@@ -38,7 +47,6 @@ namespace VT_Api.Patches.VtEvent.PlayerPatches
             catch (Exception e)
             {
                 Synapse.Api.Logger.Get.Error($"Vt-Event: PlayerDamagePost failed!!\n{e}\nStackTrace:\n{e.StackTrace}");
-                allow = true;
                 return true;
             }
         }
