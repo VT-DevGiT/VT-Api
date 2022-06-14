@@ -58,8 +58,21 @@ public class VtController
         VtController.Get.LogMessage();
         VtController.Get.AplidePatch();
         VtController.Get.InitAll();
+        VtController.Get.CheckUpdate();
 
         Logger.Get.Info("Vt-API is now ready!");
+    }
+
+    private void CheckUpdate()
+    {
+        if (!Configs.VtConfiguration.AutoUpdate)
+            return;
+
+        var updater = new Updater();
+        var isUpdate = updater.Update();
+        
+        if (isUpdate)
+            Logger.Get.Warn("The VT-API is update on the last version !");
     }
 
     private void LogMessage()
@@ -75,21 +88,21 @@ public class VtController
 
     private void InitAll()
     {
+        var i = 0;
         try
         {
-            AutoRegister.Init();
-            MinGames.Init();
-            Events.Init();
-            Commands.Init();
-            Configs.Init();
-            Team.Init();
-            Role.Init();
-            Item.Init();
-
+            AutoRegister.Init();    i++;
+            MinGames.Init();        i++;
+            Events.Init();          i++;
+            Commands.Init();        i++;
+            Configs.Init();         i++;
+            Team.Init();            i++;
+            Role.Init();            i++;
+            Item.Init();            i++;
         }
         catch (Exception e)
         {
-            throw new VtInitAllHandlerExceptions($"Vt-init: Error while Initialising the handlers!\n Please fix the Issue and restart your Server!\n{e}\nStackTrace:\n{e.StackTrace}", e);
+            throw new VtInitAllHandlerExceptions($"Vt-init: Error while Initialising the handlers #{i} !\n Please fix the Issue and restart your Server!\n{e}\nStackTrace:\n{e.StackTrace}", e);
         }
     }
 

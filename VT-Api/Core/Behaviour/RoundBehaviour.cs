@@ -21,6 +21,7 @@ namespace VT_Api.Core.Behaviour
         {
             try
             {
+                Server.Get.Events.Round.RoundRestartEvent -= Kill;
                 Destroy(this);
             }
             catch (Exception e)

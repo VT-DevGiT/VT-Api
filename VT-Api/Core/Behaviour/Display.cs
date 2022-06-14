@@ -215,11 +215,13 @@ namespace VT_Api.Core.Behaviour
                             displayWhitHierachy += Config.Config.Get.VtTranslation.ActiveTranslation.RankSame;
                     }
                     NetworkLiar.Get.SendDisplayInfo(Player, displayWhitHierachy, new List<Player>() { player });
+                    NetworkLiar.Get.SebdInfoToDisplay(Player, PlayerInfoArea.CustomInfo, Server.Get.Players);
                 }
             }
             else
             {
                 NetworkLiar.Get.SendDisplayInfo(Player, display, Server.Get.Players);
+                NetworkLiar.Get.SebdInfoToDisplay(Player, PlayerInfoArea.CustomInfo, Server.Get.Players);
             }
         }
         #endregion

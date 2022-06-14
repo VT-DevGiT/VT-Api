@@ -1,10 +1,12 @@
 ﻿// copy past of SynapseVersion
 
+using VT_Api.Core.Plugin.Updater;
+
 public static class VtVersion
 {
     public const int Major = 1;
 
-    public const int Minor = 1;
+    public const int Minor = 2;
 
     public const int Patch = 0;
 
@@ -29,6 +31,9 @@ public static class VtVersion
 #else
     SynapseVersion.Debug;
 #endif
+
+    public static PluginVersion GetVersion()
+        => new PluginVersion(Major, Minor, Patch);
 
     public static string GetVersionName()
     {

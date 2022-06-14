@@ -12,6 +12,9 @@ using VT_Api.Reflexion;
 using UERandom = UnityEngine.Random;
 using Logger = Synapse.Api.Logger;
 using SynRagdoll = Synapse.Api.Ragdoll;
+using MEC;
+using InventorySystem.Items.Firearms;
+using Synapse.Api.Enum;
 
 namespace VT_Api.Core
 {
@@ -67,7 +70,7 @@ namespace VT_Api.Core
             }
         }
 
-        public IEnumerator<float> AirBomb(int waitforready, int limit)
+        private IEnumerator<float> AirBomb(int waitforready, int limit, Player player)
         {
             if (isAirBombCurrently)
                 yield break;
@@ -91,10 +94,11 @@ namespace VT_Api.Core
             int throwcount = 0;
             while (isAirBombCurrently)
             {
-                List<Vector3> randampos = AirbombPos.OrderBy(x => Guid.NewGuid()).ToList();
+                List<Vector3> randampos = AirbombPos.ToList();
+                randampos.ShuffleList();
                 foreach (var pos in randampos)
                 {
-                    Map.Get.SpawnGrenade(pos, Vector3.zero, 0.1f);
+                    Map.Get.SpawnGrenade(pos, Vector3.zero, 0.1f, player : player);
                     yield return MEC.Timing.WaitForSeconds(0.1f);
                 }
                 throwcount++;
@@ -169,8 +173,8 @@ namespace VT_Api.Core
             return (int)totalvoltagefloat;
         }
 
-        public void StartAirBombardement(int waitforready = 10, int limit = 5)
-            => MEC.Timing.RunCoroutine(MapAndRoundManger.Get.AirBomb(waitforready, limit));
+        public void StartAirBombardement(int waitforready = 10, int limit = 5, Player player = null)
+            => MEC.Timing.RunCoroutine(MapAndRoundManger.Get.AirBomb(waitforready, limit, player));
 
         public void PlayAmbientSound(int id)
             => Server.Get.Host.GetComponent<AmbientSoundPlayer>().RpcPlaySound(id);
@@ -190,85 +194,101 @@ namespace VT_Api.Core
                 room.ResetRoomLightColor();
         }
 
+        const float MtfRespawnTimeEffect = 17.95f;
+        const float ChiRespawnTimeEffect = 13.49f;
+
         public void MtfRespawn(bool isCI, List<Player> players, bool useTicket = true) // TODO
         {
-            SpawnableTeamType Team = isCI ? SpawnableTeamType.ChaosInsurgency : SpawnableTeamType.NineTailedFox;
-            Logger.Get.Debug("MtfRespawn 1");
-            players.RemoveAll(p => p.OverWatch);
-            Logger.Get.Debug("MtfRespawn 2");
-            if (!players.Any()) return;
-            Logger.Get.Debug("MtfRespawn 3");
-            Queue<RoleType> queueToFill = new Queue<RoleType>();
-            SpawnableTeamHandlerBase spawnableTeamHandlerBase = RespawnWaveGenerator.SpawnableTeams[Team];
-            spawnableTeamHandlerBase.GenerateQueue(queueToFill, players.Count);
-            Logger.Get.Debug("MtfRespawn 4");
-            if (useTicket)
-            {
-                Logger.Get.Debug("MtfRespawn 4.1");
-                if (Round.Get.PrioritySpawn)
-                    players = players.OrderBy(p => p.DeathTime).ToList();
-                else
-                    players.ShuffleList();
-                Logger.Get.Debug("MtfRespawn 4.2");
+            if (isCI)
+                Round.Get.PlayChaosSpawnSound();
+            Round.Get.SpawnVehicle(isCI);
 
-                int tickets = RespawnTickets.Singleton.GetAvailableTickets(Team);
-                if (tickets == 0)
+            Timing.CallDelayed(isCI ? ChiRespawnTimeEffect : MtfRespawnTimeEffect, () =>
+            {
+                var Team = isCI ? SpawnableTeamType.ChaosInsurgency : SpawnableTeamType.NineTailedFox;
+                players.RemoveAll(p => p.OverWatch);
+                if (!players.Any()) return;
+                var queueToFill = new Queue<RoleType>();
+                var spawnableTeamHandlerBase = RespawnWaveGenerator.SpawnableTeams[Team];
+                spawnableTeamHandlerBase.GenerateQueue(queueToFill, players.Count);
+                if (useTicket)
                 {
-                    tickets = 5;
-                    RespawnTickets.Singleton.GrantTickets(SpawnableTeamType.ChaosInsurgency, 5, true);
-                }
+                    if (Round.Get.PrioritySpawn)
+                        players = players.OrderBy(p => p.DeathTime).ToList();
+                    else
+                        players.ShuffleList();
 
-                Logger.Get.Debug("MtfRespawn 4.3");
-                int num = Mathf.Min(tickets, spawnableTeamHandlerBase.MaxWaveSize);
-                while (players.Count > num)
-                    players.RemoveAt(players.Count - 1);
-
-                Logger.Get.Debug("MtfRespawn 4.4");
-            }
-            players.ShuffleList();
-            Logger.Get.Debug("MtfRespawn 5");
-            string unityName = "";
-            bool setUnite = UnitNamingRules.TryGetNamingRule(Team, out UnitNamingRule rule);
-            Logger.Get.Debug("MtfRespawn 6");
-
-            if (setUnite)
-            {
-                rule.GenerateNew(Team, out unityName);
-                rule.PlayEntranceAnnouncement(unityName);
-            }
-            Logger.Get.Debug("MtfRespawn 7");
-
-            foreach (var player in players)
-            {
-                try
-                {
-                    Logger.Get.Debug($"MtfRespawn {player.name}");
-
-                    if (player == null)
+                    int tickets = RespawnTickets.Singleton.GetAvailableTickets(Team);
+                    if (tickets == 0)
                     {
-                        Logger.Get.Error("Couldn't spawn a player - target's is null.");
-                        continue;
+                        tickets = 5;
+                        RespawnTickets.Singleton.GrantTickets(SpawnableTeamType.ChaosInsurgency, 5, true);
                     }
 
-                    player.RoleID = (int)queueToFill.Dequeue();
+                    int num = Mathf.Min(tickets, spawnableTeamHandlerBase.MaxWaveSize);
+                    while (players.Count > num)
+                        players.RemoveAt(players.Count - 1);
 
-                    if (setUnite)
+                }
+                players.ShuffleList();
+                var unityName = "";
+                var setUnite = UnitNamingRules.TryGetNamingRule(Team, out UnitNamingRule rule);
+
+                if (setUnite)
+                {
+                    rule.GenerateNew(Team, out unityName);
+                    rule.PlayEntranceAnnouncement(unityName);
+                }
+
+                foreach (var player in players)
+                {
+                    try
                     {
-                        player.ClassManager.NetworkCurSpawnableTeamType = (byte)Team;
-                        player.UnitName = unityName;
+                        if (player == null)
+                        {
+                            Logger.Get.Error("Couldn't spawn a player - target's is null.");
+                            continue;
+                        }
+
+                        player.RoleID = (int)queueToFill.Dequeue();
+
+                        if (setUnite)
+                        {
+                            player.ClassManager.NetworkCurSpawnableTeamType = (byte)Team;
+                            player.UnitName = unityName;
+                        }
+                    }
+                    catch (Exception e)
+                    {
+                        Logger.Get.Error($"Player {player.name} couldn't be spawned. Err msg: {e.Message}");
                     }
                 }
-                catch (Exception e)
+                RespawnManager.Singleton.RestartSequence();
+            });
+        }
+
+        public void PlayShoot(ShootSound sound, Vector3 position, byte shootSoundDistance = 25)
+        {
+            foreach (var player in Server.Get.Players)
+            {
+                var msg = new GunAudioMessage(player, 0, shootSoundDistance, player);
+                var to = position - player.Position;
+
+                if (player.RoleType != RoleType.Spectator && to.sqrMagnitude > 1760f)
                 {
-                    Logger.Get.Error($"Player {player.name} couldn't be spawned. Err msg: {e.Message}");
+                    to.y = 0f;
+                    var num = Vector3.Angle(Vector3.forward, to);
+                    if (Vector3.Dot(to.normalized, Vector3.left) > 0f)
+                        num = 360f - num;
+
+                    msg.ShooterDirection = (byte)Mathf.RoundToInt(num / 1.44f);
+                    msg.ShooterRealDistance = (byte)Mathf.RoundToInt(Mathf.Min(to.magnitude, 255f));
                 }
+
+                msg.Weapon = (ItemType)sound;
+
+                player.Connection.Send(msg);
             }
-            Logger.Get.Debug("MtfRespawn 8");
-
-            RespawnEffectsController.ExecuteAllEffects(RespawnEffectsController.EffectType.UponRespawn, Team);
-            RespawnManager.Singleton.RestartSequence();
-            Logger.Get.Debug("MtfRespawn 9");
-
         }
     }
 }

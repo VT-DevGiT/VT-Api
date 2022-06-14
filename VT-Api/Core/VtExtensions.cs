@@ -265,36 +265,16 @@ namespace VT_Api.Extension
 
         public static void SetDisplayInfoRole(this Player player, string roleName)
         {
-            /*
-             * TODO Rework This :
-             * 
-             * Badge "pas touche"
-             * 
-             * Nickname
-             * Role (Unit)
-             * CustomInfo
-             * 
-             * PowerStatus
-             */
-
-            // to
-
-            /*
-             * 
-             * NickName
-             * CustomInfo
-             * 
-             * 
-             * 
-             * 
-             */
-
             player.RemoveDisplayInfo(PlayerInfoArea.Role);
 
             if (player.Team == Team.MTF)
             {
+                if (string.IsNullOrWhiteSpace(player.UnitName))
+                    player.DisplayInfo = $"{roleName} ({player.UnitName})";
+                else
+                    player.DisplayInfo = roleName;
+
                 player.RemoveDisplayInfo(PlayerInfoArea.UnitName);
-                player.DisplayInfo = $"{roleName} ({player.UnitName})";
             }
             else
             {

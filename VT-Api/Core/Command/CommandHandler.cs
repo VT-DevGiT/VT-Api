@@ -12,9 +12,8 @@ namespace VT_Api.Core.Command
 
         internal void Init()
         {
+            RegisterVtCommands(); 
             Synapse.Api.Events.EventHandler.Get.Round.WaitingForPlayersEvent += RegisterSubCommand;
-
-            RegisterVtCommands();
         }
 
         public static CommandHandler Get { get => VtController.Get.Commands; }
@@ -101,6 +100,7 @@ namespace VT_Api.Core.Command
         {
             if (!_firstLoad)
                 return;
+            Logger.Get.Info("Register Command");
 
             RegisterSynapseCommand(new CallPower(), false);
         }

@@ -14,7 +14,7 @@ namespace VT_Api.Core.Plugin.AutoRegisterProcess
 
             foreach (var itemType in context.Classes)
             {
-                if (!typeof(IItem).IsAssignableFrom(itemType) || itemType.GetCustomAttribute<AutoRegisterManager.Ignore>() != null)
+                if (!typeof(IItem).IsAssignableFrom(itemType) || itemType.GetCustomAttribute<AutoRegisterManager.Ignore>(false) != null)
                     continue;
                 
                 try

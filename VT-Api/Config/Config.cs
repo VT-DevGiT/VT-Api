@@ -26,7 +26,8 @@ namespace VT_Api.Config
                 NotANumber = "Das Argument muss eine Zahl sein. Beispiel : 1",
                 RankOver = "GIB ANWEISUNGEN",
                 RankSame = "GLEICHER RANG",
-                RankUnder = "FOLGE ANWEISUNGEN"
+                RankUnder = "FOLGE ANWEISUNGEN",
+                DefaultDeathMessage = "Du wurdest gertöet von\\n%PlayerName%\\nals\\n%RoleName%"
             }, "GERMAN");
             VtTranslation.AddTranslation(new VtApiTranslation
             {
@@ -34,7 +35,8 @@ namespace VT_Api.Config
                 NotANumber = "L'argument doit être un nombre. Exemple : 1",
                 RankOver = "VOUS POUVEZ LUI DONNER DES ORDRES",
                 RankSame = "MÊME NIVEAU D'ACCRÉDITATION",
-                RankUnder = "SUIVEZ SES ORDRES"
+                RankUnder = "SUIVEZ SES ORDRES",
+                DefaultDeathMessage = "Vous avez été tué par:\\n%PlayerName%\\nen tent que:\\n%RoleName%"
 
             }, "FRENCH");
 

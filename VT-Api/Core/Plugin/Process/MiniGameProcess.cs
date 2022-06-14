@@ -14,7 +14,7 @@ namespace VT_Api.Core.Plugin.AutoRegisterProcess
 
             foreach (var miniGameType in context.Classes)
             {
-                if (!typeof(IMiniGame).IsAssignableFrom(miniGameType) || miniGameType.GetCustomAttribute<AutoRegisterManager.Ignore>() != null)
+                if (!typeof(IMiniGame).IsAssignableFrom(miniGameType) || miniGameType.GetCustomAttribute<AutoRegisterManager.Ignore>(false) != null)
                         continue;
 
                 try

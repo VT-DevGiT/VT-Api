@@ -6,6 +6,7 @@ using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using VT_Api.Core.Events.EventArguments;
+using VT_Api.Extension;
 
 namespace VT_Api.Core.Events
 {

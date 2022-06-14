@@ -20,8 +20,9 @@ namespace VT_Api.Core.Plugin.Updater
     {
         #region Properties & Variable
         public const string Unknow = "Unknown";
-        public const string GitHubPage = "https://api.github.com/repositories/{0}/releases/?per_page=20&page=1";
-        public const string DefaultsRegexVersion = @"[v,V]?(?<major>\d+)\.(?<minor>\d+)\.(?<patch>\d+)";
+        public const string GitHubPage = "https://api.github.com/repositories/{0}/releases?per_page=20&page=1";
+
+        private static bool FirstLoad { get; set; } = true;
 
         private string _tempDirectory;
         public string TempDirectory
@@ -84,7 +85,7 @@ namespace VT_Api.Core.Plugin.Updater
             }
         }
 
-        public virtual string RegexExpressionVersion { get; } = DefaultsRegexVersion;
+        public virtual string RegexExpressionVersion { get; } = PluginVersion.DefaultsRegexVersion;
         #endregion
 
         #region Constructor & Destructor
@@ -93,16 +94,35 @@ namespace VT_Api.Core.Plugin.Updater
             TempDirectory = Path.Combine(Server.Get.Files.SynapseDirectory, "temp");
             DownloadDirectory = Path.Combine(_tempDirectory, "download");
             OldDllDirectory = Path.Combine(_tempDirectory, "old");
+            DeletetTempDirectory();
         }
         #endregion
 
         #region Methods
         public void DeletetTempDirectory()
         {
-            if (!Directory.Exists(_tempDirectory))
+            if (Directory.Exists(_tempDirectory) && FirstLoad)
             {
-                Directory.Delete(_tempDirectory);
+                DeleteDirectory(_tempDirectory);
+                FirstLoad = false;
             }
+        }
+
+        private void DeleteDirectory(string target_dir)
+        {
+            var files = Directory.GetFiles(target_dir);
+            var dirs = Directory.GetDirectories(target_dir);
+
+            foreach (var file in files)
+            {
+                File.SetAttributes(file, FileAttributes.Normal);
+                File.Delete(file);
+            }
+
+            foreach (var dir in dirs)
+                DeleteDirectory(dir);
+            
+            Directory.Delete(target_dir, false);
         }
 
         public virtual bool TryDownload(HttpClient client, Release release, string name, out string filePath)
@@ -125,7 +145,7 @@ namespace VT_Api.Core.Plugin.Updater
             return true;
         }
 
-        public virtual Version GetPluginVersion<T>()
+        public virtual PluginVersion GetPluginVersion<T>()
         {
             var info = (PluginInformation)Attribute.GetCustomAttribute(typeof(T), typeof(PluginInformation));
             if (info.Version == Unknow)
@@ -135,20 +155,20 @@ namespace VT_Api.Core.Plugin.Updater
                 else
                     throw new VtUnknownVersionException($"Vt-AutoUppdate : The plugin {info.Name} in the assembly {typeof(T).Assembly.GetName().Name} did not set its version", typeof(T).Assembly.FullName, info.Name);
             }
-            return new Version(info.Version, RegexExpressionVersion);
+            return new PluginVersion(info.Version, RegexExpressionVersion);
         }
 
-        public virtual Version GetGitVersion(HttpClient client, string link, out Release release, bool prerealase = false)
+        public virtual PluginVersion GetGitVersion(HttpClient client, string link, out Release release, bool prerealase = false)
         {
             var realases = GetRealases(client, link);
 
-            Version highestVersion = new Version(0,0,0);
+            PluginVersion highestVersion = new PluginVersion(0,0,0);
             Release highestRelease = null;
             foreach (var realase in realases)
             {
                 if (!prerealase && realase.PreRelease)
                     continue;
-                if (Version.TryParse(realase.TagName, out var version) && version > highestVersion)
+                if (PluginVersion.TryParse(realase.TagName, out var version) && version > highestVersion)
                 {
                     highestVersion = version;
                     highestRelease = realase;
@@ -170,7 +190,7 @@ namespace VT_Api.Core.Plugin.Updater
             return JsonSerializer.Deserialize<Release[]>(stream).OrderByDescending(r => r.CreatedAt.Ticks).ToList();
         }
 
-        public virtual bool NeedToUpdate(Version PluginVersion, Version GitVersion)
+        public virtual bool NeedToUpdate(PluginVersion PluginVersion, PluginVersion GitVersion)
             => PluginVersion < GitVersion;
             
         public virtual void Replace(string newPluginPath, string pluinName, string pluginDirectory)

@@ -13,45 +13,41 @@ using VT_Api.Reflexion;
 
 namespace VT_Api.Patches.VtEvent.PlayerPatches
 {
-    [HarmonyPatch(typeof(PlayerEvents), "InvokePlayerDamageEvent")]
-    class SynapseDamagePatch
+    [HarmonyPatch(typeof(PlayerEvents), "InvokePlayerDeathEvent")]
+    class SynapseDeathPatch
     {
         [HarmonyPrefix]
-        private static bool DamageEventPatch(PlayerEvents __instance, Player victim, Player killer, ref float damage, DamageType type, out bool allow)
+        private static bool DeathEventPatch(PlayerEvents __instance, Player victim, Player killer, DamageType type, out bool allow)
         {
-            var ev = new PlayerDamageEventArgs
-            {
-                Damage = damage,
-            };
-
+            var ev = new PlayerDeathEventArgs();
             try
             {
+
+                ev.Allow = true;
                 ev.SetProperty<Player>("Killer", killer);
                 ev.SetProperty<Player>("Victim", victim);
-                ev.SetProperty<float>("Damage", damage);
                 ev.SetProperty<DamageType>("DamageType", type);
 
-                __instance.CallEvent("PlayerDamageEvent", ev);
-                
+                __instance.CallEvent("PlayerDeathEvent", ev);
+
                 allow = ev.Allow;
-                damage = ev.Damage;
             }
             catch (Exception e)
             {
-                Synapse.Api.Logger.Get.Error($"Synapse-Event: PlayerDamage event failed!!\n{e}");
                 allow = ev.Allow;
+                Logger.Get.Error($"Synapse-Event: PlayerDeath event failed!!\n{e}");
                 return false;
             }
             try
             {
-                VtController.Get.Events.Player.InvokePlayerDamagePostEvent(victim, killer, ref damage, type, ref allow);
+                VtController.Get.Events.Player.InvokePlayerDeathPostEvent(victim, killer, type, ref allow);
 
                 return false;
             }
             catch (Exception e)
             {
                 Synapse.Api.Logger.Get.Error($"Vt-Event: PlayerDamagePost failed!!\n{e}\nStackTrace:\n{e.StackTrace}");
-                return false;
+                return true;
             }
         }
 

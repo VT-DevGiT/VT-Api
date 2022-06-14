@@ -51,6 +51,7 @@
     <Compile Include="Config\VtApiTranslation.cs" />
     <Compile Include="Core\Behaviour\Display.cs" />
     <Compile Include="Core\Behaviour\ServerStopTrap.cs" />
+    <Compile Include="Core\Enum\AudioStatus.cs" />
     <Compile Include="Core\Enum\Hierarchy.cs" />
     <Compile Include="Core\Events\ServerEvents.cs" />
     <Compile Include="Core\ISengleton.cs" />
@@ -102,11 +103,12 @@
     <Compile Include="Core\Plugin\Updater\IAutoUpdate.cs" />
     <Compile Include="Core\Plugin\Updater\IUpdateHandler.cs" />
     <Compile Include="Core\Plugin\IVtPlugin.cs" />
-    <Compile Include="Core\Plugin\Updater\Release.cs" />
-    <Compile Include="Core\Plugin\Updater\ReleaseAsset.cs" />
-    <Compile Include="Core\Plugin\Updater\Version.cs" />
+    <Compile Include="Core\Plugin\Updater\Models\Release.cs" />
+    <Compile Include="Core\Plugin\Updater\Models\ReleaseAsset.cs" />
+    <Compile Include="Core\Plugin\Updater\PluginVersion.cs" />
     <Compile Include="Core\Plugin\VtAbstractPlugins.cs" />
     <Compile Include="Core\Roles\AbstractRole.cs" />
+    <Compile Include="Core\Roles\ICustomPhysicalRole.cs" />
     <Compile Include="Core\Roles\IHierarchy.cs" />
     <Compile Include="Core\Roles\IScpDeathAnnonce.cs" />
     <Compile Include="Core\Roles\IUtrRole.cs" />
@@ -116,10 +118,10 @@
     <Compile Include="Config\SerializedVector2.cs" />
     <Compile Include="Core\Roles\SpawnManager.cs" />
     <Compile Include="Core\Singleton.cs" />
-    <Compile Include="Core\Structur\StructureManager.cs" />
     <Compile Include="Core\Teams\AbstractTeam.cs" />
     <Compile Include="Core\Teams\RespawnTeamInfo.cs" />
     <Compile Include="Core\Teams\TeamManager.cs" />
+    <Compile Include="Core\Updater.cs" />
     <Compile Include="Core\VtExtensionsReflexion.cs" />
     <Compile Include="Exceptions\VtCommandsExpetions.cs" />
     <Compile Include="Exceptions\VtInitExceptions.cs" />
@@ -142,8 +144,10 @@
     <Compile Include="Patches\VtEvent\PlayerPatches\DestroyHubPatch.cs" />
     <Compile Include="Patches\VtEvent\PlayerPatches\IntercomSpeakPatch.cs" />
     <Compile Include="Patches\VtEvent\PlayerPatches\SetClassPatch.cs" />
+    <Compile Include="Patches\VtEvent\PlayerPatches\SynapseDeathPatch.cs" />
     <Compile Include="Patches\VtEvent\PlayerPatches\SynapseDamagePatch.cs" />
     <Compile Include="Patches\VtEvent\ScpPatches\Scp106\Scp106UsePortalPatch.cs" />
+    <Compile Include="Patches\VtPatch\CustomDeathReasonPatch.cs" />
     <Compile Include="Patches\VtPatch\GetCategoryLimitPatchs.cs" />
     <Compile Include="Patches\VtPatch\SynapseItemPatch.cs" />
     <Compile Include="Patches\VtPatch\NextKnownTeamPatch.cs" />
@@ -153,12 +157,17 @@
     <Compile Include="VtVersion.cs" />
   </ItemGroup>
   <ItemGroup>
+    <Folder Include="Core\Audio\" />
+    <Folder Include="Core\CustomObjects\" />
     <Folder Include="Core\DataBase\" />
     <Folder Include="Core\NPC\" />
-    <Folder Include="Core\SoundManager\" />
     <Folder Include="Patches\VtFix\" />
   </ItemGroup>
   <ItemGroup>
+    <Reference Include="DissonanceVoip-Publicized">
+      <HintPath>..\ref\DissonanceVoip-Publicized.dll</HintPath>
+      <Aliases>Dissonance</Aliases>
+    </Reference>
     <Reference Include="NorthwoodLib-Publicized">
       <HintPath>..\ref\NorthwoodLib-Publicized.dll</HintPath>
     </Reference>

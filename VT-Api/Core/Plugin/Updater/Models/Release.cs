@@ -8,12 +8,16 @@ namespace VT_Api.Core.Plugin.Updater
     {
         [DataMember(Name = "id")] 
         public readonly int Id;
+        
         [DataMember(Name = "tag_name")] 
         public readonly string TagName;
+        
         [DataMember(Name = "prerelease")] 
         public readonly bool PreRelease;
+        
         [DataMember(Name = "created_at")] 
         public readonly DateTime CreatedAt;
+        
         [DataMember(Name = "assets")] 
         public readonly ReleaseAsset[] Assets;
 

@@ -10,6 +10,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
+using VT_Api.Extension;
 
 namespace VT_Api.Patches.VtEvent.ItemPatches
 {
@@ -17,16 +18,14 @@ namespace VT_Api.Patches.VtEvent.ItemPatches
 
     class RemoveExceedingLimitsPatch
     {
-        [HarmonyPrefix]// TODO And When Player try to pickup Item
-        private static bool ItemLimitPatch(Inventory inv, BodyArmor armor, bool removeItems = true, bool removeAmmo = true)
+        [HarmonyPrefix]
+        private static bool ItemLimitPatch(Inventory inv, BodyArmor armor, bool removeItems = true, bool removeAmmo = true) // TODO fix this
         {
             try
             {
-                //SynapseController.Server.Logger.Debug("ItemLimitPatch");
 
                 var player = inv.GetPlayer();
 
-                //Item
                 if (removeItems)
                     RemovItems(inv, armor, player);
 

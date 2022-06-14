@@ -13,6 +13,14 @@ namespace VT_Api.Core.Events.EventArguments
         public DamageType DamageType { get; internal set; }
         public bool Allow { get; set; }
     }
+    public class PlayerDeathPostEventArgs : Synapse.Api.Events.EventHandler.ISynapseEventArgs
+    {
+        public Player Killer { get; internal set; }
+        public Player Victim { get; internal set; }
+        public DamageType DamageType { get; internal set; }
+        public bool Allow { get; set; }
+    }
+    
 
     public class PlayerDestroyEventArgs : Synapse.Api.Events.EventHandler.ISynapseEventArgs
     {
@@ -35,12 +43,5 @@ namespace VT_Api.Core.Events.EventArguments
         public Player Player { get; internal set; }
 
         public RoleType Role { get; internal set; }
-    }
-
-    public class PlayerSetClassEventArgs : Synapse.Api.Events.EventHandler.ISynapseEventArgs
-    {
-        public Player Player { get; internal set; }
-        public int OldID { get; internal set; }
-        public int NewID { get; internal set; }
     }
 }
