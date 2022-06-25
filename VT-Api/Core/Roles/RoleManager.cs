@@ -52,7 +52,6 @@ namespace VT_Api.Core.Roles
 
         public bool IsVanilla(int roleID)
             => roleID > (int)RoleID.None && roleID <= SynRoleManager.HighestRole;
-        
 
         public int GetHierachy(int roleID)
         {
@@ -124,13 +123,17 @@ namespace VT_Api.Core.Roles
             {
                 try
                 {
-                   role.InitAll(ev);
+                    role.InitAll(ev);
+                    //ev.Player.GetOrAddComponent<CustomDisplay>().enabled = true;
+
                 }
                 catch (Exception ex)
                 {
                     Synapse.Api.Logger.Get.Error($"Fail to init the role {role.GetRoleName()} (ID : {role.GetRoleID()}) :\n{ex}");
                 }
             }
+            //else if (ev.Player.gameObject.TryGetComponent<CustomDisplay>(out var display))
+            //    display.enabled = false;
             if (ev.Player.CustomRole is ICustomPhysicalRole customPhyRole)
             {
                 if (!CustomPhysicaleRoles.Contains(customPhyRole))
@@ -171,21 +174,23 @@ namespace VT_Api.Core.Roles
 
         private void OnUpdate()
         {
-            foreach (var utr in CustomPhysicaleRoles)
+            foreach (var role in CustomPhysicaleRoles)
             {
-                utr.UpdateBody();
+                role.UpdateBody();
             }
         }
 
         private void OnTransmitPlayerData(TransmitPlayerDataEventArgs ev)
         {
-            if (ev.PlayerToShow == ev.Player)
+            if (ev.PlayerToShow == ev.Player || ev.PlayerToShow.CustomRole is not ICustomPhysicalRole customRole)
                 return;
-            var utr = CustomPhysicaleRoles.FirstOrDefault(p => p.Player == ev.PlayerToShow);
-            if (utr == null)    
-                return;
-            if (ev.Player.RoleID != (int)RoleID.Staff)
+
+            if (ev.Player.RoleID == (int)RoleID.Staff || customRole.CanBySee(ev.Player))
                 ev.Invisible = false;
+            else if (ev.Player.RoleType == RoleType.Spectator && ev.Player.CurrentlySpectating == ev.PlayerToShow)
+                ev.Position += UnityEngine.Vector3.forward * 1.5f;
+            else
+                ev.Invisible = true;
         }
         #endregion
     }

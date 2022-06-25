@@ -49,10 +49,11 @@
     <Compile Include="Config\Config.cs" />
     <Compile Include="Config\VtApiConfiguration.cs" />
     <Compile Include="Config\VtApiTranslation.cs" />
-    <Compile Include="Core\Behaviour\Display.cs" />
+    <Compile Include="Core\Roles\CustomDisplay.cs" />
     <Compile Include="Core\Behaviour\ServerStopTrap.cs" />
     <Compile Include="Core\Enum\AudioStatus.cs" />
     <Compile Include="Core\Enum\Hierarchy.cs" />
+    <Compile Include="Core\Enum\NpcPathPointType.cs" />
     <Compile Include="Core\Events\ServerEvents.cs" />
     <Compile Include="Core\ISengleton.cs" />
     <Compile Include="Core\Items\IWeapon.cs" />
@@ -86,6 +87,12 @@
     <Compile Include="Core\MiniGame\IMiniGame.cs" />
     <Compile Include="Core\MiniGame\MiniGameInformation.cs" />
     <Compile Include="Core\NetworkLiar.cs" />
+    <Compile Include="Core\NPC\NPC.cs" />
+    <Compile Include="Core\NPC\NpcManger.cs" />
+    <Compile Include="Core\NPC\NpcMovementController.cs" />
+    <Compile Include="Core\NPC\Path\NpcPath.cs" />
+    <Compile Include="Core\NPC\Path\NpcPathPoint.cs" />
+    <Compile Include="Core\NPC\Path\NpcMapPath.cs" />
     <Compile Include="Core\Plugin\Process\AutoUpdatePorecess.cs" />
     <Compile Include="Core\Plugin\Process\DebugCheckProcess.cs" />
     <Compile Include="Core\Plugin\Updater\AbstractAutoUpdater.cs" />
@@ -159,7 +166,6 @@
     <Folder Include="Core\Audio\" />
     <Folder Include="Core\CustomObjects\" />
     <Folder Include="Core\DataBase\" />
-    <Folder Include="Core\NPC\" />
     <Folder Include="Patches\VtFix\" />
   </ItemGroup>
   <ItemGroup>

@@ -16,6 +16,7 @@ using VT_Api.Core.Items;
 
 using EventHandler = VT_Api.Core.Events.EventHandler;
 using VT_Api.Core.Behaviour;
+using VT_Api.Core.NPC;
 
 public class VtController
 {
@@ -30,6 +31,7 @@ public class VtController
     public MapAndRoundManger MapAction { get => Singleton<MapAndRoundManger>.Instance; }
     public NetworkLiar NetworkLiar { get => Singleton<NetworkLiar>.Instance; }
     public ItemManager Item { get => Singleton<ItemManager>.Instance; }
+    public NpcManger Npc { get => Singleton<NpcManger>.Instance; }
     internal CommandHandler Commands { get => Singleton<CommandHandler>.Instance; } // nothing  public (yet)
     public Config Configs { get => Singleton<Config>.Instance; }
 
@@ -99,6 +101,7 @@ public class VtController
             Team.Init();            i++;
             Role.Init();            i++;
             Item.Init();            i++;
+            Npc.Init();             i++;
         }
         catch (Exception e)
         {

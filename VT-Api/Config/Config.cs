@@ -36,7 +36,7 @@ namespace VT_Api.Config
                 RankOver = "VOUS POUVEZ LUI DONNER DES ORDRES",
                 RankSame = "MÊME NIVEAU D'ACCRÉDITATION",
                 RankUnder = "SUIVEZ SES ORDRES",
-                DefaultDeathMessage = "Vous avez été tué par:\\n%PlayerName%\\nen tent que:\\n%RoleName%"
+                DefaultDeathMessage = "Vous avez été tué par:\\n%PlayerName%\\nen tant que:\\n%RoleName%"
 
             }, "FRENCH");
 

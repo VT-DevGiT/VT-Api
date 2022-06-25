@@ -1,4 +1,5 @@
-﻿using Synapse;
+﻿using Respawning;
+using Synapse;
 using Synapse.Api;
 using Synapse.Api.Enum;
 using Synapse.Api.Events.SynapseEventArguments;
@@ -10,6 +11,7 @@ using System.Linq;
 using System.Text.RegularExpressions;
 using VT_Api.Config;
 using VT_Api.Core.Behaviour;
+using VT_Api.Core.Teams;
 using VT_Api.Extension;
 
 namespace VT_Api.Core.Roles
@@ -160,6 +162,13 @@ namespace VT_Api.Core.Roles
 
             Player.RoleType = RoleType;
 
+            if (Player.Team == Team.MTF)
+            {
+                var units = TeamManager.Get.NamingManager.AllUnitNames;
+                var lastNtfUnit = units.LastOrDefault(p => p.SpawnableTeam == (byte)SpawnableTeamType.NineTailedFox);
+                Player.UnitName = string.IsNullOrEmpty(lastNtfUnit.UnitName) ? null : lastNtfUnit.UnitName;
+            }
+
             if (!string.IsNullOrEmpty(SpawnMessage))
             { 
                 string message = Regex.Replace(SpawnMessage, "%RoleName%", RoleName, RegexOptions.IgnoreCase);
@@ -167,6 +176,7 @@ namespace VT_Api.Core.Roles
             }
 
             SetDisplayInfo();
+            
             if (Config != null)
             {
                 if (Config.Health != null)

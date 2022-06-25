@@ -49,7 +49,7 @@ namespace VT_Api.Core
             SendAndRecycle(owner, observer, players, player);
         }
 
-        public void SebdInfoToDisplay(Player player, PlayerInfoArea info, List<Player> players)
+        public void SendInfoToDisplay(Player player, PlayerInfoArea info, List<Player> players)
         {
             const byte bytecodes = 4;
 

@@ -63,7 +63,7 @@ namespace VT_Api.Extension
         {
             var players = MapAndRoundManger.Get.GetRagdollOwners(player, range);
 
-            players.RemoveAll(p => p.Team == Team.RIP && !p.OverWatch);
+            players.RemoveAll(p => p.Team != Team.RIP || p.OverWatch);
 
             return players.FirstOrDefault();
         }
