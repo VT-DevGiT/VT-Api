@@ -20,10 +20,10 @@ namespace VT_Api.Core
 {
     public class MapAndRoundManger
     {
+        public static MapAndRoundManger Get => Singleton<MapAndRoundManger>.Instance;
+
         //Original of SanyaPlugin https://github.com/sanyae2439/SanyaPlugin_Exiled
         public bool isAirBombCurrently = false;
-
-        public static MapAndRoundManger Get { get => VtController.Get.MapAction; }
 
         public Vector3[] AirbombPos
         {

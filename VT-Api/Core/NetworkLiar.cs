@@ -10,7 +10,7 @@ namespace VT_Api.Core
 {
     public class NetworkLiar
     {
-        public static NetworkLiar Get { get => VtController.Get.NetworkLiar; }
+        public static NetworkLiar Get => Singleton<NetworkLiar>.Instance;
 
         public void SendRole(Player player, RoleType info, List<Player> players)
         {

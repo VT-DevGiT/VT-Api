@@ -10,11 +10,11 @@ namespace VT_Api.Core.NPC
     public class NpcManger
     {
         #region Properties & Variable
+        public static NpcManger Get => Singleton<NpcManger>.Instance;
+
         public Dictionary<uint, NPC> NPCs { get; } = new Dictionary<uint, NPC>();
         public List<NpcPathPoint> NpcPathPoints { get; } = new List<NpcPathPoint>();
         public List<NpcMapPath> NpcMaps { get; } = new List<NpcMapPath>();
-
-        public static NpcManger Get => VtController.Get.Npc;
         #endregion
 
         #region Constructor & Destructor

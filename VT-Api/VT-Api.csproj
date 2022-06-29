@@ -49,6 +49,9 @@
     <Compile Include="Config\Config.cs" />
     <Compile Include="Config\VtApiConfiguration.cs" />
     <Compile Include="Config\VtApiTranslation.cs" />
+    <Compile Include="Core\Audio\AudioManager.cs" />
+    <Compile Include="Core\Audio\Controller.cs" />
+    <Compile Include="Core\Audio\FakeMicrophone.cs" />
     <Compile Include="Core\Roles\CustomDisplay.cs" />
     <Compile Include="Core\Behaviour\ServerStopTrap.cs" />
     <Compile Include="Core\Enum\AudioStatus.cs" />
@@ -154,6 +157,7 @@
     <Compile Include="Patches\VtEvent\PlayerPatches\DeathPatch.cs" />
     <Compile Include="Patches\VtEvent\PlayerPatches\SynapseDamagePatch.cs" />
     <Compile Include="Patches\VtEvent\ScpPatches\Scp106\Scp106UsePortalPatch.cs" />
+    <Compile Include="Patches\VtPatch\DissonanceHostPatch.cs" />
     <Compile Include="Patches\VtPatch\GetCategoryLimitPatchs.cs" />
     <Compile Include="Patches\VtPatch\SynapseItemPatch.cs" />
     <Compile Include="Patches\VtPatch\NextKnownTeamPatch.cs" />
@@ -163,15 +167,13 @@
     <Compile Include="VtVersion.cs" />
   </ItemGroup>
   <ItemGroup>
-    <Folder Include="Core\Audio\" />
     <Folder Include="Core\CustomObjects\" />
     <Folder Include="Core\DataBase\" />
     <Folder Include="Patches\VtFix\" />
   </ItemGroup>
   <ItemGroup>
-    <Reference Include="DissonanceVoip-Publicized">
-      <HintPath>..\ref\DissonanceVoip-Publicized.dll</HintPath>
-      <Aliases>Dissonance</Aliases>
+    <Reference Include="DissonanceVoip">
+      <HintPath>..\ref\DissonanceVoip.dll</HintPath>
     </Reference>
     <Reference Include="NorthwoodLib-Publicized">
       <HintPath>..\ref\NorthwoodLib-Publicized.dll</HintPath>

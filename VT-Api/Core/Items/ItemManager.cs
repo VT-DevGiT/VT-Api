@@ -19,9 +19,9 @@ namespace VT_Api.Core.Items
         #region Properties & Variable
         public const string KeySynapseItemData = "VtScript";
 
-        private readonly List<VtCustomItemInfo> customItems = new List<VtCustomItemInfo>();
+        public static ItemManager Get => Singleton<ItemManager>.Instance;
 
-        public static ItemManager Get { get => VtController.Get.Item; }
+        private readonly List<VtCustomItemInfo> customItems = new List<VtCustomItemInfo>();
 
         public Dictionary<ItemCategory, sbyte> ItemCategoryLimit { get; } = new Dictionary<ItemCategory, sbyte>();
         

@@ -20,7 +20,7 @@ namespace VT_Api.Core.Teams
     {
 
         #region Properties & Variable
-        public static TeamManager Get => VtController.Get.Team;
+        public static TeamManager Get => Singleton<TeamManager>.Instance;
         public RespawnTeamInfo NextRespawnInfo { get; set; } = new RespawnTeamInfo();
         
         public RespawnManager RespawnManager { get => RespawnManager.Singleton; } 

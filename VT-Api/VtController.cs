@@ -17,6 +17,7 @@ using VT_Api.Core.Items;
 using EventHandler = VT_Api.Core.Events.EventHandler;
 using VT_Api.Core.Behaviour;
 using VT_Api.Core.NPC;
+using VT_Api.Core.Audio;
 
 public class VtController
 {
@@ -24,6 +25,7 @@ public class VtController
     public static VtController Get { get; private set; }
 
     internal AutoRegisterManager AutoRegister { get => Singleton<AutoRegisterManager>.Instance; } // nothing  public (yet)
+    public AudioManager Audio { get => Singleton<AudioManager>.Instance; }
     internal MiniGameManager MinGames { get => Singleton<MiniGameManager>.Instance; } // not finish
     public RoleManager Role { get => Singleton<RoleManager>.Instance; }
     public TeamManager Team { get => Singleton<TeamManager>.Instance; }
@@ -31,7 +33,7 @@ public class VtController
     public MapAndRoundManger MapAction { get => Singleton<MapAndRoundManger>.Instance; }
     public NetworkLiar NetworkLiar { get => Singleton<NetworkLiar>.Instance; }
     public ItemManager Item { get => Singleton<ItemManager>.Instance; }
-    public NpcManger Npc { get => Singleton<NpcManger>.Instance; }
+    internal NpcManger Npc { get => Singleton<NpcManger>.Instance; } // not finish
     internal CommandHandler Commands { get => Singleton<CommandHandler>.Instance; } // nothing  public (yet)
     public Config Configs { get => Singleton<Config>.Instance; }
 
@@ -93,19 +95,32 @@ public class VtController
         var i = 0;
         try
         {
-            AutoRegister.Init();    i++;
-            MinGames.Init();        i++;
-            Events.Init();          i++;
-            Commands.Init();        i++;
-            Configs.Init();         i++;
-            Team.Init();            i++;
-            Role.Init();            i++;
-            Item.Init();            i++;
-            Npc.Init();             i++;
+            TryInit(AutoRegister.Init, "Initialising AutoRegister failed");
+            TryInit(Audio.Init, "Initialising Audio failed");
+            TryInit(MinGames.Init, "Initialising MinGames failed");
+            TryInit(Events.Init, "Initialising Events failed");
+            TryInit(Commands.Init, "Initialising Commands failed");
+            TryInit(Configs.Init, "Initialising Configs failed");
+            TryInit(Team.Init, "Initialising Team failed");
+            TryInit(Role.Init, "Initialising Role failed");
+            TryInit(Item.Init, "Initialising Item failed");
+            TryInit(Npc.Init, "Initialising Npc failed");
         }
         catch (Exception e)
         {
             throw new VtInitAllHandlerExceptions($"Vt-init: Error while Initialising the handlers #{i} !\n Please fix the Issue and restart your Server!\n{e}\nStackTrace:\n{e.StackTrace}", e);
+        }
+    }
+
+    private void TryInit(Action init, string msg)
+    {
+        try
+        {
+            init();
+        }
+        catch (Exception ex)
+        {
+            Logger.Get.Error("Synapse-Loader: " + msg + "\n" + ex);
         }
     }
 

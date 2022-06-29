@@ -24,6 +24,8 @@ namespace VT_Api.Core.Roles
     {
 
         #region Properties & Variable
+        public static RoleManager Get => Singleton<RoleManager>.Instance;
+        
         public Dictionary<Player, int> OldPlayerRole { get; } = new Dictionary<Player, int>();
 
         public List<ICustomPhysicalRole> CustomPhysicaleRoles { get; } = new List<ICustomPhysicalRole>();
@@ -31,8 +33,7 @@ namespace VT_Api.Core.Roles
         public static int[] VanilaScpID { get; } = { (int)RoleType.Scp049,   (int)RoleType.Scp0492, (int)RoleType.Scp079,
                                                      (int)RoleType.Scp096,   (int)RoleType.Scp106,  (int)RoleType.Scp173,
                                                      (int)RoleType.Scp93953, (int)RoleType.Scp93989 };
-        
-        public static RoleManager Get => VtController.Get.Role;
+
         #endregion
 
         #region Constructor & Destructor
