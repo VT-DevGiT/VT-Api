@@ -28,12 +28,15 @@ namespace VT_Api.Core.Roles
         
         public Dictionary<Player, int> OldPlayerRole { get; } = new Dictionary<Player, int>();
 
-        public List<ICustomPhysicalRole> CustomPhysicaleRoles { get; } = new List<ICustomPhysicalRole>();
+        public HashSet<ICustomPhysicalRole> CustomPhysicaleRoles { get; } = new HashSet<ICustomPhysicalRole>();
 
-        public static int[] VanilaScpID { get; } = { (int)RoleType.Scp049,   (int)RoleType.Scp0492, (int)RoleType.Scp079,
-                                                     (int)RoleType.Scp096,   (int)RoleType.Scp106,  (int)RoleType.Scp173,
-                                                     (int)RoleType.Scp93953, (int)RoleType.Scp93989 };
-
+        public int[] VanilaScpID { get; } = { (int)RoleType.Scp049,   (int)RoleType.Scp0492, (int)RoleType.Scp079,
+                                              (int)RoleType.Scp096,   (int)RoleType.Scp106,  (int)RoleType.Scp173,
+                                              (int)RoleType.Scp93953, (int)RoleType.Scp93989 };
+        public int[] VanilaNtfID { get; } = { (int)RoleType.NtfCaptain,  (int)RoleType.NtfPrivate, 
+                                              (int)RoleType.NtfSergeant, (int)RoleType.NtfSpecialist };
+        public int[] VanilaChiID { get; } = { (int)RoleType.ChaosMarauder,   (int)RoleType.ChaosRifleman, 
+                                              (int)RoleType.ChaosRepressor,  (int)RoleType.ChaosConscript };
         #endregion
 
         #region Constructor & Destructor
@@ -47,8 +50,41 @@ namespace VT_Api.Core.Roles
             Synapse.Api.Events.EventHandler.Get.Player.PlayerKeyPressEvent += OnPressKey;
             Synapse.Api.Events.EventHandler.Get.Server.UpdateEvent += OnUpdate;
             Synapse.Api.Events.EventHandler.Get.Server.TransmitPlayerDataEvent += OnTransmitPlayerData;
-            VtController.Get.Events.Player.PlayerKillEvent += OnPlayerDeath;
+            VtController.Get.Events.Player.PlayerDeathReasonEvent += OnPlayerDeath;
 
+        }
+
+        public List<int> GetRoles(int teamID)
+        {
+            var result = new List<int>();
+            foreach (var customrole in Synapse.Api.Roles.RoleManager.Get.CustomRoles)
+            {
+                Synapse.Api.Roles.IRole role = (Synapse.Api.Roles.IRole)Activator.CreateInstance(customrole.RoleScript);
+                if (teamID == role.GetTeamID())
+                    result.Add(role.GetRoleID());
+            }
+            switch (teamID)
+            {
+                case (int)Team.RIP:
+                    result.Add((int)RoleType.Spectator);
+                    break;
+                case (int)Team.CDP:
+                    result.Add((int)RoleType.ClassD);
+                    break;
+                case (int)Team.RSC:
+                    result.Add((int)RoleType.Scientist);
+                    break;
+                case (int)Team.CHI:
+                    result.Concat(VanilaChiID.ToList());
+                    break;
+                case (int)Team.MTF:
+                    result.Concat(VanilaNtfID.ToList());
+                    break;
+                case (int)Team.SCP:
+                    result.Concat(VanilaScpID.ToList());
+                    break;
+            }
+            return result;
         }
 
         public bool IsVanilla(int roleID)

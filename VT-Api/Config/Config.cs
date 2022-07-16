@@ -12,7 +12,7 @@ namespace VT_Api.Config
         public static Config Get => Singleton<Config>.Instance;
 
         public VtApiConfiguration VtConfiguration { get; private set; }
-        public SynapseTranslation<VtApiTranslation> VtTranslation { get; private set; };
+        public SynapseTranslation<VtApiTranslation> VtTranslation { get; private set; }
         public SynapseConfiguration SynapseConfiguration => Synapse.Server.Get.Configs.GetFieldValueOrPerties<SynapseConfiguration>("synapseConfiguration");
         #endregion
 

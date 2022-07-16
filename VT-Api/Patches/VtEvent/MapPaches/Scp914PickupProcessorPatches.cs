@@ -14,14 +14,18 @@ using VT_Api.Extension;
 
 namespace VT_Api.Patches.VtEvent.MapPaches
 {
-    class Scp914ItemPickupPatch
+
+    [HarmonyPatch(typeof(AmmoItemProcessor), nameof(AmmoItemProcessor.OnPickupUpgraded))]
+    class AmmoUpgradePatch
     {
-        [HarmonyPatch(typeof(AmmoItemProcessor), nameof(AmmoItemProcessor.OnPickupUpgraded))]
         [HarmonyPrefix]
-        private static bool AmmoUpgradePatch(AmmoItemProcessor __instance, Scp914KnobSetting setting, ItemPickupBase ipb, Vector3 newPos)
+        private static bool OnPickupUpgraded(AmmoItemProcessor __instance, Scp914KnobSetting setting, ItemPickupBase ipb, Vector3 newPos)
         {
             try
-            { 
+            {
+                Synapse.Api.Logger.Get.Debug("OnAmmoUpgraded");
+
+
                 ItemType itemType;
                 switch (setting)
                 {
@@ -40,16 +44,16 @@ namespace VT_Api.Patches.VtEvent.MapPaches
                         return false;
                 }
 
-                if (ipb is not AmmoPickup ammoPickup) // change this in C#9 
+                if (ipb is not AmmoPickup ammoPickup)
                     return false;
-            
+
                 var change = 0;
                 var exchangedAmmo = 0;
 
-                if (AmmoItemProcessor.TryGetAmmoItem(ammoPickup.Info.ItemId, out AmmoItem ammoItem) && 
-                    InventoryItemLoader.AvailableItems.TryGetValue(itemType, out ItemBase itembase) && 
+                if (AmmoItemProcessor.TryGetAmmoItem(ammoPickup.Info.ItemId, out AmmoItem ammoItem) &&
+                    InventoryItemLoader.AvailableItems.TryGetValue(itemType, out ItemBase itembase) &&
                     itembase is AmmoItem ammoItem2)
-                { 
+                {
                     var unitPrice1 = ammoItem.UnitPrice;
                     var unitPrice2 = ammoItem2.UnitPrice;
                     var num1 = 0;
@@ -72,14 +76,14 @@ namespace VT_Api.Patches.VtEvent.MapPaches
                     change = num1;
                 }
 
-                var destroyOldItem = change == 0;
+                var keepOldItem = change != 0;
                 var oldItem = ammoPickup.GetSynapseItem();
                 var newItem = exchangedAmmo > 0 ? new SynapseItem(itemType) { Durabillity = exchangedAmmo } : SynapseItem.None;
-            
+
                 oldItem.Durabillity = change;
                 oldItem.Position = newPos;
 
-                VtController.Get.Events.Map.InvokeScp914UpgradeItemEvent(setting, oldItem, ref newItem, ref destroyOldItem);
+                VtController.Get.Events.Map.InvokeScp914UpgradeItemEvent(setting, oldItem, ref newItem, ref keepOldItem);
 
                 if (newItem.IsDefined())
                 {
@@ -87,7 +91,9 @@ namespace VT_Api.Patches.VtEvent.MapPaches
                     newItem.Rotation = oldItem.Rotation;
                 }
 
-                if (destroyOldItem)
+                Synapse.Api.Logger.Get.Debug(oldItem == null);
+
+                if (!keepOldItem)
                 {
                     oldItem.Destroy();
                 }
@@ -100,25 +106,30 @@ namespace VT_Api.Patches.VtEvent.MapPaches
                 return true;
             }
         }
+    }
 
-        [HarmonyPatch(typeof(FirearmItemProcessor), nameof(FirearmItemProcessor.OnPickupUpgraded))]
+    [HarmonyPatch(typeof(FirearmItemProcessor), nameof(FirearmItemProcessor.OnPickupUpgraded))]
+    class FirearmUpgradePatch
+    {
         [HarmonyPrefix]
-        private static bool FirearmUpgradePatch(FirearmItemProcessor __instance, Scp914KnobSetting setting, ItemPickupBase ipb, Vector3 newPos)
+        private static bool OnPickupUpgraded(FirearmItemProcessor __instance, Scp914KnobSetting setting, ItemPickupBase ipb, Vector3 newPos)
         {
             try
-            { 
+            {
+                Synapse.Api.Logger.Get.Debug("OnFirearmUpgraded");
+
                 var items = __instance.GetItems(setting, ipb.Info.ItemId);
 
                 foreach (ItemType newItemType in items)
                 {
                     var oldItem = ipb.GetSynapseItem();
                     var newItem = newItemType == ItemType.None || newItemType == oldItem.ItemType ? SynapseItem.None : new SynapseItem(newItemType);
-                    var destroyOldItem = newItem.IsDefined();
+                    var keepOldItem = newItem.IsDefined();
                     var attachments = 0u;
 
                     if (!InventoryItemLoader.AvailableItems.TryGetValue(newItemType, out ItemBase newItemBase))
                     {
-                        destroyOldItem = true;
+                        keepOldItem = true;
                         newItem = SynapseItem.None;
                     }
 
@@ -126,7 +137,7 @@ namespace VT_Api.Patches.VtEvent.MapPaches
                         throw new InvalidOperationException("FirearmItemProcessor can't be used for non-firearm items, such as " + newItemBase?.ItemTypeId ?? "Unknow");
 
 
-                    if (newItemBase is Firearm newFirearm && 
+                    if (newItemBase is Firearm newFirearm &&
                         InventoryItemLoader.AvailableItems.TryGetValue(oldFirearmPickup.Info.ItemId, out ItemBase oldItemBase) &&
                         oldItemBase is Firearm oldFirearm)
                     {
@@ -183,14 +194,14 @@ namespace VT_Api.Patches.VtEvent.MapPaches
                         attachments = newFirearm.ValidateAttachmentsCode(0u);
                     }
 
-                    if (!destroyOldItem)
+                    if (keepOldItem)
                     {
                         oldFirearmPickup.NetworkStatus = new FirearmStatus(0, FirearmStatusFlags.None, AttachmentsUtils.GetRandomAttachmentsCode(newItemType));
                     }
 
                     oldItem.Position = newPos;
 
-                    VtController.Get.Events.Map.InvokeScp914UpgradeItemEvent(setting, oldItem, ref newItem, ref destroyOldItem);
+                    VtController.Get.Events.Map.InvokeScp914UpgradeItemEvent(setting, oldItem, ref newItem, ref keepOldItem);
 
                     if (newItem.IsDefined())
                     {
@@ -203,7 +214,7 @@ namespace VT_Api.Patches.VtEvent.MapPaches
                         firearmPickup.NetworkStatus = new FirearmStatus(0, FirearmStatusFlags.None, attachments);
                     }
 
-                    if (destroyOldItem)
+                    if (!keepOldItem)
                     {
                         oldItem.Destroy();
                     }
@@ -222,26 +233,32 @@ namespace VT_Api.Patches.VtEvent.MapPaches
                 return true;
             }
         }
-
-        [HarmonyPatch(typeof(StandardItemProcessor), nameof(StandardItemProcessor.OnPickupUpgraded))]
+    }
+    
+    [HarmonyPatch(typeof(StandardItemProcessor), nameof(StandardItemProcessor.OnPickupUpgraded))]
+    class ItemUpgradePatch
+    { 
         [HarmonyPrefix]
-        private static bool ItemUpgradePatch(StandardItemProcessor __instance, Scp914KnobSetting setting, ItemPickupBase ipb, Vector3 newPosition)
+        private static bool OnPickupUpgraded(StandardItemProcessor __instance, Scp914KnobSetting setting, ItemPickupBase ipb, Vector3 newPosition)
         {
+
             try
             {
+                Synapse.Api.Logger.Get.Debug("OnPickupUpgraded");
+
                 var itemType = __instance.RandomOutput(setting, ipb.Info.ItemId);
                 var oldItem = ipb.GetSynapseItem();
                 var newItem = itemType == ItemType.None || itemType == oldItem.ItemType ? SynapseItem.None : new SynapseItem(itemType);
-                var destroyOldItem = newItem.IsDefined();
+                var keepOldItem = !newItem.IsDefined();
 
-                if (!destroyOldItem && __instance._fireUpgradeTrigger && ipb is IUpgradeTrigger upgradeTrigger)
+                if (!keepOldItem && __instance._fireUpgradeTrigger && ipb is IUpgradeTrigger upgradeTrigger)
                 {
                     upgradeTrigger.ServerOnUpgraded(setting);
                 }
 
                 oldItem.Position = newPosition;
 
-                VtController.Get.Events.Map.InvokeScp914UpgradeItemEvent(setting, oldItem, ref newItem, ref destroyOldItem);
+                VtController.Get.Events.Map.InvokeScp914UpgradeItemEvent(setting, oldItem, ref newItem, ref keepOldItem);
 
                 if (newItem.IsDefined())
                 {
@@ -249,12 +266,11 @@ namespace VT_Api.Patches.VtEvent.MapPaches
                     newItem.Rotation = oldItem.Rotation;
                 }
 
-                if (destroyOldItem)
+                if (!keepOldItem)
                 {
                     oldItem.Destroy();
                 }
 
-                ipb.DestroySelf();
                 return false;
             }
             catch (Exception e)

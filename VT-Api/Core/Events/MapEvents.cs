@@ -3,6 +3,7 @@ using Synapse.Api;
 using Synapse.Api.Items;
 using System;
 using VT_Api.Core.Events.EventArguments;
+using VT_Api.Extension;
 
 namespace VT_Api.Core.Events
 {
@@ -21,7 +22,7 @@ namespace VT_Api.Core.Events
         public event Synapse.Api.Events.EventHandler.OnSynapseEvent<LockerInteractEventArgs> LockerInteractEvent;
         public event Synapse.Api.Events.EventHandler.OnSynapseEvent<Scp914ActivateEventArgs> Scp914ActivateEvent;
         public event Synapse.Api.Events.EventHandler.OnSynapseEvent<Scp914UpgradeItemEventArgs> Scp914UpgradeItemEvent;
-        public event Synapse.Api.Events.EventHandler.OnSynapseEvent<Change914KnobSettingEventArgs> Scp914changeSettingEvent;
+        public event Synapse.Api.Events.EventHandler.OnSynapseEvent<Change914KnobSettingEventArgs> Scp914ChangeSettingEvent;
         #endregion
 
         #region Invoke
@@ -72,7 +73,7 @@ namespace VT_Api.Core.Events
                 Allow = allow
             };
 
-            Scp914changeSettingEvent?.Invoke(ev);
+            Scp914ChangeSettingEvent?.Invoke(ev);
 
             allow = ev.Allow;
         }
@@ -124,6 +125,8 @@ namespace VT_Api.Core.Events
 
         internal void InvokeScp914UpgradeItemEvent(Scp914KnobSetting setting, SynapseItem olditem, ref SynapseItem newItem, ref bool keepOldItem)
         {
+            Logger.Get.Debug("InvokeScp914UpgradeItemEvent");
+
             var ev = new Scp914UpgradeItemEventArgs
             {
                 Item = olditem,

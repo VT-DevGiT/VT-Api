@@ -92,24 +92,16 @@ public class VtController
 
     private void InitAll()
     {
-        var i = 0;
-        try
-        {
-            TryInit(AutoRegister.Init, "Initialising AutoRegister failed");
-            TryInit(Audio.Init, "Initialising Audio failed");
-            TryInit(MinGames.Init, "Initialising MinGames failed");
-            TryInit(Events.Init, "Initialising Events failed");
-            TryInit(Commands.Init, "Initialising Commands failed");
-            TryInit(Configs.Init, "Initialising Configs failed");
-            TryInit(Team.Init, "Initialising Team failed");
-            TryInit(Role.Init, "Initialising Role failed");
-            TryInit(Item.Init, "Initialising Item failed");
-            TryInit(Npc.Init, "Initialising Npc failed");
-        }
-        catch (Exception e)
-        {
-            throw new VtInitAllHandlerExceptions($"Vt-init: Error while Initialising the handlers #{i} !\n Please fix the Issue and restart your Server!\n{e}\nStackTrace:\n{e.StackTrace}", e);
-        }
+        TryInit(AutoRegister.Init, "Initialising AutoRegister failed");
+        TryInit(Audio.Init, "Initialising Audio failed");
+        TryInit(MinGames.Init, "Initialising MinGames failed");
+        TryInit(Events.Init, "Initialising Events failed");
+        TryInit(Commands.Init, "Initialising Commands failed");
+        TryInit(Configs.Init, "Initialising Configs failed");
+        TryInit(Team.Init, "Initialising Team failed");
+        TryInit(Role.Init, "Initialising Role failed");
+        TryInit(Item.Init, "Initialising Item failed");
+        TryInit(Npc.Init, "Initialising Npc failed");
     }
 
     private void TryInit(Action init, string msg)
@@ -120,7 +112,7 @@ public class VtController
         }
         catch (Exception ex)
         {
-            Logger.Get.Error("Synapse-Loader: " + msg + "\n" + ex);
+            Logger.Get.Error(msg + "\n" + ex);
         }
     }
 

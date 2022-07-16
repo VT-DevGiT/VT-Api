@@ -2,6 +2,7 @@
 using Synapse.Api;
 using System.IO;
 using UnityEngine;
+using VT_Api.Extension;
 
 namespace VT_Api.Core.Audio
 {
@@ -15,7 +16,10 @@ namespace VT_Api.Core.Audio
         #endregion
 
         #region Constructors & Destructor
-        internal AudioManager() { }
+        internal AudioManager() {
+
+            Synapse.Api.Logger.Get.Debug("AudioRun");
+        }
 
         #endregion
 
@@ -23,7 +27,7 @@ namespace VT_Api.Core.Audio
 
         internal void Init()
         {
-            _controller = new Controller();
+            //_controller = new Controller();
         }
 
         public void Loop(bool enabled)

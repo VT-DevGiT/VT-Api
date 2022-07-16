@@ -26,10 +26,9 @@ namespace VT_Api.Patches.VtEvent.PlayerPatches
             {
                 var victim = __instance.GetPlayer();
                 var attacker = handler is AttackerDamageHandler ahandler ? ahandler.Attacker.GetPlayer() : null;
-                var allow = true;
                 string reason = null;
 
-                VtController.Get.Events.Player.InvokePlayerKillEvent(victim, attacker, handler, ref reason);
+                VtController.Get.Events.Player.InvokePlayerDeathReasonEvent(victim, attacker, handler, ref reason);
 
                 Ragdoll.ServerSpawnRagdoll(__instance._hub, handler);
 

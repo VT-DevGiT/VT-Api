@@ -12,7 +12,7 @@ namespace VT_Api.Core.Events
 
         #region Events
         public event Synapse.Api.Events.EventHandler.OnSynapseEvent<PlayerDamagePostEventArgs> PlayerDamagePostEvent;
-        public event Synapse.Api.Events.EventHandler.OnSynapseEvent<PlayerKillEventArgs> PlayerKillEvent;
+        public event Synapse.Api.Events.EventHandler.OnSynapseEvent<PlayerKillEventArgs> PlayerDeathReasonEvent;
         public event Synapse.Api.Events.EventHandler.OnSynapseEvent<PlayerDestroyEventArgs> PlayerUnloadEvent;
         public event Synapse.Api.Events.EventHandler.OnSynapseEvent<PlayerSpeakIntercomEventEventArgs> PlayerSpeakIntercomEvent;
         public event Synapse.Api.Events.EventHandler.OnSynapseEvent<PlayerSetClassAdvEventArgs> PlayerSetClassAdvEvent;
@@ -31,7 +31,7 @@ namespace VT_Api.Core.Events
             PlayerSetClassAdvEvent?.Invoke(ev);
         }
 
-        internal void InvokePlayerKillEvent(Player victim, Player killer, DamageHandlerBase handler, ref string victimeDeathReason)
+        internal void InvokePlayerDeathReasonEvent(Player victim, Player killer, DamageHandlerBase handler, ref string victimeDeathReason)
         {
             var ev = new PlayerKillEventArgs
             {
@@ -41,7 +41,7 @@ namespace VT_Api.Core.Events
                 Victim = victim
             };
 
-            PlayerKillEvent?.Invoke(ev);
+            PlayerDeathReasonEvent?.Invoke(ev);
 
             victimeDeathReason = ev.DeathReason;
         }

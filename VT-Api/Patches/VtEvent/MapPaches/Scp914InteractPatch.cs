@@ -22,10 +22,10 @@ namespace VT_Api.Patches.VtEvent.MapPaches
                 switch ((Scp914InteractCode)colliderId)
                 {
                     case Scp914InteractCode.ChangeMode:
-                        VtController.Get.Events.Map.InvokeChange914KnobSettingEvent(__instance.GetPlayer(), ref flag);
+                        VtController.Get.Events.Map.InvokeChange914KnobSettingEvent(ply.GetPlayer(), ref flag);
                         return flag;
                     case Scp914InteractCode.Activate:
-                        VtController.Get.Events.Map.InvokeScp914ActivateEvent(__instance.GetPlayer(), ref flag);
+                        VtController.Get.Events.Map.InvokeScp914ActivateEvent(ply.GetPlayer(), ref flag);
                         return flag;
                 }
                 return false;
