@@ -2,6 +2,7 @@
 using Synapse.Api.Enum;
 using Synapse.Api.Items;
 using Synapse.Config;
+using Synapse.Translation;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -29,6 +30,9 @@ namespace VT_Api.Extension
             if (VtVersion.Debug)
                 logger.Send($"VtApi-Debug: {message}", ConsoleColor.DarkYellow);
         }
+
+        public static TPluginTranslation GetForPlayer<TPluginTranslation>(this SynapseTranslation<TPluginTranslation> translation, Player player) where TPluginTranslation : IPluginTranslation
+            => VtController.Get.Translation.GetTranslation(translation, player);
 
         public static void PlayAmbientSound(this Map _, int id)
             => VtController.Get.MapAction.PlayAmbientSound(id);

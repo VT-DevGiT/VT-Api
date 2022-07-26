@@ -131,6 +131,8 @@
     <Compile Include="Core\Teams\AbstractTeam.cs" />
     <Compile Include="Core\Teams\RespawnTeamInfo.cs" />
     <Compile Include="Core\Teams\TeamManager.cs" />
+    <Compile Include="Core\Translation\IpInfo.cs" />
+    <Compile Include="Core\Translation\TranslationManager.cs" />
     <Compile Include="Core\Updater.cs" />
     <Compile Include="Core\VtExtensionsReflexion.cs" />
     <Compile Include="Exceptions\VtCommandsExpetions.cs" />
@@ -167,7 +169,6 @@
     <Compile Include="VtVersion.cs" />
   </ItemGroup>
   <ItemGroup>
-    <Folder Include="Core\CustomObjects\" />
     <Folder Include="Core\DataBase\" />
     <Folder Include="Patches\VtFix\" />
   </ItemGroup>
@@ -201,6 +202,9 @@
   <ItemGroup>
     <PackageReference Include="Lib.Harmony">
       <Version>2.2.1</Version>
+    </PackageReference>
+    <PackageReference Include="Newtonsoft.Json">
+      <Version>13.0.1</Version>
     </PackageReference>
     <PackageReference Include="SynapseSL">
       <Version>2.10.0</Version>
