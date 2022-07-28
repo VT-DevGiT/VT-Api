@@ -32,28 +32,26 @@ namespace VT_Api.Core.Events
         internal EventHandler()
         {
             SyanpseEventHandler.Get.Player.PlayerJoinEvent += PlayerJoin;
-            SyanpseEventHandler.Get.Server.RemoteAdminCommandEvent += OnRaOverwatchFix;
+            //SyanpseEventHandler.Get.Server.RemoteAdminCommandEvent += OnRaOverwatchFix;
             SyanpseEventHandler.Get.Round.WaitingForPlayersEvent += OnWaiting;
 #if DEBUG
             SyanpseEventHandler.Get.Player.PlayerKeyPressEvent += KeyPress;
 #endif
         }
+        #endregion
 
-        private void OnWaiting()
-        {
-            SynapseController.Server.Host.gameObject.GetOrAddComponent<ServerStopTrap>();
-        }
-
+        #region Methods
         internal void Init()
         {
 
         }
         #endregion
 
-        #region Methods
-        #endregion
-
         #region Events
+        private void OnWaiting()
+        {
+            SynapseController.Server.Host.gameObject.GetOrAddComponent<ServerStopTrap>();
+        }
 
         private void PlayerJoin(Synapse.Api.Events.SynapseEventArguments.PlayerJoinEventArgs ev)
         {

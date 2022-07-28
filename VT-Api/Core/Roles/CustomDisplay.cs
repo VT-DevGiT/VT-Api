@@ -100,7 +100,8 @@ namespace VT_Api.Core.Roles
         #endregion
 
         #region Methods
-        private void Start()
+
+        protected override void Start()
         {
             Player = this.gameObject.GetPlayer();
 

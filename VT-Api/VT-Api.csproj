@@ -52,6 +52,7 @@
     <Compile Include="Core\Audio\AudioManager.cs" />
     <Compile Include="Core\Audio\Controller.cs" />
     <Compile Include="Core\Audio\FakeMicrophone.cs" />
+    <Compile Include="Core\Command\Commands\ChangeLanguage.cs" />
     <Compile Include="Core\Roles\CustomDisplay.cs" />
     <Compile Include="Core\Behaviour\ServerStopTrap.cs" />
     <Compile Include="Core\Enum\AudioStatus.cs" />

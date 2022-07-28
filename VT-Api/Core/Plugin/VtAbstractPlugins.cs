@@ -48,7 +48,7 @@ namespace VT_Api.Core.Plugin
 
 
         [Obsolete("This is the old Translation system, use Translation", true)]
-        Translation IPlugin.Translation { get; set; }
+        Synapse.Api.Plugin.Translation IPlugin.Translation { get; set; }
         #endregion
 
         #region Constructor & Destructor
@@ -116,7 +116,7 @@ namespace VT_Api.Core.Plugin
 
 
         [Obsolete("This is the old Translation Systemn, use Translation", true)]
-        Translation IPlugin.Translation { get; set; }
+        Synapse.Api.Plugin.Translation IPlugin.Translation { get; set; }
         #endregion
 
         #region Constructor & Destructor
@@ -183,7 +183,7 @@ namespace VT_Api.Core.Plugin
 
 
         [Obsolete("This is the old Translation Systemn, use Translation", true)]
-        Translation IPlugin.Translation { get; set; }
+        Synapse.Api.Plugin.Translation IPlugin.Translation { get; set; }
         #endregion
 
         #region Constructor & Destructor

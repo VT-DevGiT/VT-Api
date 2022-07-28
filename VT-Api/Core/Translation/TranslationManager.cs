@@ -20,7 +20,20 @@ namespace VT_Api.Core.Translation
         #region Properties & Variables
         public static TranslationManager Get => Singleton<TranslationManager>.Instance;
 
-        public Dictionary<string, string> PlayersLanguage = new Dictionary<string, string>();
+        public Dictionary<string, string> PlayersLanguage { get; } = new Dictionary<string, string>();
+
+        public Dictionary<string, string> CountryLanguage { get; } = new Dictionary<string, string>()
+        {
+            { "FRANCE", "FRENCH" },
+            { "GERMANY", "GERMAN" },
+            { "ITALY", "ITALIAN" },
+            { "SPAIN", "SPANISH" },
+            { "BRITAIN", "ENGLISH" }
+        };
+
+        public List<string> AvailableLanguage => CountryLanguage.Values.Distinct().ToList();
+
+
         #endregion
 
         #region Constructor & Destructor
@@ -82,8 +95,9 @@ namespace VT_Api.Core.Translation
         public string GetLanguage(Player player)
         {
             var contry = GetUserCountry(player);
-            var cultureInfo = CultureInfo.GetCultures(CultureTypes.AllCultures).FirstOrDefault(c => new RegionInfo(c.Name).EnglishName == contry);
-            return cultureInfo.IetfLanguageTag;
+            if (!CountryLanguage.TryGetValue(contry, out string language))
+                language = "ENGLISH";
+            return language;
         }
 
         public TPluginTranslation GetTranslation<TPluginTranslation>(SynapseTranslation<TPluginTranslation> translation, Player player) where TPluginTranslation : IPluginTranslation
@@ -105,8 +119,8 @@ namespace VT_Api.Core.Translation
             var language = ev.Player.GetData("Language");
             if (language == null)
             {
-                language = GetLanguage(ev.Player);
-                ev.Player.SetData("Language", GetLanguage(ev.Player));
+                language = GetLanguage(ev.Player).ToUpper();
+                ev.Player.SetData("Language", language);
             }
             PlayersLanguage.Add(ev.Player.NickName, language);
         }

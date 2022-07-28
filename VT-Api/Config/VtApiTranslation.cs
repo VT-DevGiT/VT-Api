@@ -16,5 +16,7 @@ namespace VT_Api.Config
 
         [Description("The death message when you are kill by a custom class of the VT-API")]
         public string DefaultDeathMessage { get; set; } = "You were killed by\\n%PlayerName%\\nas\\n%RoleName%";
+
+
     }
 }
