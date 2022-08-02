@@ -68,7 +68,7 @@ namespace VT_Api.Core.Translation
             }
             catch (Exception)
             {
-                ipInfo.Country = null;
+                ipInfo.Country = "";
             }
 
             return ipInfo.Country;
@@ -86,7 +86,7 @@ namespace VT_Api.Core.Translation
             }
             catch (Exception)
             {
-                ipInfo.Country = null;
+                ipInfo.Country = "";
             }
 
             return ipInfo.Country;
@@ -102,7 +102,7 @@ namespace VT_Api.Core.Translation
 
         public TPluginTranslation GetTranslation<TPluginTranslation>(SynapseTranslation<TPluginTranslation> translation, Player player) where TPluginTranslation : IPluginTranslation
         {
-            if (!PlayersLanguage.TryGetValue(player.NickName, out var language))
+            if (!PlayersLanguage.TryGetValue(player.UserId, out var language))
             {
                 Logger.Get.Error($"The player language of {player.NickName} is not set !");
                 return translation.ActiveTranslation;
@@ -114,7 +114,7 @@ namespace VT_Api.Core.Translation
         #region Events
         private void OnJoin(PlayerJoinEventArgs ev)
         {
-            if (PlayersLanguage.ContainsKey(ev.Player.NickName))
+            if (PlayersLanguage.ContainsKey(ev.Player.UserId))
                 return;
             var language = ev.Player.GetData("Language");
             if (language == null)
@@ -122,14 +122,14 @@ namespace VT_Api.Core.Translation
                 language = GetLanguage(ev.Player).ToUpper();
                 ev.Player.SetData("Language", language);
             }
-            PlayersLanguage.Add(ev.Player.NickName, language);
+            PlayersLanguage.Add(ev.Player.UserId, language);
         }
 
         private void OnRoundRestart()
         {
             foreach(var playerLanguage in PlayersLanguage)
             {
-                if (!Server.Get.Players.Any(p => p.NickName == playerLanguage.Key))
+                if (!Server.Get.Players.Any(p => p.UserId == playerLanguage.Key))
                     PlayersLanguage.Remove(playerLanguage.Key);
             }
         }
