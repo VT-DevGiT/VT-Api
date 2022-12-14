@@ -6,7 +6,7 @@ using VT_Api.Extension;
 
 namespace VT_Api.Core.Audio
 {
-    public class AudioManager
+    internal class AudioManager
     {
         #region Attributes & Properties
         public static AudioManager Get => Singleton<AudioManager>.Instance;
@@ -16,7 +16,8 @@ namespace VT_Api.Core.Audio
         #endregion
 
         #region Constructors & Destructor
-        internal AudioManager() {
+        internal AudioManager() 
+        {
 
             Synapse.Api.Logger.Get.Debug("AudioRun");
         }
@@ -27,13 +28,12 @@ namespace VT_Api.Core.Audio
 
         internal void Init()
         {
-            //_controller = new Controller();
+            _controller = new Controller();
         }
 
         public void Loop(bool enabled)
         {
             _controller.Loop = enabled;
-            //Synapse.Api.Logger.Get.Info($"Loop : {_controller.Loop}");
         }
 
         private void UnmutePlayer(Player player)
@@ -45,6 +45,8 @@ namespace VT_Api.Core.Audio
         private void MutePlayer(Player player)
         {
             var id = player.Radio.mirrorIgnorancePlayer._playerId;
+            if (_controller.MutedPlayers.Contains(id))
+                return;
             _controller.MutePlayer(id);
         }
 

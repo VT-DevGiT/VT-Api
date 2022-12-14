@@ -17,9 +17,24 @@ namespace VT_Api.Core.Audio
         public FakeMicrophone Microphone;
 
         public bool Loop { get; set; }
-        public float Volume { get; set; } = 1;
 
-        public readonly List<string> MutedPlayers = new List<string>();
+        public float _volume;
+        /// <summary>
+        /// It was in %
+        /// </summary>
+        public float Volume 
+        { 
+            get
+            {
+                return _volume * 100;
+            } 
+            set
+            {
+                _volume = Mathf.Clamp(value, 0, 100) / 100;
+            }
+        }
+
+        public List<string> MutedPlayers { get; } = new List<string>();
         #endregion
 
         #region Constructors & Destructor
@@ -36,11 +51,12 @@ namespace VT_Api.Core.Audio
         public void UnMutePlayer(string playerId)
         {
             MutedPlayers.Remove(playerId);
-            UnMutePlayer(playerId);
-            Comms.PlayerChannels.Open(playerId, false, ChannelPriority.Default, Volume);
+            Comms.PlayerChannels.Open(playerId, false, ChannelPriority.Default, _volume);
         }
+
         public void MutePlayer(string playerId)
         {
+            MutedPlayers.Add(playerId);
             var channel = Comms.PlayerChannels._openChannelsBySubId.FirstOrDefault(x => x.Value.TargetId == playerId);
             Comms.PlayerChannels.Close(channel.Value);
         }
@@ -68,7 +84,7 @@ namespace VT_Api.Core.Audio
             yield return Timing.WaitForOneFrame;
             yield return Timing.WaitForOneFrame;
 
-            Volume = Mathf.Clamp(volume, 0, 100) / 100;
+            Volume = volume;
             RefreshChannels();
 
             Microphone.File = new FileStream(path, FileMode.Open);
@@ -90,7 +106,7 @@ namespace VT_Api.Core.Audio
             foreach (var channel in Comms.PlayerChannels._openChannelsBySubId.Values.ToList())
             {
                 Comms.PlayerChannels.Close(channel);
-                Comms.PlayerChannels.Open(channel.TargetId, false, ChannelPriority.Default, Volume);
+                Comms.PlayerChannels.Open(channel.TargetId, false, ChannelPriority.Default, _volume);
             }
         }
 
@@ -112,10 +128,9 @@ namespace VT_Api.Core.Audio
 
         private void OnPlayerJoinedSession(VoicePlayerState player)
         {
-            Comms.PlayerChannels.Open(player.Name, false, ChannelPriority.Default, Volume);
+            Comms.PlayerChannels.Open(player.Name, false, ChannelPriority.Default, _volume);
         }
 
         #endregion
-
     }
 }

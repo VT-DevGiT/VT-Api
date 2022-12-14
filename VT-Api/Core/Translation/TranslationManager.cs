@@ -14,7 +14,7 @@ using Synapse.Translation;
 
 namespace VT_Api.Core.Translation
 {
-    public class TranslationManager
+    internal class TranslationManager
     {
 
         #region Properties & Variables
