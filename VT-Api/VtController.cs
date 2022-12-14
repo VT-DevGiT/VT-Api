@@ -26,7 +26,7 @@ public class VtController
     public static VtController Get { get; private set; }
 
     internal AutoRegisterManager AutoRegister { get => Singleton<AutoRegisterManager>.Instance; } // nothing  public (yet)
-    public AudioManager Audio { get => Singleton<AudioManager>.Instance; }
+    internal AudioManager Audio { get => Singleton<AudioManager>.Instance; } // need patch
     internal MiniGameManager MinGames { get => Singleton<MiniGameManager>.Instance; } // not finish
     public RoleManager Role { get => Singleton<RoleManager>.Instance; }
     public TeamManager Team { get => Singleton<TeamManager>.Instance; }
@@ -34,7 +34,7 @@ public class VtController
     public MapAndRoundManger MapAction { get => Singleton<MapAndRoundManger>.Instance; }
     public NetworkLiar NetworkLiar { get => Singleton<NetworkLiar>.Instance; }
     public ItemManager Item { get => Singleton<ItemManager>.Instance; }
-    public TranslationManager Translation { get => Singleton<TranslationManager>.Instance; }
+    internal TranslationManager Translation { get => Singleton<TranslationManager>.Instance; } // not finish
     internal NpcManger Npc { get => Singleton<NpcManger>.Instance; } // not finish
     internal CommandHandler Commands { get => Singleton<CommandHandler>.Instance; } // nothing  public (yet)
 
@@ -97,16 +97,16 @@ public class VtController
     private void InitAll()
     {
         TryInit(AutoRegister.Init, "Initialising AutoRegister failed");
-        TryInit(Audio.Init, "Initialising Audio failed");
-        TryInit(MinGames.Init, "Initialising MinGames failed");
+        //TryInit(Audio.Init, "Initialising Audio failed");
+        //TryInit(MinGames.Init, "Initialising MinGames failed");
         TryInit(Events.Init, "Initialising Events failed");
         TryInit(Commands.Init, "Initialising Commands failed");
         TryInit(Configs.Init, "Initialising Configs failed");
         TryInit(Team.Init, "Initialising Team failed");
         TryInit(Role.Init, "Initialising Role failed");
         TryInit(Item.Init, "Initialising Item failed");
-        TryInit(Translation.Init, "Initialising Translation failed");
-        TryInit(Npc.Init, "Initialising Npc failed");
+        //TryInit(Translation.Init, "Initialising Translation failed");
+        //TryInit(Npc.Init, "Initialising Npc failed");
     }
 
     private void TryInit(Action init, string msg)

@@ -1,4 +1,5 @@
-﻿using Dissonance.Audio.Capture;
+﻿using Dissonance;
+using Dissonance.Audio.Capture;
 using Dissonance.Networking;
 using NAudio.Wave;
 using System;
@@ -24,7 +25,7 @@ namespace VT_Api.Core.Audio
 
         private readonly WaveFormat _format = new WaveFormat(48000, 1);
         private readonly float[] _frame = new float[960];
-        private readonly byte[] _frameBytes = new byte[960 * 4];
+        private readonly byte[] _frameBytes = new byte[960 * sizeof(float)];
 
         private float _elapsedTime;
 
