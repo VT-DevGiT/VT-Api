@@ -1,4 +1,5 @@
-﻿using Synapse.Api;
+﻿using PlayerStatsSystem;
+using Synapse.Api;
 using Synapse.Api.Enum;
 using System;
 using VT_Api.Core.Events.EventArguments;
@@ -11,7 +12,7 @@ namespace VT_Api.Core.Events
 
         #region Events
         public event Synapse.Api.Events.EventHandler.OnSynapseEvent<PlayerDamagePostEventArgs> PlayerDamagePostEvent;
-        public event Synapse.Api.Events.EventHandler.OnSynapseEvent<PlayerDeathPostEventArgs> PlayerDeathPostEvent;
+        public event Synapse.Api.Events.EventHandler.OnSynapseEvent<PlayerKillEventArgs> PlayerDeathReasonEvent;
         public event Synapse.Api.Events.EventHandler.OnSynapseEvent<PlayerDestroyEventArgs> PlayerUnloadEvent;
         public event Synapse.Api.Events.EventHandler.OnSynapseEvent<PlayerSpeakIntercomEventEventArgs> PlayerSpeakIntercomEvent;
         public event Synapse.Api.Events.EventHandler.OnSynapseEvent<PlayerSetClassAdvEventArgs> PlayerSetClassAdvEvent;
@@ -30,19 +31,19 @@ namespace VT_Api.Core.Events
             PlayerSetClassAdvEvent?.Invoke(ev);
         }
 
-        internal void InvokePlayerDeathPostEvent(Player victim, Player killer, DamageType type, ref bool allow)
+        internal void InvokePlayerDeathReasonEvent(Player victim, Player killer, DamageHandlerBase handler, ref string victimeDeathReason)
         {
-            var ev = new PlayerDeathPostEventArgs
+            var ev = new PlayerKillEventArgs
             {
-                Allow = allow,
-                DamageType = type,
+                DamageHandler = handler,
+                DeathReason = victimeDeathReason,
                 Killer = killer,
                 Victim = victim
             };
 
-            PlayerDeathPostEvent?.Invoke(ev);
+            PlayerDeathReasonEvent?.Invoke(ev);
 
-            allow = ev.Allow;
+            victimeDeathReason = ev.DeathReason;
         }
 
         internal void InvokePlayerSpeakIntercomEvent(Player player, ref bool allow)

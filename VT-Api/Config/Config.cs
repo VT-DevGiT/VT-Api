@@ -1,21 +1,26 @@
 ﻿using Synapse.Config;
 using Synapse.Translation;
+using VT_Api.Core;
 using VT_Api.Reflexion;
 
 namespace VT_Api.Config
 {
     public class Config
     {
-        public static Config Get { get => VtController.Get.Configs; }
 
-        public VtApiConfiguration VtConfiguration;
+        #region Properties & Variable
+        public static Config Get => Singleton<Config>.Instance;
 
-
-        public SynapseTranslation<VtApiTranslation> VtTranslation;
+        public VtApiConfiguration VtConfiguration { get; private set; }
+        public SynapseTranslation<VtApiTranslation> VtTranslation { get; private set; }
         public SynapseConfiguration SynapseConfiguration => Synapse.Server.Get.Configs.GetFieldValueOrPerties<SynapseConfiguration>("synapseConfiguration");
+        #endregion
 
+        #region Constructor & Destructor
+        internal Config() { }
+        #endregion
 
-
+        #region Methods
         internal void Init()
         {
             VtTranslation = new SynapseTranslation<VtApiTranslation>(SynapseController.Server.Files.GetTranslationPath("Vt-Api"));
@@ -36,12 +41,13 @@ namespace VT_Api.Config
                 RankOver = "VOUS POUVEZ LUI DONNER DES ORDRES",
                 RankSame = "MÊME NIVEAU D'ACCRÉDITATION",
                 RankUnder = "SUIVEZ SES ORDRES",
-                DefaultDeathMessage = "Vous avez été tué par:\\n%PlayerName%\\nen tent que:\\n%RoleName%"
+                DefaultDeathMessage = "Vous avez été tué par:\\n%PlayerName%\\nen tant que:\\n%RoleName%"
 
             }, "FRENCH");
 
             VtConfiguration = new VtApiConfiguration();
             VtConfiguration = Synapse.Server.Get.Configs.GetOrSetDefault("VT-API", new VtApiConfiguration());
         }
+        #endregion
     }
 }

@@ -6,7 +6,7 @@ public static class VtVersion
 {
     public const int Major = 1;
 
-    public const int Minor = 2;
+    public const int Minor = 3;
 
     public const int Patch = 0;
 

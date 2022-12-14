@@ -7,12 +7,12 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using UnityEngine;
+using VT_Api.Core.Behaviour;
 using VT_Api.Core.Enum;
 using VT_Api.Core.Events.EventArguments;
-using VT_Api.Core.Roles;
 using VT_Api.Extension;
 
-namespace VT_Api.Core.Behaviour
+namespace VT_Api.Core.Roles
 {
     //TODO:
     /*
@@ -37,7 +37,7 @@ namespace VT_Api.Core.Behaviour
      * 
      * 
      */
-    public class Display : RoundBehaviour
+    public class CustomDisplay : RepeatingBehaviour
     {
         #region Properties & Variable
         public Player Player { get; private set; }
@@ -87,13 +87,21 @@ namespace VT_Api.Core.Behaviour
             }
         }
 
-        const int delata = 5; //this number must be a divisor of 255
+        const int delata = 5; //this number must be a divisor of 255 (for the rambo color)
         private float delay = Time.time;
         int r = 255, g = 0, b = 0;
         #endregion
 
+        #region Constructor & Destructor
+        public CustomDisplay()
+        {
+            this.RefreshTime = delata * 1000;
+        }
+        #endregion
+
         #region Methods
-        private void Start()
+
+        protected override void Start()
         {
             Player = this.gameObject.GetPlayer();
 
@@ -104,14 +112,8 @@ namespace VT_Api.Core.Behaviour
             }
         }
 
-        private void Update()
+        protected override void BehaviourAction()
         {
-            if (Player.RankColor != "RAINBOW")
-            {
-                enabled = false;
-                return;
-            }
-
             if (Time.time >= delay)
             {
                 delay += delata;
@@ -215,13 +217,13 @@ namespace VT_Api.Core.Behaviour
                             displayWhitHierachy += Config.Config.Get.VtTranslation.ActiveTranslation.RankSame;
                     }
                     NetworkLiar.Get.SendDisplayInfo(Player, displayWhitHierachy, new List<Player>() { player });
-                    NetworkLiar.Get.SebdInfoToDisplay(Player, PlayerInfoArea.CustomInfo, Server.Get.Players);
+                    NetworkLiar.Get.SendInfoToDisplay(Player, PlayerInfoArea.CustomInfo, Server.Get.Players);
                 }
             }
             else
             {
                 NetworkLiar.Get.SendDisplayInfo(Player, display, Server.Get.Players);
-                NetworkLiar.Get.SebdInfoToDisplay(Player, PlayerInfoArea.CustomInfo, Server.Get.Players);
+                NetworkLiar.Get.SendInfoToDisplay(Player, PlayerInfoArea.CustomInfo, Server.Get.Players);
             }
         }
         #endregion

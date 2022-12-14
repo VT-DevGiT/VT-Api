@@ -10,7 +10,7 @@ namespace VT_Api.Core
 {
     public class NetworkLiar
     {
-        public static NetworkLiar Get { get => VtController.Get.NetworkLiar; }
+        public static NetworkLiar Get => Singleton<NetworkLiar>.Instance;
 
         public void SendRole(Player player, RoleType info, List<Player> players)
         {
@@ -49,7 +49,7 @@ namespace VT_Api.Core
             SendAndRecycle(owner, observer, players, player);
         }
 
-        public void SebdInfoToDisplay(Player player, PlayerInfoArea info, List<Player> players)
+        public void SendInfoToDisplay(Player player, PlayerInfoArea info, List<Player> players)
         {
             const byte bytecodes = 4;
 

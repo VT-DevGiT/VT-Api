@@ -12,6 +12,7 @@ using SynRoleManger = Synapse.Api.Roles.RoleManager;
 using rnd = UnityEngine.Random;
 using VT_Api.Reflexion;
 using VT_Api.Core.Roles;
+using Respawning;
 
 namespace VT_Api.Core.Teams
 {
@@ -19,8 +20,12 @@ namespace VT_Api.Core.Teams
     {
 
         #region Properties & Variable
-        public static TeamManager Get => VtController.Get.Team;
+        public static TeamManager Get => Singleton<TeamManager>.Instance;
         public RespawnTeamInfo NextRespawnInfo { get; set; } = new RespawnTeamInfo();
+        
+        public RespawnManager RespawnManager { get => RespawnManager.Singleton; } 
+        
+        public UnitNamingManager NamingManager { get => RespawnManager.NamingManager; }
         #endregion
 
         #region Constructor & Destructor
@@ -32,6 +37,8 @@ namespace VT_Api.Core.Teams
         {
             Synapse.Api.Events.EventHandler.Get.Round.TeamRespawnEvent += OnRespawn;
         }
+
+        
 
         public int GetTeam(int roleID)
         {
@@ -59,7 +66,7 @@ namespace VT_Api.Core.Teams
         #region Events
         private void OnRespawn(TeamRespawnEventArgs ev)
         {
-            if (NextRespawnInfo.TeamID == (int)TeamID.None)
+            if (NextRespawnInfo == null || NextRespawnInfo.TeamID == (int)TeamID.None)
                 return;
 
             if (NextRespawnInfo.AmountOfPlayers != -1)

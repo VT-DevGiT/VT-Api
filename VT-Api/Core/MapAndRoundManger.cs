@@ -20,10 +20,10 @@ namespace VT_Api.Core
 {
     public class MapAndRoundManger
     {
+        public static MapAndRoundManger Get => Singleton<MapAndRoundManger>.Instance;
+
         //Original of SanyaPlugin https://github.com/sanyae2439/SanyaPlugin_Exiled
         public bool isAirBombCurrently = false;
-
-        public static MapAndRoundManger Get { get => VtController.Get.MapAction; }
 
         public Vector3[] AirbombPos
         {
@@ -267,9 +267,9 @@ namespace VT_Api.Core
             });
         }
 
-        public void PlayShoot(ShootSound sound, Vector3 position, byte shootSoundDistance = 25)
+        public void PlayShoot(ShootSound sound, Vector3 position, byte shootSoundDistance = 25, List<Player> players = null)
         {
-            foreach (var player in Server.Get.Players)
+            foreach (var player in players ?? Server.Get.Players)
             {
                 var msg = new GunAudioMessage(player, 0, shootSoundDistance, player);
                 var to = position - player.Position;

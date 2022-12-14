@@ -15,7 +15,7 @@ namespace VT_Api.Core.Events
         internal ItemEvents() { }
 
         #region Events
-        public event Synapse.Api.Events.EventHandler.OnSynapseEvent<ChangeIntoFragEventArgs> ChangeIntoFragEvent;
+        public event Synapse.Api.Events.EventHandler.OnSynapseEvent<ChangeIntoFragEventArgs> ChangeIntoActivGrenadEvent;
         public event Synapse.Api.Events.EventHandler.OnSynapseEvent<ExplosionGrenadeEventArgs> ExplosionGrenadeEvent;
         public event Synapse.Api.Events.EventHandler.OnSynapseEvent<CollisionEventArgs> CollisionEvent;
         public event Synapse.Api.Events.EventHandler.OnSynapseEvent<RemoveLimitItemEventArgs> RemoveLimitItemEvent;
@@ -77,7 +77,7 @@ namespace VT_Api.Core.Events
                 Allow = allow
             };
 
-            ChangeIntoFragEvent?.Invoke(ev);
+            ChangeIntoActivGrenadEvent?.Invoke(ev);
 
             allow = ev.Allow;
         }

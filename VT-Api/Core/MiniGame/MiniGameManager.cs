@@ -10,7 +10,7 @@ namespace VT_Api.Core.MiniGame
     internal class MiniGameManager
     {
         #region Properties & Variable
-        public static MiniGameManager Get => VtController.Get.MinGames;
+        public static MiniGameManager Get => Singleton<MiniGameManager>.Instance;
 
         private List<MiniGameInformation> MiniGames { get; } = new List<MiniGameInformation>();
 

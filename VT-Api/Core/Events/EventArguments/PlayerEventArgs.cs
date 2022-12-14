@@ -1,4 +1,5 @@
-﻿using Synapse.Api;
+﻿using PlayerStatsSystem;
+using Synapse.Api;
 using Synapse.Api.Enum;
 using Synapse.Api.Items;
 
@@ -13,12 +14,12 @@ namespace VT_Api.Core.Events.EventArguments
         public DamageType DamageType { get; internal set; }
         public bool Allow { get; set; }
     }
-    public class PlayerDeathPostEventArgs : Synapse.Api.Events.EventHandler.ISynapseEventArgs
+    public class PlayerKillEventArgs : Synapse.Api.Events.EventHandler.ISynapseEventArgs
     {
         public Player Killer { get; internal set; }
         public Player Victim { get; internal set; }
-        public DamageType DamageType { get; internal set; }
-        public bool Allow { get; set; }
+        public DamageHandlerBase DamageHandler { get; internal set; }
+        public string DeathReason { get; set; }
     }
     
 

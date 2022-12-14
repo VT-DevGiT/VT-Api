@@ -14,7 +14,7 @@ namespace VT_Api.Core.Command.Commands
        Description = "Call the power of your role",
        Usage = "no argument if you want to call your main power, if not add the id of the power",
        Permission = "",
-       Platforms = new[] { Platform.ServerConsole },
+       Platforms = new[] { Platform.ClientConsole },
        Arguments = new[] { "(powerId)" }
        )]
     public class CallPower : ISynapseCommand

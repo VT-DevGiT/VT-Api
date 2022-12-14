@@ -49,10 +49,15 @@
     <Compile Include="Config\Config.cs" />
     <Compile Include="Config\VtApiConfiguration.cs" />
     <Compile Include="Config\VtApiTranslation.cs" />
-    <Compile Include="Core\Behaviour\Display.cs" />
+    <Compile Include="Core\Audio\AudioManager.cs" />
+    <Compile Include="Core\Audio\Controller.cs" />
+    <Compile Include="Core\Audio\FakeMicrophone.cs" />
+    <Compile Include="Core\Command\Commands\ChangeLanguage.cs" />
+    <Compile Include="Core\Roles\CustomDisplay.cs" />
     <Compile Include="Core\Behaviour\ServerStopTrap.cs" />
     <Compile Include="Core\Enum\AudioStatus.cs" />
     <Compile Include="Core\Enum\Hierarchy.cs" />
+    <Compile Include="Core\Enum\NpcPathPointType.cs" />
     <Compile Include="Core\Events\ServerEvents.cs" />
     <Compile Include="Core\ISengleton.cs" />
     <Compile Include="Core\Items\IWeapon.cs" />
@@ -86,6 +91,12 @@
     <Compile Include="Core\MiniGame\IMiniGame.cs" />
     <Compile Include="Core\MiniGame\MiniGameInformation.cs" />
     <Compile Include="Core\NetworkLiar.cs" />
+    <Compile Include="Core\NPC\NPC.cs" />
+    <Compile Include="Core\NPC\NpcManger.cs" />
+    <Compile Include="Core\NPC\NpcMovementController.cs" />
+    <Compile Include="Core\NPC\Path\NpcPath.cs" />
+    <Compile Include="Core\NPC\Path\NpcPathPoint.cs" />
+    <Compile Include="Core\NPC\Path\NpcMapPath.cs" />
     <Compile Include="Core\Plugin\Process\AutoUpdatePorecess.cs" />
     <Compile Include="Core\Plugin\Process\DebugCheckProcess.cs" />
     <Compile Include="Core\Plugin\Updater\AbstractAutoUpdater.cs" />
@@ -121,6 +132,8 @@
     <Compile Include="Core\Teams\AbstractTeam.cs" />
     <Compile Include="Core\Teams\RespawnTeamInfo.cs" />
     <Compile Include="Core\Teams\TeamManager.cs" />
+    <Compile Include="Core\Translation\IpInfo.cs" />
+    <Compile Include="Core\Translation\TranslationManager.cs" />
     <Compile Include="Core\Updater.cs" />
     <Compile Include="Core\VtExtensionsReflexion.cs" />
     <Compile Include="Exceptions\VtCommandsExpetions.cs" />
@@ -144,10 +157,10 @@
     <Compile Include="Patches\VtEvent\PlayerPatches\DestroyHubPatch.cs" />
     <Compile Include="Patches\VtEvent\PlayerPatches\IntercomSpeakPatch.cs" />
     <Compile Include="Patches\VtEvent\PlayerPatches\SetClassPatch.cs" />
-    <Compile Include="Patches\VtEvent\PlayerPatches\SynapseDeathPatch.cs" />
+    <Compile Include="Patches\VtEvent\PlayerPatches\DeathPatch.cs" />
     <Compile Include="Patches\VtEvent\PlayerPatches\SynapseDamagePatch.cs" />
     <Compile Include="Patches\VtEvent\ScpPatches\Scp106\Scp106UsePortalPatch.cs" />
-    <Compile Include="Patches\VtPatch\CustomDeathReasonPatch.cs" />
+    <Compile Include="Patches\VtPatch\DissonanceHostPatch.cs" />
     <Compile Include="Patches\VtPatch\GetCategoryLimitPatchs.cs" />
     <Compile Include="Patches\VtPatch\SynapseItemPatch.cs" />
     <Compile Include="Patches\VtPatch\NextKnownTeamPatch.cs" />
@@ -157,16 +170,12 @@
     <Compile Include="VtVersion.cs" />
   </ItemGroup>
   <ItemGroup>
-    <Folder Include="Core\Audio\" />
-    <Folder Include="Core\CustomObjects\" />
     <Folder Include="Core\DataBase\" />
-    <Folder Include="Core\NPC\" />
     <Folder Include="Patches\VtFix\" />
   </ItemGroup>
   <ItemGroup>
-    <Reference Include="DissonanceVoip-Publicized">
-      <HintPath>..\ref\DissonanceVoip-Publicized.dll</HintPath>
-      <Aliases>Dissonance</Aliases>
+    <Reference Include="DissonanceVoip">
+      <HintPath>..\ref\DissonanceVoip.dll</HintPath>
     </Reference>
     <Reference Include="NorthwoodLib-Publicized">
       <HintPath>..\ref\NorthwoodLib-Publicized.dll</HintPath>
@@ -195,8 +204,11 @@
     <PackageReference Include="Lib.Harmony">
       <Version>2.2.1</Version>
     </PackageReference>
+    <PackageReference Include="Newtonsoft.Json">
+      <Version>13.0.1</Version>
+    </PackageReference>
     <PackageReference Include="SynapseSL">
-      <Version>2.10.0</Version>
+      <Version>2.10.1</Version>
     </PackageReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

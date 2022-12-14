@@ -10,13 +10,8 @@ namespace VT_Api.Core.Command
     public class CommandHandler
     {
 
-        internal void Init()
-        {
-            RegisterVtCommands(); 
-            Synapse.Api.Events.EventHandler.Get.Round.WaitingForPlayersEvent += RegisterSubCommand;
-        }
-
-        public static CommandHandler Get { get => VtController.Get.Commands; }
+        #region Properties & Variable
+        public static CommandHandler Get => Singleton<CommandHandler>.Instance;
         internal List<GeneratedMainCommand> MainCommands { get; } = new List<GeneratedMainCommand>();
         internal List<GeneratedSubCommand> SubCommands { get; } = new List<GeneratedSubCommand>();
 
@@ -24,6 +19,19 @@ namespace VT_Api.Core.Command
 
 
         private bool _firstLoad = true;
+
+        #endregion
+
+        #region Constructor & Destructor
+        internal CommandHandler() { }
+        #endregion
+
+        #region Methods
+        internal void Init()
+        {
+            RegisterVtCommands();
+            Synapse.Api.Events.EventHandler.Get.Round.WaitingForPlayersEvent += RegisterSubCommand;
+        }
 
         internal void RegisterSynapseCommand(ISynapseCommand iSynapseCommand, bool awaitPluginInitialisation)
             => typeof(Handlers).CallMethod("RegisterCommand", iSynapseCommand, awaitPluginInitialisation);
@@ -98,11 +106,8 @@ namespace VT_Api.Core.Command
 
         private void RegisterVtCommands()
         {
-            if (!_firstLoad)
-                return;
-            Logger.Get.Info("Register Command");
-
             RegisterSynapseCommand(new CallPower(), false);
         }
+        #endregion
     }
 }

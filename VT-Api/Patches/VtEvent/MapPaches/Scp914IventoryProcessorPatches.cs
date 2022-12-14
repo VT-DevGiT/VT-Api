@@ -6,6 +6,7 @@ using InventorySystem.Items.Firearms.Ammo;
 using InventorySystem.Items.Firearms.Attachments;
 using Scp914;
 using Scp914.Processors;
+using Synapse.Api;
 using Synapse.Api.Items;
 using System;
 using System.Collections.Generic;
@@ -16,17 +17,19 @@ using VT_Api.Extension;
 
 namespace VT_Api.Patches.VtEvent.MapPaches
 {
-    class Scp914IventoryProcessorPatch
-    {
-        // the ammo cannot be upgrade if they are in the inventory, even if the method exists I do not see any interest in the patch
-        // call Warkis if you want an event for the ammo or do a pull request
+    // the ammo cannot be upgrade if they are in the inventory, even if the method exists I do not see any interest in the patch
+    // call Warkis if you want an event for the ammo or do a pull request
 
-        [HarmonyPatch(typeof(FirearmItemProcessor), nameof(FirearmItemProcessor.OnInventoryItemUpgraded))]
+    [HarmonyPatch(typeof(FirearmItemProcessor), nameof(FirearmItemProcessor.OnInventoryItemUpgraded))]
+    class InvFirearmUpgradePatch
+    {
         [HarmonyPrefix]
-        private static bool FirearmUpgradePatch(FirearmItemProcessor __instance, Scp914KnobSetting setting, ReferenceHub hub, ushort serial)
+        private static bool OnInventoryItemUpgraded(FirearmItemProcessor __instance, Scp914KnobSetting setting, ReferenceHub hub, ushort serial)
         {
             try
             {
+                Logger.Get.Debug("OnInventoryItemUpgraded");
+
                 if (hub.inventory.UserInventory.Items.TryGetValue(serial, out ItemBase item))
                 {
                     var items = __instance.GetItems(setting, item.ItemTypeId);
@@ -132,13 +135,18 @@ namespace VT_Api.Patches.VtEvent.MapPaches
                 return true;
             }
         }
+    }
 
-        [HarmonyPatch(typeof(StandardItemProcessor), nameof(StandardItemProcessor.OnInventoryItemUpgraded))]
+    [HarmonyPatch(typeof(StandardItemProcessor), nameof(StandardItemProcessor.OnInventoryItemUpgraded))]
+    class InvItemUpgradePatch
+    { 
         [HarmonyPrefix]
-        private static bool ItemUpgradePatch(StandardItemProcessor __instance, Scp914KnobSetting setting, ReferenceHub hub, ushort serial)
+        private static bool OnInventoryItemUpgraded(StandardItemProcessor __instance, Scp914KnobSetting setting, ReferenceHub hub, ushort serial)
         {
             try
             {
+                Logger.Get.Debug("OnInventoryItemUpgraded");
+               
                 if (!hub.inventory.UserInventory.Items.TryGetValue(serial, out ItemBase value))
                     return false;
 
