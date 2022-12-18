@@ -11,6 +11,7 @@ namespace VT_Api.Core.Plugin.AutoRegisterProcess
         public void Process(PluginLoadContext context)
         {
             if (context.Plugin is not IVtPlugin vtPlugin || !vtPlugin.AutoRegister) return;
+            Logger.Get.Warn($"Try auto register Item for {context.Plugin.Information.Name}");
 
             foreach (var itemType in context.Classes)
             {
@@ -24,12 +25,17 @@ namespace VT_Api.Core.Plugin.AutoRegisterProcess
                     {
                         var customItem = Activator.CreateInstance(itemType) as IItem;
                         if (customItem.Info == null)
+                        {
                             Logger.Get.Error($"The custom Item {itemType.Name} ave no information !");
+                            continue;
+                        }
+                        Logger.Get.Warn($"The custom Item {info.Name} ({info.ID}) is auto regitred !"); 
                         VtController.Get.Item.RegisterCustomItem(customItem);
                     }
                     else
                     {
                         VtController.Get.Item.RegisterCustomItem(itemType, info.ID, info.Name, info.BasedItemType);
+                        Logger.Get.Error($"The custom Item {info.Name} ({info.ID}) is auto regitred ");
                     } 
                 }
                 catch (Exception e)

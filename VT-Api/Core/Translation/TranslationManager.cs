@@ -45,7 +45,6 @@ namespace VT_Api.Core.Translation
         {
             Synapse.Api.Events.EventHandler.Get.Player.PlayerJoinEvent += OnJoin;
             Synapse.Api.Events.EventHandler.Get.Round.RoundStartEvent += OnRoundRestart;
-
         }
 
         //https://stackoverflow.com/questions/4327629/get-user-location-by-ip-address

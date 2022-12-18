@@ -13,6 +13,7 @@ namespace VT_Api.Core.Plugin.AutoRegisterProcess
         public void Process(PluginLoadContext context)
         {
             if (context.Plugin is not IVtPlugin vtPlugin || !vtPlugin.AutoRegister) return;
+            Logger.Get.Warn($"Try auto register Team for {context.Plugin.Information.Name}");
 
             foreach (var teamType in context.Classes)
             {
@@ -32,7 +33,7 @@ namespace VT_Api.Core.Plugin.AutoRegisterProcess
                     if (Synapse.Api.Teams.TeamManager.Get.IsIDRegistered(synapseTeam.Info.ID))
                         Logger.Get.Error($"A Plugin tried to register a CustomTeam with an already used Id : {synapseTeam.Info.ID}");
 
-
+                    Logger.Get.Warn($"The custom Team {synapseTeam.Info.Name} ({synapseTeam.Info.ID}) is auto regitred !");
                     Synapse.Api.Teams.TeamManager.Get.GetFieldValueOrPerties<List<ISynapseTeam>>("teams").Add(synapseTeam);
                     synapseTeam.Initialise();
                 }

@@ -12,6 +12,7 @@ namespace VT_Api.Core.Plugin.AutoRegisterProcess
         public void Process(PluginLoadContext context)
         {
             if (context.Plugin is not IVtPlugin vtPlugin || !vtPlugin.AutoRegister) return;
+            Logger.Get.Warn($"Try auto register Role for {context.Plugin.Information.Name}");
 
             foreach (var roleType in context.Classes)
             {
@@ -24,6 +25,7 @@ namespace VT_Api.Core.Plugin.AutoRegisterProcess
                     var customRole = Activator.CreateInstance(roleType) as IRole;
                     var info = new RoleInformation(customRole.GetRoleName(), customRole.GetRoleID(), roleType);
 
+                    Logger.Get.Warn($"The custom Role {info.Name} ({info.ID}) is auto regitred !");
                     Synapse.Api.Roles.RoleManager.Get.RegisterCustomRole(info);
                 }
                 catch (Exception e)
